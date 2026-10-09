@@ -6,7 +6,7 @@
     <title>Erizofilm — Visor de Guiones</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Special+Elite&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Courier+Prime&family=Special+Elite&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-carbon: #020203;       
@@ -154,6 +154,7 @@
             border: 1px solid rgba(159, 18, 57, 0.4);
             transition: all 0.2s ease;
             white-space: nowrap;
+            cursor: pointer;
         }
 
         .btn-read:hover {
@@ -200,14 +201,12 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN: Solo pon aquí tu usuario exacto de GitHub y el nombre de tu repositorio
         const usuarioGithub = 'erizofilm'; 
         const repositorioGithub = 'erizofilm.github.io';
 
         async function escanearAutomaticoNube() {
             const container = document.getElementById('scriptsList');
             try {
-                // Petición automática a la API de GitHub para listar la carpeta scripts
                 const respuesta = await fetch(`https://api.github.com/repos/${usuarioGithub}/${repositorioGithub}/contents/scripts`);
                 const archivos = await respuesta.json();
 
@@ -218,11 +217,8 @@
                     for (const archivo of archivos) {
                         if (archivo.name && archivo.name.endsWith('.txt')) {
                             encontrados = true;
-                            
-                            // Limpiamos el nombre del archivo (ej: "el-silencio-de-un-corazon.txt" -> "El Silencio De Un Corazon")
                             const nombreLimpio = decodeURIComponent(archivo.name.replace('.txt', '').replace(/-/g, ' '));
                             
-                            // Creamos la tarjeta de forma 100% automática
                             const card = document.createElement('div');
                             card.className = 'script-card';
                             card.innerHTML = `
@@ -231,7 +227,7 @@
                                     <h2 class="script-name">${nombreLimpio}</h2>
                                     <p class="script-logline">Cargado automáticamente desde el servidor.</p>
                                 </div>
-                                <a href="scripts/${archivo.name}" target="_blank" class="btn-read">📄 Leer Guion</a>
+                                <button class="btn-read" onclick="abrirGuionFormateado('scripts/${archivo.name}', '${nombreLimpio}')">📄 Leer Guion</button>
                             `;
                             container.appendChild(card);
                         }
@@ -243,6 +239,70 @@
                 }
             } catch (error) {
                 container.innerHTML = `<div style="color: var(--text-muted); text-align: center;">Error al escanear los guiones en la nube.</div>`;
+            }
+        }
+
+        // Función para descargar el texto del archivo .txt y abrirlo en una ventana con estilo de guion
+        async function abrirGuionFormateado(rutaArchivo, titulo) {
+            try {
+                const res = await fetch(rutaArchivo);
+                const contenidoTexto = await res.text();
+
+                const nuevaVentana = window.open('', '_blank');
+                nuevaVentana.document.write(`
+                    <!DOCTYPE html>
+                    <html lang="es">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>${titulo} — Erizofilm</title>
+                        <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Special+Elite&display=swap" rel="stylesheet">
+                        <style>
+                            body {
+                                background-color: #020203;
+                                color: #f1f5f9;
+                                font-family: 'Courier Prime', monospace;
+                                padding: 50px 20px;
+                                display: flex;
+                                justify-content: center;
+                            }
+                            .script-page {
+                                width: 100%;
+                                max-width: 750px;
+                                background: #07090c;
+                                border: 2px solid #181d24;
+                                padding: 50px;
+                                box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+                                border-radius: 6px;
+                            }
+                            h1 {
+                                font-family: 'Special Elite', monospace;
+                                color: #9f1239;
+                                border-bottom: 2px dashed #181d24;
+                                padding-bottom: 15px;
+                                margin-bottom: 30px;
+                                font-size: 28px;
+                                text-transform: uppercase;
+                            }
+                            pre {
+                                white-space: pre-wrap;
+                                word-wrap: break-word;
+                                font-family: 'Courier Prime', monospace;
+                                font-size: 15px;
+                                line-height: 1.6;
+                                color: #cbd5e1;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="script-page">
+                            <h1>${titulo}</h1>
+                            <pre>${contenidoTexto}</pre>
+                        </div>
+                    </body>
+                    </html>
+                `);
+            } catch (e) {
+                alert("No se pudo cargar el contenido del guion.");
             }
         }
 
