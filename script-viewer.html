@@ -74,7 +74,7 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
             position: relative; 
             font-family: 'Courier Prime', Courier, monospace; 
-            font-size: 14.5px; 
+            font-size: 15px; /* Estándar Courier 12pt */
             line-height: 1.45; 
         }
 
@@ -87,26 +87,50 @@
             font-family: 'Courier Prime', monospace; 
         }
 
-        /* PORTADA CENTRADA */
-        .cover-page { 
+        /* PORTADA SPEC SCRIPT TRADICIONAL */
+        .cover-page-spec { 
             display: flex; 
             flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 800px; 
-            text-align: center; 
-            font-family: 'Inter', sans-serif; 
+            justify-content: space-between; 
+            height: 840px; 
+            font-family: 'Courier Prime', Courier, monospace; 
+            position: relative;
         }
-        .cover-title { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: 2px; margin-bottom: 12px; text-transform: uppercase; font-family: 'Courier Prime', monospace; }
-        .cover-subtitle { font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 140px; }
-        .cover-author { font-size: 14px; color: var(--text-main); line-height: 1.8; }
+
+        .cover-center {
+            margin-top: 240px;
+            text-align: center;
+        }
+
+        .cover-title { 
+            font-size: 18px; 
+            font-weight: 700; 
+            color: #fff; 
+            text-transform: uppercase; 
+            margin-bottom: 24px; 
+            letter-spacing: 1px;
+        }
+
+        .cover-author { 
+            font-size: 15px; 
+            color: var(--text-main); 
+            line-height: 1.6; 
+        }
+
+        .cover-footer-left {
+            text-align: left;
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-top: auto;
+        }
 
         /* SINOPSIS Y REPARTO */
         .synopsis-page { font-family: 'Inter', sans-serif; }
         .synopsis-page h2 { font-size: 16px; font-weight: 700; color: #fff; margin-top: 20px; margin-bottom: 12px; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; letter-spacing: 1px; }
         .synopsis-page p, .synopsis-page li { font-size: 14px; color: var(--text-main); margin-bottom: 10px; line-height: 1.6; }
 
-        /* ESTRUCTURA FORMATO GUIÓN DE CINE */
+        /* FORMATO GUIÓN DE CINE */
         .scene { 
             font-weight: 700; 
             text-transform: uppercase; 
@@ -161,7 +185,7 @@
                 min-height: auto; 
             }
             .cover-title, .synopsis-page h2, .scene, .character { color: black !important; }
-            .cover-subtitle, .parenthetical, .page-number { color: #555 !important; }
+            .cover-subtitle, .parenthetical, .page-number, .cover-footer-left { color: #555 !important; }
             .dialogue, .action, .cover-author, .synopsis-page p, .synopsis-page li { color: black !important; }
         }
 
@@ -210,29 +234,35 @@
             let htmlOutput = '';
             let mainTitle = "Guion Erizofilm";
 
-            // 1. HOJA DE PORTADA
+            // 1. PORTADA ESTÁNDAR SPEC SCRIPT
             if (sections.length > 0) {
                 const coverLines = sections[0].trim().split('\n');
                 let title = "";
-                let subtitle = "";
-                let authorInfo = [];
+                let authorLines = [];
+                let contactLines = [];
 
                 coverLines.forEach(l => {
                     let trimmed = l.trim();
-                    if (trimmed.startsWith('# ')) title = trimmed.replace('# ', '');
-                    else if (trimmed !== '') {
-                        if (!subtitle && !trimmed.toLowerCase().includes('escrito') && !trimmed.match(/^\d{4}$/)) subtitle = trimmed;
-                        else authorInfo.push(trimmed);
+                    if (trimmed.startsWith('# ')) {
+                        title = trimmed.replace('# ', '');
+                    } else if (trimmed.toLowerCase().startsWith('contacto:') || trimmed.toLowerCase().startsWith('registro:')) {
+                        contactLines.push(trimmed);
+                    } else if (trimmed !== '') {
+                        authorLines.push(trimmed);
                     }
                 });
                 if (title) mainTitle = title;
 
                 htmlOutput += `
                     <div class="page">
-                        <div class="cover-page">
-                            <div class="cover-title">${title}</div>
-                            <div class="cover-subtitle">${subtitle}</div>
-                            <div class="cover-author">${authorInfo.join('<br>')}</div>
+                        <div class="cover-page-spec">
+                            <div class="cover-center">
+                                <div class="cover-title">${title}</div>
+                                <div class="cover-author">${authorLines.join('<br>')}</div>
+                            </div>
+                            <div class="cover-footer-left">
+                                ${contactLines.join('<br>')}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -251,7 +281,7 @@
                 htmlOutput += `</div></div>`;
             }
 
-            // 3. DESARROLLO DEL GUIÓN FLUIDO Y CONTINUO
+            // 3. DESARROLLO DEL GUIÓN CONTINUO
             if (sections.length > 2) {
                 const fullScriptText = sections.slice(2).join('\n');
                 const scriptLines = fullScriptText.trim().split('\n');
@@ -291,18 +321,17 @@
                     }
                 });
 
-                // Renderizado dinámico según la altura real para llenar la página de arriba abajo
                 const tempContainer = document.createElement('div');
                 tempContainer.innerHTML = scriptBlocks.join('');
                 tempContainer.style.visibility = 'hidden';
                 tempContainer.style.position = 'absolute';
                 tempContainer.style.width = '670px';
                 tempContainer.style.fontFamily = "'Courier Prime', Courier, monospace";
-                tempContainer.style.fontSize = '14.5px';
+                tempContainer.style.fontSize = '15px';
                 tempContainer.style.lineHeight = '1.45';
                 document.body.appendChild(tempContainer);
 
-                const MAX_PAGE_HEIGHT = 820; // Altura disponible de la hoja
+                const MAX_PAGE_HEIGHT = 820;
                 let currentPageHtml = '';
                 let currentHeight = 0;
                 let scriptPageNum = 1;
