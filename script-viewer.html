@@ -46,17 +46,37 @@
     </div>
 
     <script>
-        async function loadScript() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const filePath = urlParams.get('file') || 'scripts/el-silencio.txt';
+        // BASE DE DATOS INTERNA DE GUIONES (Sin problemas de carpetas ni fetch)
+        const scriptsDB = {
+            "el-silencio": `
+# EL SILENCIO DE UN CORAZÓN
 
-            try {
-                const response = await fetch(filePath);
-                if (!response.ok) throw new Error("No se pudo cargar el archivo");
-                const text = await response.text();
-                parseScriptFormat(text);
-            } catch (error) {
-                document.getElementById('scriptContainer').innerHTML = "<p style='color: #ef4444;'>Error: No se pudo cargar el archivo de guion especificado.</p>";
+- INT. CAFETERÍA - DÍA
+
+- En una mesa de fondo, Marco entrega con cortesía una taza de café a Vanessa.
+
+DAYNER
+(acercándose con timidez)
+Sé que no has comido nada... Te traje esto.
+
+BIANCA
+(sin mirarlo, cortante)
+No quiero nada. ¿Por qué siempre tienes que estar encima mío?
+            `
+            // Aquí puedes agregar más guiones en el futuro separados por comas, por ejemplo:
+            // "proyecto-2": "# TÍTULO DEL PROYECTO 2\n\n- INT. CASA - DÍA\n..."
+        };
+
+        function loadScript() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const scriptKey = urlParams.get('id') || 'el-silencio';
+
+            const rawText = scriptsDB[scriptKey];
+
+            if (rawText) {
+                parseScriptFormat(rawText);
+            } else {
+                document.getElementById('scriptContainer').innerHTML = "<p style='color: #ef4444;'>Error: El guion solicitado no existe en la base de datos.</p>";
             }
         }
 
