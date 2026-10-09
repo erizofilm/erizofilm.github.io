@@ -6,7 +6,7 @@
     <title>Lector de Guion — Erizofilm</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap" rel="stylesheet">
     <style>
         :root { 
             --bg-carbon: #020203;       
@@ -17,7 +17,6 @@
             --solid-color: #700c24;     
             --solid-hover: #500819;
             --text-main: #e2e8f0;
-            --accent-primary: #700c24;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -79,7 +78,7 @@
             padding: 0 20px; 
         }
 
-        /* HOJA TAMAÑO CARTA CON ESTILO CARBONO */
+        /* HOJA TAMAÑO CARTA CON ESTILO CARBONO Y FUENTE COURIER PRIME */
         .page { 
             background-color: var(--card-carbon); 
             border: 2px solid var(--border-carbon); 
@@ -116,7 +115,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* PORTADA SPEC SCRIPT TRADICIONAL */
+        /* PORTADA SPEC SCRIPT TRADICIONAL (TODO EN COURIER PRIME) */
         .cover-page-spec { 
             display: flex; 
             flex-direction: column; 
@@ -132,20 +131,20 @@
         }
 
         .cover-title { 
-            font-size: 22px; 
+            font-size: 18px; 
             font-weight: 700; 
             color: #f1f5f9; 
             text-transform: uppercase; 
             margin-bottom: 24px; 
-            letter-spacing: 1.5px;
-            font-family: 'Caveat', cursive;
-            font-size: 42px;
+            letter-spacing: 1px;
+            font-family: 'Courier Prime', Courier, monospace;
         }
 
         .cover-author { 
             font-size: 15px; 
             color: var(--text-cream); 
             line-height: 1.6; 
+            font-family: 'Courier Prime', Courier, monospace;
         }
 
         .cover-footer-left {
@@ -154,22 +153,22 @@
             color: var(--text-muted);
             line-height: 1.6;
             margin-top: auto;
+            font-family: 'Courier Prime', monospace;
         }
 
-        /* SINOPSIS Y REPARTO */
-        .synopsis-page { font-family: 'Special Elite', monospace; padding-top: 10px; }
+        /* SINOPSIS Y REPARTO (EN COURIER PRIME) */
+        .synopsis-page { font-family: 'Courier Prime', Courier, monospace; padding-top: 10px; }
         .synopsis-page h2 { 
-            font-size: 16px; 
+            font-size: 15px; 
             font-weight: 700; 
             color: #f1f5f9; 
             margin-top: 35px; 
             margin-bottom: 16px; 
             text-transform: uppercase; 
-            border-bottom: 1px dashed var(--border-carbon); 
+            border-bottom: 1px solid var(--border-carbon); 
             padding-bottom: 8px; 
             letter-spacing: 1px; 
-            font-family: 'Caveat', cursive;
-            font-size: 30px;
+            font-family: 'Courier Prime', Courier, monospace;
         }
         .synopsis-page h2:first-child { margin-top: 0; }
         .synopsis-page p, .synopsis-page li { 
@@ -177,6 +176,7 @@
             color: var(--text-cream); 
             margin-bottom: 14px; 
             line-height: 1.65; 
+            font-family: 'Courier Prime', Courier, monospace;
         }
 
         /* FORMATO GUIÓN DE CINE */
@@ -257,12 +257,12 @@
     <header>
         <div style="display: flex; align-items: center; gap: 15px;">
             <a href="script-list.html" class="btn-action">← Volver a la Lista</a>
-            <span id="scriptTitleHeader" style="font-size: 13px; font-weight: 600; color: var(--text-muted); font-family: 'Special Elite', monospace;">| Sincronizando...</span>
+            <span id="scriptTitleHeader" style="font-size: 13px; font-weight: 600; color: var(--text-muted); font-family: 'Courier Prime', monospace;">| Sincronizando...</span>
         </div>
     </header>
 
     <div class="script-wrapper" id="scriptContainer">
-        Cargando guion y aplicando formato Erizofilm...
+        Cargando guion y aplicando formato cinematográfico...
     </div>
 
     <script>
