@@ -10,6 +10,7 @@ script-viewer
 ![script-viewer](https://i.imgur.com/cyZL0t3.png)
 
 Create a new script ".txt" and add it here: ./scripts/here
+To avoid problems, create names without accents or spaces—though you can use hyphens (-).
 ```
 # [TÍTULO DEL GUION EN MAYÚSCULAS]
 
