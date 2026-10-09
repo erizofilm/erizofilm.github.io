@@ -242,7 +242,6 @@
             }
         }
 
-        // Función para descargar el texto del archivo .txt y abrirlo en una ventana con estilo de guion
         async function abrirGuionFormateado(rutaArchivo, titulo) {
             try {
                 const res = await fetch(rutaArchivo);
@@ -259,45 +258,41 @@
                         <style>
                             body {
                                 background-color: #020203;
-                                color: #f1f5f9;
+                                color: #e2e8f0;
                                 font-family: 'Courier Prime', monospace;
-                                padding: 50px 20px;
+                                padding: 60px 20px;
                                 display: flex;
                                 justify-content: center;
                             }
                             .script-page {
                                 width: 100%;
-                                max-width: 750px;
+                                max-width: 850px;
                                 background: #07090c;
                                 border: 2px solid #181d24;
-                                padding: 50px;
-                                box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+                                padding: 70px;
+                                box-shadow: 0 25px 60px rgba(0,0,0,0.95);
                                 border-radius: 6px;
-                            }
-                            h1 {
-                                font-family: 'Special Elite', monospace;
-                                color: #9f1239;
-                                border-bottom: 2px dashed #181d24;
-                                padding-bottom: 15px;
-                                margin-bottom: 30px;
-                                font-size: 28px;
-                                text-transform: uppercase;
                             }
                             pre {
                                 white-space: pre-wrap;
-                                word-wrap: break-word;
+                                word-break: break-word;
                                 font-family: 'Courier Prime', monospace;
                                 font-size: 15px;
                                 line-height: 1.6;
                                 color: #cbd5e1;
+                                background: transparent;
+                                margin: 0;
                             }
                         </style>
                     </head>
                     <body>
                         <div class="script-page">
-                            <h1>${titulo}</h1>
-                            <pre>${contenidoTexto}</pre>
+                            <pre id="contenidoGuion"></pre>
                         </div>
+                        <script>
+                            // Respeta absolutamente cada espacio, salto de línea y estructura exacta del .txt
+                            document.getElementById('contenidoGuion').textContent = ${JSON.stringify(contenidoTexto)};
+                        <\/script>
                     </body>
                     </html>
                 `);
