@@ -60,7 +60,7 @@
             margin: 40px auto 80px auto; 
             display: flex; 
             flex-direction: column; 
-            gap: 40px; 
+            gap: 60px; /* Incrementado para distanciar visualmente las tarjetas en pantalla */
             padding: 0 20px; 
         }
 
@@ -139,14 +139,14 @@
             margin-top: auto;
         }
 
-        /* SINOPSIS Y REPARTO - CON MAYOR ESPACIADO */
+        /* SINOPSIS Y REPARTO */
         .synopsis-page { font-family: 'Inter', sans-serif; padding-top: 10px; }
         .synopsis-page h2 { 
             font-size: 15px; 
             font-weight: 700; 
             color: #fff; 
-            margin-top: 35px; 
-            margin-bottom: 16px; 
+            margin-top: 40px; 
+            margin-bottom: 18px; 
             text-transform: uppercase; 
             border-bottom: 1px solid var(--border-color); 
             padding-bottom: 8px; 
@@ -156,8 +156,13 @@
         .synopsis-page p, .synopsis-page li { 
             font-size: 14px; 
             color: var(--text-main); 
-            margin-bottom: 14px; 
-            line-height: 1.65; 
+            margin-bottom: 16px; 
+            line-height: 1.7; 
+        }
+
+        /* INICIO DEL GUIÓN TÉCNICO CON MARGEN EXTRA */
+        .first-script-page {
+            padding-top: 90px !important;
         }
 
         /* FORMATO GUIÓN DE CINE */
@@ -305,7 +310,7 @@
                 `;
             }
 
-            // 2. SINOPSIS Y REPARTO (EN SU PROPIA HOJA CON ESPACIADO MEJORADO)
+            // 2. SINOPSIS Y REPARTO
             if (sections.length > 1) {
                 const synopsisLines = sections[1].trim().split('\n');
                 htmlOutput += `<div class="page"><div class="synopsis-page">`;
@@ -318,7 +323,7 @@
                 htmlOutput += `</div></div>`;
             }
 
-            // 3. GUIÓN CON NUMERACIÓN DE PÁGINA Y PIE CON COPYRIGHT
+            // 3. GUIÓN CON NUMERACIÓN DE PÁGINA, PIE Y ESPACIADO EXTRA INICIAL
             if (sections.length > 2) {
                 const fullScriptText = sections.slice(2).join('\n');
                 const scriptLines = fullScriptText.trim().split('\n');
@@ -359,7 +364,7 @@
                         flushDialogueGroup();
                         scriptBlocks.push(`<div class="scene">${sceneCount}. ${trimmed}</div>`);
                         sceneCount++;
-                    } else if (trimmed === trimmed.toUpperCase() && !trimmed.includes('.') && trimmed.length < 35 && !trimmed.startsWith('FADE')) {
+                    } else if (trimmed === trimmed.toUpperCase() && !trimmed.includes('.') && trimmed.length < 35 && !trimmed.startsWith('FADE') && !trimmed.startsWith('FIN')) {
                         flushDialogueGroup();
                         currentCharacter = trimmed;
                     } else if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
@@ -368,9 +373,12 @@
                         } else {
                             scriptBlocks.push(`<div class="parenthetical">${trimmed}</div>`);
                         }
-                    } else if (trimmed.startsWith('FADE OUT') || trimmed.startsWith('FIN')) {
+                    } else if (trimmed.startsWith('FADE OUT')) {
                         flushDialogueGroup();
                         scriptBlocks.push(`<div class="scene" style="text-align:right; margin-top:20px;">${trimmed}</div>`);
+                    } else if (trimmed === 'FIN' || trimmed.startsWith('FIN ')) {
+                        flushDialogueGroup();
+                        scriptBlocks.push(`<div style="text-align:center; font-weight:700; margin-top:40px; margin-bottom:20px; color:#fff; letter-spacing:1px;">${trimmed}</div>`);
                     } else {
                         if (currentCharacter) {
                             currentDialogueLines.push(trimmed);
@@ -410,8 +418,9 @@
                     }
 
                     if (currentHeight + extraHeightNeeded > MAX_PAGE_HEIGHT && currentPageBlocks.length > 0) {
+                        const pageClass = scriptPageNum === 1 ? "page first-script-page" : "page";
                         htmlOutput += `
-                            <div class="page">
+                            <div class="${pageClass}">
                                 <div class="page-number">${mainTitle} — ${scriptPageNum}.</div>
                                 <div class="script-body">${currentPageBlocks.map(el => el.outerHTML).join('')}</div>
                                 <div class="page-footer">© 2026 Erizofilm</div>
@@ -427,8 +436,9 @@
                 }
 
                 if (currentPageBlocks.length > 0) {
+                    const pageClass = scriptPageNum === 1 ? "page first-script-page" : "page";
                     htmlOutput += `
-                        <div class="page">
+                        <div class="${pageClass}">
                             <div class="page-number">${mainTitle} — ${scriptPageNum}.</div>
                             <div class="script-body">${currentPageBlocks.map(el => el.outerHTML).join('')}</div>
                             <div class="page-footer">© 2026 Erizofilm</div>
