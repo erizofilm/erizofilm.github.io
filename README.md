@@ -9,7 +9,7 @@ script-list
 script-viewer
 ![script-viewer](https://i.imgur.com/cyZL0t3.png)
 
-Create new script:
+Create a new script and add it here: ./scripts/here
 ```
 # [TÍTULO DEL GUION EN MAYÚSCULAS]
 
