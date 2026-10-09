@@ -1,79 +1,273 @@
 # EL SILENCIO DE UN CORAZÓN
-Guion Técnico para Cortometraje
+Guion para Cortometraje
 
 Escrito por Erizofilm
 2026
 
 ---
 
-## SINOPSIS Y REPARTO
+## INFORMACIÓN DEL PROYECTO
 
 SINOPSIS:
-En una cafetería local, un joven intenta acercarse a una mujer que evita el contacto, mientras en el exterior se gestan tensiones, reproches y conflictos vinculados a relaciones del pasado y decisiones impulsivas marcadas por la obsesión y la redención.
+Dos amigas viven atrapadas en la ceguera emocional: Vanessa desprecia a su novio atento para buscar la adrenalina de un motociclista peligroso; Bianca, consumida por los celos y la obsesión hacia ese mismo novio, ignora al único amigo que la ama incondicionalmente. Sin embargo, un sacrificio desinteresado y una amarga revelación obligarán a mirar donde realmente estuvo el amor siempre.
 
-REPARTO PRINCIPAL:
-- MARCO (34): Repartidor de café, atento y observador.
-- VANESSA (30): Cliente de la cafetería, distante y reservada.
-- DAYNER (34): Joven tímido, insistente y marcado por la devoción hacia Bianca.
-- BIANCA (30): Amiga de Vanessa, de carácter cortante, directa y envuelta en tensiones ocultas.
-- ROYER (35): Motociclista rebelde a bordo de una Harley Davidson.
-- KAREN (28): Testigo circunstancial de los hechos en el exterior.
+REPARTO Y PERFILES (30-35 AÑOS):
+- BIANCA (31 años): Observadora, obsesionada e insegura. Se deja llevar por la envidia y la búsqueda de validación ajena.
+- DAYNER (33 años): Noble, humilde y profundamente abnegado. Su lealtad no busca chantajear, sino proteger.
+- VANESSA (30 años): Superficial e inconstante. Se aburre de la estabilidad y busca el peligro.
+- MARCO (34 años): Atractivo, caballeroso por fachada, pero narcisista, engreído y vanidoso en su interior.
+- ROYER (35 años): Imponente, agresivo y de aspecto duro. Maneja una Harley Davidson.
+- KAREN (32 años): Hermana de Dayner. Directa, protectora y realista.
 
 ---
 
 - INT. CAFETERÍA - DÍA
 
-- En una mesa de fondo, Marco entrega con cortesía una taza humeante de café a Vanessa, quien apenas lo mira.
+- En una mesa de fondo, MARCO (34) entrega con cortesía una taza de café a VANESSA (30), ofreciéndole además una sonrisa atenta. Vanessa apenas lo mira; revisa su teléfono con evidente aburrimiento.
+
+- A unos metros, BIANCA (31) los observa fijamente. Aprieta con rabia una servilleta de papel en su mano. Los celos le queman el rostro.
+
+- DAYNER (33) se acerca despacio a la mesa de Bianca y coloca un vaso de agua frente a ella.
 
 DAYNER
-(acercándose con timidez, sosteniendo una servilleta)
-Sé que no has comido nada... Te traje esto. Deberías cuidarte un poco más.
+Sé que no has comido nada... Te traje esto.
 
 BIANCA
-(sin mirarlo, con tono cortante y cortante)
-No quiero nada, Dayner. ¿Por qué siempre tienes que estar encima mío? Vete ya.
+(sin mirarlo, cortante)
+No quiero nada. ¿Por qué siempre tienes que estar encima mío?
 
-DAYNER
-(bajando la mirada, con un nudo en la garganta)
-Solo quería asegurarme de que estuvieras bien... Nada más.
-
-BIANCA
-Pues tus atenciones ya me cansaron. No las necesito.
+- Dayner guarda silencio, asiente con timidez y da un paso atrás sin reprocharle nada.
 
 - EXT. CALLE DE LA CIUDAD - ATARDECER
 
-- Un rugido de motor seco y potente retumba en el asfalto. Royer frena de golpe al borde de la acera a bordo de su Harley Davidson, quitándose el casco con actitud despreocupada y una sonrisa desafiante.
+- Vanessa camina distanciada por la acera. Más atrás, Bianca la sigue con disimulo. Dayner camina a su lado.
+
+- De pronto, un rugido de motor seco retumba en la calle. ROYER (35) frena al borde de la acera sobre su Harley Davidson. Vanessa cruza miradas con él; hay un coqueteo inmediato y descarado entre ambos. Vanessa sonríe y se acerca al motociclista.
+
+- Bianca se detiene tras un poste y abre los ojos de par en par. Atrapa a Dayner del brazo, acortando la distancia.
+
+BIANCA
+Se van a ver a solas. Lo sé. Necesito que los sigas y consigas una prueba. Una sola foto o video y Marco por fin verá la clase de mujer que tiene al lado.
 
 DAYNER
-(inquieto, dudando desde la acera de enfrente al verlo llegar)
-Esto no es una buena idea... Si nos ve aquí, se armará un problema de aquellos.
+(inquieto, dudando)
+Esto no está bien... Es meterse en problemas. Además, ese tipo no tiene buena cara.
 
 BIANCA
-(cruzándose de brazos, con gesto desafiante)
-Que piense lo que quiera y que haga lo que le plazca. Ya estoy harta de tanta discreción y de ocultar lo que sentimos ante todos.
+(mirándolo a los ojos, con tono suave y manipulador)
+¿Harías todo por mí, verdad? Es lo único que te pido.
 
-ROYER
-(apagando el motor y acercándose con paso firme)
-¿De qué tanto hablan que se les nota tan nerviosos? Espero que no sea nada en mi contra.
+- Dayner la mira, atrapado por su mirada. Traga saliva, rindiéndose.
 
-- INT. CAFETERÍA - CONTINUACIÓN
+DAYNER
+Está bien... Lo haré.
 
-- Vanessa observa la escena a través del ventanal, bebiendo su café en completo silencio, mientras el peso del ambiente se vuelve cada vez más asfixiante.
+- EXT. CALLEJÓN EN SOMBRAS - NOCHE
 
-VANESSA
-(susurrando para sí misma)
-Nunca aprenden... Todo esto va a terminar muy mal.
+- Entre la penumbra del callejón, Dayner, con una gabardina oscura, sigue a Vanessa a una distancia discreta.
 
-MARCO
-(acercándose con discreción para limpiar la mesa contigua)
-A veces las personas eligen chocar contra la misma pared una y otra vez, señorita.
+- A lo lejos, Vanessa habla con alguien, pero la sombra del callejón impide que Dayner vea con claridad con quién está. Él saca rápidamente su celular y enfoca, pero la oscuridad obstaculiza la vista.
 
-- EXT. CALLE DE LA CIUDAD - MOMENTOS DESPUÉS
+- De pronto, el hombre se acerca y sale a la luz, revelando el rostro de Royer. En ese momento, comienzan las caricias y los besos entre los dos. Dayner aprovecha para tomar un par de fotografías nítidas.
 
-- La tensión entre Dayner, Bianca y Royer alcanza su punto máximo mientras los transeúntes desvían la mirada. El silencio entre ellos pesa más que las propias palabras.
+- En ese instante, Royer gira levemente los ojos hacia la dirección de Dayner.
 
-BIANCA
-(mirando fijamente a los ojos de Dayner)
-Se acabó el juego. Es hora de asumir las consecuencias de lo que hemos hecho.
+- Vanessa se despide y se aleja hacia la calle principal.
+
+- Dayner revisa las fotografías en su pantalla, satisfecho con la evidencia. Al levantar la mirada, avanza con cuidado buscando a Royer, pero no lo encuentra. Solo ve la motocicleta solitaria.
+
+- Dayner se congela. Se da cuenta de que la situación no pinta nada bien. Intenta dar la vuelta para huir...
+
+- ROYER APARECE JUSTO DETRÁS DE ÉL, CERRÁNDOLE EL PASO.
+
+DAYNER
+(ahogado, sin aire)
+Oh, por Dios...
+
+- Royer lo atrapa violentamente y lo arrastra fuera de campo detrás del muro.
+
+- El celular cae al suelo. La pantalla queda tirada en el piso, apuntando únicamente al muro de ladrillo.
+
+- En fuera de campo, se escucha el impacto sordo contra la pared, los contenedores metálicos de basura volcándose y el eco de la agresión.
+
+- La imagen se va a negro gradualmente.
 
 FADE OUT.
+
+- INT. CASA DE MARCO - NOCHE
+
+- El celular de Bianca vibra. Lleva la foto donde Vanessa está con Royer. Bianca sonríe victoriosa y corre a la casa de Marco.
+
+- INT. SALA DE MARCO - MOMENTOS DESPUÉS
+
+- Marco sostiene el teléfono, mirando la evidencia. Bianca escucha desde un costado mientras Marco encara a Vanessa por llamada en altavoz.
+
+MARCO (POR TELÉFONO)
+(frío)
+Tengo las fotos, no intentes negar nada. Se acabó. No te quiero volver a ver.
+
+- Él cuelga bruscamente. Se gira hacia Bianca y le dedica una sonrisa atractiva.
+
+MARCO
+De verdad fuiste muy lista al traerme esto... Fui un idiota por estar con ella. Ahora que lo pienso, tú siempre has sido una mujer encantadora.
+
+- El teléfono de Bianca suena de pronto. Ella pide disculpas con la mano, encantada por las palabras de Marco, y contesta.
+
+BIANCA
+¿Hola?
+
+KAREN (V.O.)
+(al otro lado de la línea, alterada)
+¿Bianca? Habla Karen, la hermana de Dayner... Él llegó a casa destrozado, golpeado salvajemente. Le revisé el teléfono mientras descansaba para ver qué le pasó y vi las fotos... Deberías venir a verlo.
+
+- La sonrisa de Bianca se congela.
+
+BIANCA
+(con voz temblorosa)
+Gracias... Iré en cuanto pueda.
+
+- Ella cuelga. Marco la observa con curiosidad.
+
+MARCO
+¿Sucede algo?
+
+BIANCA
+(pensativa)
+No... Todo bien.
+
+MARCO
+(sarcástico)
+Seguro es sobre tu "amigo", ¿verdad? Lo siento por él...
+
+BIANCA
+¿Por qué dices eso?
+
+MARCO
+No tiene nada de orgullo ni dignidad. Es tan obvio que está loco por ti... Todo lo que hace para llamar tu atención solo lo hace ver patético, ¿no crees?
+
+- Bianca lo mira, sintiendo un nudo amargo en la garganta. La culpa empieza a aplastarla.
+
+MARCO
+(acercándose con vanidad)
+Además, yo sabía desde hace tiempo que tú eras la que estaba enamorada de mí. Por algo nunca le diste entrada a él... Me querías a mí, ¿cierto?
+
+BIANCA
+Sí... Pero si lo supiste todo el tiempo, ¿por qué nunca dijiste nada?
+
+MARCO
+(sonriendo con soberbia)
+Para mí es normal que todas se fijen en mí. Sé cómo me mirabas, cómo te ponías nerviosa cuando volteaba... Disculpa si te ignoré, pero estoy acostumbrado a eso.
+
+- En la mente de Bianca pasan ráfagas de recuerdos: Dayner trayéndole agua, Dayner caminando a su lado sin exigir nada, Dayner recibiendo sus desprecios en silencio.
+
+BIANCA
+(en voz baja)
+Disculpa...
+
+MARCO
+(sorprendido)
+¿Por qué?
+
+BIANCA
+Por ser una persona egoísta. Al igual que tú. Hiciste que mendigara por tu atención y me dejaste actuar como una idiota solo para alimentar tu ego... No eres más que un imbécil narcisista.
+
+MARCO
+(con el rostro endurecido, molesto)
+¿Y qué me dices tú, hipócrita? ¿No le hiciste exactamente lo mismo a tu amigo?
+
+BIANCA
+Sí, fui igual de miserable. Pero la diferencia es que yo me estoy dando cuenta... Algo que tú jamás harás.
+
+- Marco la atrapa del brazo con brusquedad.
+
+MARCO
+Espera, yo no he terminado contigo-
+
+- Bianca reacciona con rapidez y le asesta un rodillazo certero en la entrepierna. Marco cae doblado al suelo, quejándose.
+
+BIANCA
+¡No me vuelvas a tocar!
+
+- Ella sale corriendo de la casa, dejando la puerta abierta.
+
+- INT. ENTRADA DE LA CASA DE DAYNER - NOCHE
+
+- Bianca llega agitada y toca la puerta.
+
+- KAREN (32) abre. En cuanto reconoce a Bianca, le propina una bofetada sonora en la mejilla.
+
+- Bianca recibe el impacto, baja la cabeza y contiene el llanto.
+
+BIANCA
+Me lo merezco. Lo siento mucho.
+
+- Karen exhala un largo suspiro, notando el arrepentimiento sincero en su rostro. Se hace a un lado para dejarla pasar.
+
+KAREN
+Está descansando en su habitación.
+
+- INT. HABITACIÓN DE DAYNER - CONTINUACIÓN
+
+- Luz tenue. Dayner yace en la cama con vendajes en la cabeza, pómulos inflamados y cortes en el rostro.
+
+- Abre los ojos despacio y se sobresalta al ver a Bianca a su lado.
+
+DAYNER
+(voz débil y rasposa)
+¿Tú... qué haces aquí?
+
+- Él intenta levantarse para mostrarse fuerte, pero se le escapa un quejido de dolor.
+
+BIANCA
+(acomodándolo suavemente)
+No te levantes, por favor... Quédate acostado.
+
+DAYNER
+(agachando la mirada, apenado)
+Perdóname... Le dije a mi hermana que no te llamara. No quería que te enteraras para que no te sintieras culpable...
+
+- Bianca siente que el corazón se le rompe.
+
+BIANCA
+(con lágrimas en los ojos)
+¿Todavía te preocupas por cómo me siento yo? Te arriesgaste, recibiste este castigo por mi culpa... y ni siquiera querías que lo supiera para no hacerme daño.
+
+DAYNER
+(desorientado)
+¿Pudiste estar con él? ¿Salió todo bien?
+
+BIANCA
+No... Fui yo quien no quiso estar con él. Al principio pensé que era lo que quería, pero me di cuenta de lo equivocada que estaba. Él siempre supo lo que yo sentía y solo se aprovechó para inflar su ego... Me di cuenta de la persona tan egoísta que fui, especialmente contigo.
+
+DAYNER
+No tenías que darte cuenta de nada...
+
+BIANCA
+Sí tenía que hacerlo. Hiciste todo por mí, incluso a costa de ti mismo. Te negaste a ti mismo por protegerme... Gracias por quererme así, y perdóname por haberme dado cuenta tan tarde.
+
+- Dayner la mira detenidamente. A pesar de los hematomas y los vendajes, una sonrisa amplia y sincera se dibuja en sus labios.
+
+BIANCA
+(sonriendo entre lágrimas)
+¿De qué te ríes? Estás todo golpeado...
+
+DAYNER
+Me río porque... valió la pena cada golpe si eso sirvió para que por fin me miraras.
+
+- Bianca se emociona y lo abraza con fuerza por el cuello.
+
+DAYNER
+(soltando un quejido)
+¡Auch! ¡Mi espalda!
+
+BIANCA
+(apartándose rápido, asustada)
+¡Uy, lo siento! ¡Perdóname!
+
+- Ambos rompen a reír juntos en medio de la habitación.
+
+- Bianca se inclina despacio y le da un beso tierno en la mejilla, tomando su mano con firmeza.
+
+FADE OUT.
+
+FIN DEL CORTOMETRAJE
