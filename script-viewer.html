@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lector de Guion — Erizofilm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-color: #0d0f12; --card-bg: #121418; --text-main: #e2e8f0; --text-muted: #8a94a6; --accent-primary: #6366f1; --border-color: #22262f; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        header { width: 100%; background: rgba(18,20,24,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 12px 24px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
+        .nav-actions { display: flex; gap: 10px; }
+        .btn-action { background: #181b22; color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+        .btn-action:hover { background: var(--accent-primary); color: #fff; border-color: var(--accent-primary); }
+        .container { width: 100%; max-width: 850px; margin-top: 36px; padding: 0 20px 80px 20px; }
+        .script-paper { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 70px 90px; box-shadow: 0 20px 40px rgba(0,0,0,0.55); font-family: 'Courier Prime', Courier, monospace; font-size: 15px; line-height: 1.4; outline: none; }
+        
+        .scene { font-weight: 700; text-transform: uppercase; margin-top: 36px; margin-bottom: 16px; color: #fff; }
+        .action { margin-bottom: 18px; color: var(--text-main); }
+        .character { text-transform: uppercase; font-weight: 700; margin-top: 22px; margin-bottom: 2px; margin-left: 38%; color: #fff; font-family: 'Courier Prime', monospace; }
+        .parenthetical { font-style: italic; margin-left: 28%; color: var(--text-muted); margin-bottom: 2px; }
+        .dialogue { margin-left: 20%; margin-right: 20%; margin-bottom: 18px; color: var(--text-main); }
+        
+        @media(max-width: 640px) { .script-paper { padding: 35px 20px; } .character { margin-left: 20%; } .parenthetical { margin-left: 10%; } .dialogue { margin-left: 5%; margin-right: 5%; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <a href="guiones.html" class="btn-action">← Volver a la Lista</a>
+            <span id="scriptTitleHeader" style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Cargando guion...</span>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-action" onclick="window.print()">🖨️ PDF / Imprimir</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="script-paper" id="scriptContainer">
+            Cargando contenido...
+        </div>
+    </div>
+
+    <script>
+        async function loadScript() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const filePath = urlParams.get('file') || 'scripts/el-silencio.txt';
+
+            try {
+                const response = await fetch(filePath);
+                if (!response.ok) throw new Error("No se pudo cargar el archivo");
+                const text = await response.text();
+                parseScriptFormat(text);
+            } catch (error) {
+                document.getElementById('scriptContainer').innerHTML = "<p style='color: #ef4444;'>Error: No se pudo cargar el archivo de guion especificado.</p>";
+            }
+        }
+
+        function parseScriptFormat(rawText) {
+            const lines = rawText.split('\n');
+            let htmlOutput = '';
+            let titleDetected = "Guion Erizofilm";
+
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (!trimmed) return;
+
+                if (trimmed.startsWith('# ')) {
+                    titleDetected = trimmed.replace('# ', '');
+                    htmlOutput += `<div style="text-align: center; font-size: 26px; font-weight: 700; letter-spacing: 2px; margin-top: 60px; margin-bottom: 20px; color: #fff;">${titleDetected}</div>`;
+                } else if (trimmed.startsWith('INT.') || trimmed.startsWith('EXT.')) {
+                    htmlOutput += `<div class="scene">${trimmed}</div>`;
+                } else if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
+                    htmlOutput += `<div class="parenthetical">${trimmed}</div>`;
+                } else if (trimmed === trimmed.toUpperCase() && !trimmed.includes('.') && trimmed.length < 30) {
+                    htmlOutput += `<div class="character">${trimmed}</div>`;
+                } else if (trimmed.startsWith('- ')) {
+                    htmlOutput += `<div class="action">${trimmed.replace('- ', '')}</div>`;
+                } else {
+                    htmlOutput += `<div class="dialogue">${trimmed}</div>`;
+                }
+            });
+
+            document.getElementById('scriptContainer').innerHTML = htmlOutput;
+            document.getElementById('scriptTitleHeader').textContent = "|  " + titleDetected;
+            document.title = titleDetected + " — Erizofilm";
+        }
+
+        loadScript();
+    </script>
+</body>
+</html>
