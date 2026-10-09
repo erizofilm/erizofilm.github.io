@@ -2,471 +2,100 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lector de Guion — Erizofilm</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+    <title>Visor de Guion — Erizofilm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Special+Elite&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --bg-carbon: #020203;       
-            --card-carbon: #07090c;     
-            --border-carbon: #181d24;   
-            --text-cream: #e2e8f0;
-            --text-muted: #475569;
-            --solid-color: #700c24;     
-            --solid-hover: #500819;
-            --text-main: #e2e8f0;
-            --accent-primary: #700c24;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { 
-            background-color: var(--bg-carbon); 
-            color: var(--text-main); 
-            font-family: 'Special Elite', monospace; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            min-height: 100vh;
+        body {
+            background-color: #020203;
+            color: #e2e8f0;
+            font-family: 'Courier Prime', monospace;
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
             background-image: radial-gradient(rgba(112, 12, 36, 0.04) 1px, transparent 0);
             background-size: 20px 20px;
         }
-        
-        header { 
-            width: 100%; 
-            background: rgba(7,9,12,0.9); 
-            backdrop-filter: blur(12px); 
-            border-bottom: 2px dashed var(--border-carbon); 
-            padding: 16px 24px; 
-            position: sticky; 
-            top: 0; 
-            z-index: 100; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
+        .top-bar {
+            width: 100%;
+            max-width: 850px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-start;
         }
-
-        .btn-action { 
-            background: transparent; 
-            color: var(--text-muted); 
-            border: 1px solid var(--border-carbon); 
-            padding: 8px 16px; 
-            border-radius: 4px; 
+        .btn-back {
+            background: transparent;
+            color: #475569;
+            border: 1px solid #181d24;
+            padding: 8px 16px;
+            border-radius: 4px;
             font-family: 'Special Elite', monospace;
-            font-size: 12px; 
-            font-weight: 500; 
-            cursor: pointer; 
-            text-decoration: none; 
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            transition: all 0.2s; 
-        }
-        .btn-action:hover { 
-            color: #f1f5f9; 
-            border-color: #475569; 
-            background-color: rgba(255,255,255,0.02); 
-        }
-
-        .script-wrapper { 
-            width: 100%; 
-            max-width: 850px; 
-            margin: 40px auto 80px auto; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 40px; 
-            padding: 0 20px; 
-        }
-
-        /* HOJA TAMAÑO CARTA CON ESTILO CARBONO */
-        .page { 
-            background-color: var(--card-carbon); 
-            border: 2px solid var(--border-carbon); 
-            border-radius: 8px; 
-            min-height: 980px; 
-            padding: 70px 80px 80px 80px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8); 
-            position: relative; 
-            font-family: 'Courier Prime', Courier, monospace; 
-            font-size: 15px; 
-            line-height: 1.45; 
-        }
-
-        /* ENCABEZADO CON NOMBRE Y NÚMERO DE PÁGINA */
-        .page-number { 
-            position: absolute; 
-            top: 35px; 
-            right: 45px; 
-            font-size: 12px; 
-            color: var(--text-muted); 
-            font-family: 'Courier Prime', monospace; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* PIE DE PÁGINA CON COPYRIGHT DE PRODUCTORA */
-        .page-footer {
-            position: absolute;
-            bottom: 35px;
-            left: 45px;
             font-size: 12px;
-            color: var(--text-muted);
-            font-family: 'Courier Prime', monospace;
-            letter-spacing: 0.5px;
-        }
-
-        /* PORTADA SPEC SCRIPT TRADICIONAL */
-        .cover-page-spec { 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-            height: 840px; 
-            font-family: 'Courier Prime', Courier, monospace; 
-            position: relative;
-        }
-
-        .cover-center {
-            margin-top: 240px;
-            text-align: center;
-        }
-
-        .cover-title { 
-            font-size: 22px; 
-            font-weight: 700; 
-            color: #f1f5f9; 
-            text-transform: uppercase; 
-            margin-bottom: 24px; 
+            text-decoration: none;
+            text-transform: uppercase;
             letter-spacing: 1.5px;
-            font-family: 'Caveat', cursive;
-            font-size: 42px;
+            transition: all 0.2s;
         }
-
-        .cover-author { 
-            font-size: 15px; 
-            color: var(--text-cream); 
-            line-height: 1.6; 
+        .btn-back:hover {
+            color: #f1f5f9;
+            border-color: #475569;
+            background-color: rgba(255,255,255,0.02);
         }
-
-        .cover-footer-left {
-            text-align: left;
-            font-size: 13px;
-            color: var(--text-muted);
+        .script-page {
+            width: 100%;
+            max-width: 850px;
+            background: #07090c;
+            border: 2px solid #181d24;
+            padding: 70px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.95);
+            border-radius: 6px;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: 'Courier Prime', monospace;
+            font-size: 15px;
             line-height: 1.6;
-            margin-top: auto;
-        }
-
-        /* SINOPSIS Y REPARTO */
-        .synopsis-page { font-family: 'Special Elite', monospace; padding-top: 10px; }
-        .synopsis-page h2 { 
-            font-size: 16px; 
-            font-weight: 700; 
-            color: #f1f5f9; 
-            margin-top: 35px; 
-            margin-bottom: 16px; 
-            text-transform: uppercase; 
-            border-bottom: 1px dashed var(--border-carbon); 
-            padding-bottom: 8px; 
-            letter-spacing: 1px; 
-            font-family: 'Caveat', cursive;
-            font-size: 30px;
-        }
-        .synopsis-page h2:first-child { margin-top: 0; }
-        .synopsis-page p, .synopsis-page li { 
-            font-size: 14px; 
-            color: var(--text-cream); 
-            margin-bottom: 14px; 
-            line-height: 1.65; 
-        }
-
-        /* FORMATO GUIÓN DE CINE */
-        .scene { 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            margin-top: 24px; 
-            margin-bottom: 10px; 
-            color: #f1f5f9; 
-            break-after: avoid; 
-            page-break-after: avoid;
-        }
-        .action { 
-            margin-bottom: 12px; 
-            color: var(--text-cream); 
-            line-height: 1.45; 
-            text-align: left;
-        }
-        .dialogue-group {
-            margin-top: 14px;
-            margin-bottom: 12px;
-            break-inside: avoid;
-            page-break-inside: avoid;
-        }
-        .character { 
-            text-transform: uppercase; 
-            font-weight: 700; 
-            margin-bottom: 2px; 
-            margin-left: 38%; 
-            color: #fff; 
-            text-align: left;
-        }
-        .parenthetical { 
-            font-style: italic; 
-            margin-left: 28%; 
-            margin-right: 28%; 
-            color: var(--text-muted); 
-            margin-bottom: 2px; 
-            text-align: left;
-        }
-        .dialogue { 
-            margin-left: 22%; 
-            margin-right: 22%; 
-            color: var(--text-cream); 
-            text-align: left;
-            line-height: 1.4;
-        }
-
-        @media print {
-            body { background: white; color: black; }
-            header { display: none !important; }
-            .script-wrapper { margin: 0; padding: 0; gap: 0; max-width: 100%; }
-            .page { 
-                background: white !important; 
-                color: black !important; 
-                border: none !important; 
-                box-shadow: none !important; 
-                page-break-after: always; 
-                break-after: page; 
-                padding: 50px 60px; 
-                min-height: auto; 
-            }
-            .cover-title, .synopsis-page h2, .scene, .character { color: black !important; }
-            .parenthetical, .page-number, .page-footer, .cover-footer-left { color: #555 !important; }
-            .dialogue, .action, .cover-author, .synopsis-page p, .synopsis-page li { color: black !important; }
-        }
-
-        @media(max-width: 640px) {
-            .page { padding: 40px 20px; }
-            .character { margin-left: 25%; }
-            .parenthetical { margin-left: 10%; margin-right: 10%; }
-            .dialogue { margin-left: 5%; margin-right: 5%; }
+            color: #cbd5e1;
+            background: transparent;
+            margin: 0;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <a href="script-list.html" class="btn-action">← Volver a la Lista</a>
-            <span id="scriptTitleHeader" style="font-size: 13px; font-weight: 600; color: var(--text-muted); font-family: 'Special Elite', monospace;">| Sincronizando...</span>
-        </div>
-    </header>
+    <div class="top-bar">
+        <a href="script-list.html" class="btn-back">← Volver a la Lista</a>
+    </div>
 
-    <div class="script-wrapper" id="scriptContainer">
-        Cargando guion y aplicando formato Erizofilm...
+    <div class="script-page">
+        <pre id="contenidoGuion">Cargando guion original...</pre>
     </div>
 
     <script>
-        async function loadScript() {
+        async function cargarGuionOriginal() {
             const urlParams = new URLSearchParams(window.location.search);
-            let filePath = urlParams.get('file') || 'scripts/el-silencio-de-un-corazon.txt';
-            filePath = decodeURIComponent(filePath);
+            let filePath = urlParams.get('file');
+
+            if (!filePath) {
+                document.getElementById('contenidoGuion').textContent = "No se especificó ningún archivo de guion.";
+                return;
+            }
 
             try {
-                const response = await fetch(filePath);
-                if (!response.ok) throw new Error("No se pudo cargar el archivo");
-                const text = await response.text();
-                renderScreenplay(text);
-            } catch (error) {
-                document.getElementById('scriptContainer').innerHTML = "<p style='color: #ef4444; text-align: center; padding: 40px;'>Error al cargar el guion desde el servidor.</p>";
+                const res = await fetch(filePath);
+                if (!res.ok) throw new Error("No se pudo cargar el archivo");
+                const contenidoTexto = await res.text();
+                
+                // Mantiene exactamente la fuente original y el formato intacto del .txt
+                document.getElementById('contenidoGuion').textContent = contenidoTexto;
+            } catch (e) {
+                document.getElementById('contenidoGuion').textContent = "Error al cargar el contenido del guion desde el servidor.";
             }
         }
 
-        function renderScreenplay(rawText) {
-            const sections = rawText.split('---');
-            let htmlOutput = '';
-            let mainTitle = "Guion Erizofilm";
-
-            // 1. PORTADA SPEC SCRIPT
-            if (sections.length > 0) {
-                const coverLines = sections[0].trim().split('\n');
-                let title = "";
-                let authorLines = [];
-                let contactLines = [];
-
-                coverLines.forEach(l => {
-                    let trimmed = l.trim();
-                    if (trimmed.startsWith('# ')) {
-                        title = trimmed.replace('# ', '');
-                    } else if (
-                        trimmed.toLowerCase().startsWith('contacto:') || 
-                        trimmed.toLowerCase().startsWith('registro:') ||
-                        trimmed.startsWith('©')
-                    ) {
-                        contactLines.push(trimmed);
-                    } else if (trimmed !== '' && !trimmed.toLowerCase().includes('guion para')) {
-                        authorLines.push(trimmed);
-                    }
-                });
-                if (title) mainTitle = title;
-
-                htmlOutput += `
-                    <div class="page">
-                        <div class="cover-page-spec">
-                            <div class="cover-center">
-                                <div class="cover-title">${title}</div>
-                                <div class="cover-author">${authorLines.join('<br>')}</div>
-                            </div>
-                            <div class="cover-footer-left">
-                                ${contactLines.join('<br>')}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // 2. SINOPSIS Y REPARTO
-            if (sections.length > 1) {
-                const synopsisLines = sections[1].trim().split('\n');
-                htmlOutput += `<div class="page"><div class="synopsis-page">`;
-                synopsisLines.forEach(l => {
-                    let trimmed = l.trim();
-                    if (trimmed.startsWith('## ')) htmlOutput += `<h2>${trimmed.replace('## ', '')}</h2>`;
-                    else if (trimmed.startsWith('- ')) htmlOutput += `<p style="margin-left:15px;">• ${trimmed.replace('- ', '')}</p>`;
-                    else if (trimmed !== '') htmlOutput += `<p>${trimmed}</p>`;
-                });
-                htmlOutput += `</div></div>`;
-            }
-
-            // 3. GUIÓN CON NUMERACIÓN DE PÁGINA, PIE Y "FIN" CENTRADO
-            if (sections.length > 2) {
-                const fullScriptText = sections.slice(2).join('\n');
-                const scriptLines = fullScriptText.trim().split('\n');
-
-                let scriptBlocks = [];
-                let sceneCount = 1;
-
-                let currentCharacter = null;
-                let currentParenthetical = null;
-                let currentDialogueLines = [];
-
-                function flushDialogueGroup() {
-                    if (currentCharacter) {
-                        let groupHtml = `<div class="dialogue-group">`;
-                        groupHtml += `<div class="character">${currentCharacter}</div>`;
-                        if (currentParenthetical) {
-                            groupHtml += `<div class="parenthetical">${currentParenthetical}</div>`;
-                        }
-                        if (currentDialogueLines.length > 0) {
-                            groupHtml += `<div class="dialogue">${currentDialogueLines.join('<br>')}</div>`;
-                        }
-                        groupHtml += `</div>`;
-                        scriptBlocks.push(groupHtml);
-
-                        currentCharacter = null;
-                        currentParenthetical = null;
-                        currentDialogueLines = [];
-                    }
-                }
-
-                scriptLines.forEach(line => {
-                    let trimmed = line.trim();
-                    if (!trimmed) return;
-
-                    trimmed = trimmed.replace(/^\d+\.\s*/, '');
-
-                    if (trimmed.startsWith('INT.') || trimmed.startsWith('EXT.')) {
-                        flushDialogueGroup();
-                        scriptBlocks.push(`<div class="scene">${sceneCount}. ${trimmed}</div>`);
-                        sceneCount++;
-                    } else if (trimmed === trimmed.toUpperCase() && !trimmed.includes('.') && trimmed.length < 35 && !trimmed.startsWith('FADE') && !trimmed.startsWith('FIN')) {
-                        flushDialogueGroup();
-                        currentCharacter = trimmed;
-                    } else if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
-                        if (currentCharacter) {
-                            currentParenthetical = trimmed;
-                        } else {
-                            scriptBlocks.push(`<div class="parenthetical">${trimmed}</div>`);
-                        }
-                    } else if (trimmed.startsWith('FADE OUT')) {
-                        flushDialogueGroup();
-                        scriptBlocks.push(`<div class="scene" style="text-align:right; margin-top:20px;">${trimmed}</div>`);
-                    } else if (trimmed === 'FIN' || trimmed.startsWith('FIN ')) {
-                        flushDialogueGroup();
-                        scriptBlocks.push(`<div style="text-align:center; font-weight:700; margin-top:40px; margin-bottom:20px; color:#fff; letter-spacing:1px;">${trimmed}</div>`);
-                    } else {
-                        if (currentCharacter) {
-                            currentDialogueLines.push(trimmed);
-                        } else {
-                            scriptBlocks.push(`<div class="action">${trimmed}</div>`);
-                        }
-                    }
-                });
-
-                flushDialogueGroup();
-
-                const tempContainer = document.createElement('div');
-                tempContainer.innerHTML = scriptBlocks.join('');
-                tempContainer.style.visibility = 'hidden';
-                tempContainer.style.position = 'absolute';
-                tempContainer.style.width = '670px';
-                tempContainer.style.fontFamily = "'Courier Prime', Courier, monospace";
-                tempContainer.style.fontSize = '15px';
-                tempContainer.style.lineHeight = '1.45';
-                document.body.appendChild(tempContainer);
-
-                const MAX_PAGE_HEIGHT = 780;
-                let currentPageBlocks = [];
-                let currentHeight = 0;
-                let scriptPageNum = 1;
-
-                const children = Array.from(tempContainer.children);
-
-                for (let i = 0; i < children.length; i++) {
-                    const child = children[i];
-                    const childHeight = child.offsetHeight || 24;
-                    const isSceneHeader = child.classList.contains('scene');
-
-                    let extraHeightNeeded = childHeight;
-                    if (isSceneHeader && i + 1 < children.length) {
-                        extraHeightNeeded += (children[i + 1].offsetHeight || 24);
-                    }
-
-                    if (currentHeight + extraHeightNeeded > MAX_PAGE_HEIGHT && currentPageBlocks.length > 0) {
-                        htmlOutput += `
-                            <div class="page">
-                                <div class="page-number">${mainTitle} — ${scriptPageNum}.</div>
-                                <div class="script-body">${currentPageBlocks.map(el => el.outerHTML).join('')}</div>
-                                <div class="page-footer">© 2026 Erizofilm</div>
-                            </div>
-                        `;
-                        scriptPageNum++;
-                        currentPageBlocks = [child];
-                        currentHeight = childHeight;
-                    } else {
-                        currentPageBlocks.push(child);
-                        currentHeight += childHeight;
-                    }
-                }
-
-                if (currentPageBlocks.length > 0) {
-                    htmlOutput += `
-                        <div class="page">
-                            <div class="page-number">${mainTitle} — ${scriptPageNum}.</div>
-                            <div class="script-body">${currentPageBlocks.map(el => el.outerHTML).join('')}</div>
-                            <div class="page-footer">© 2026 Erizofilm</div>
-                        </div>
-                    `;
-                }
-
-                document.body.removeChild(tempContainer);
-            }
-
-            document.getElementById('scriptContainer').innerHTML = htmlOutput;
-            document.getElementById('scriptTitleHeader').textContent = "|  " + mainTitle;
-            document.title = mainTitle + " — Erizofilm";
-        }
-
-        loadScript();
+        cargarGuionOriginal();
     </script>
 </body>
 </html>
