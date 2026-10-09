@@ -3,27 +3,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Erizofilm — Portada</title>
+    <title>Erizofilm — Spec Scripts & Producción</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Cinzel:wght@600;800;900&family=Inter:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-color: #0d0f12; --card-bg: #121418; --text-main: #e2e8f0; --text-muted: #8a94a6; --accent-primary: #6366f1; --border-color: #22262f; }
+        :root {
+            --bg-dark: #0b0d10;
+            --card-vintage: #14181f;
+            --text-cream: #f4f1ea;
+            --text-chalk: #e2ded4;
+            --text-muted: #8e99a8;
+            
+            /* Cinematic Color Palette */
+            --amber-gold: #f59e0b;
+            --amber-glow: #d97706;
+            --cinematic-teal: #0d9488;
+            --teal-bright: #14b8a6;
+            --burgundy: #9f1239;
+            --burgundy-bright: #e11d48;
+            --chalk-border: #d1d5db;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .intro-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 60px 50px; max-width: 520px; width: 100%; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-        .intro-title { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 12px; font-family: 'Courier Prime', monospace; letter-spacing: 1.5px; }
-        .intro-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 30px; line-height: 1.5; }
-        .btn-enter { background: var(--accent-primary); color: #fff; border: none; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.2s; }
-        .btn-enter:hover { background: #4f46e5; }
+        html, body { min-height: 100vh; width: 100%; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-cream);
+            font-family: 'Courier Prime', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(13, 148, 136, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(159, 18, 57, 0.14) 0%, transparent 45%),
+                radial-gradient(rgba(245, 158, 11, 0.04) 1px, transparent 0);
+            background-size: 100% 100%, 100% 100%, 24px 24px;
+        }
+
+        /* CONTENEDOR PRINCIPAL VINTAGE */
+        .vintage-wrapper {
+            background: linear-gradient(160deg, #181c24 0%, #11141a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(20, 184, 166, 0.3);
+            border-bottom: 2px solid var(--burgundy);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 720px;
+            padding: 50px 40px;
+            box-shadow: 
+                0 30px 80px rgba(0, 0, 0, 0.9),
+                0 0 40px rgba(13, 148, 136, 0.08),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vintage-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cinematic-teal), var(--amber-gold), var(--burgundy-bright));
+        }
+
+        .header-tag {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            letter-spacing: 6px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 110px;
+            color: var(--text-cream);
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.25), rgba(159, 18, 57, 0.25));
+            padding: 10px 24px;
+            border-radius: 30px;
+            border: 1px solid rgba(20, 184, 166, 0.4);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-tag .dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--amber-gold);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--amber-gold);
+        }
+
+        .slate-container {
+            width: 100%;
+            max-width: 520px;
+            margin: 0 0 35px 0;
+            position: relative;
+        }
+
+        .slate-bars-top {
+            width: 100%;
+            height: 108px;
+            position: relative;
+            margin-bottom: -2px;
+            z-index: 2;
+        }
+
+        /* BARRA INFERIOR FIJA (GROSOR: 54px) */
+        .bar-bottom {
+            width: 100%;
+            height: 54px;
+            background: repeating-linear-gradient(
+                -45deg,
+                #111318,
+                #111318 28px,
+                var(--text-chalk) 28px,
+                var(--text-chalk) 56px
+            );
+            border: 4px solid var(--text-chalk);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        }
+
+        /* BARRA SUPERIOR ELEVADA (+15deg, BISAGRA ABAJO-DERECHA) */
+        .bar-top {
+            width: 100%;
+            height: 54px;
+            background: repeating-linear-gradient(
+                -45deg,
+                #111318,
+                #111318 28px,
+                var(--text-chalk) 28px,
+                var(--text-chalk) 56px
+            );
+            border: 4px solid var(--text-chalk);
+            position: absolute;
+            bottom: 54px;
+            left: 0;
+            transform-origin: 100% 100%;
+            transform: rotate(+15deg);
+            box-shadow: -8px -10px 30px rgba(0,0,0,0.85);
+            border-radius: 6px;
+        }
+
+        /* BISAGRA VISUAL DE LA CLAQUETA */
+        .hinge {
+            position: absolute;
+            right: 12px;
+            bottom: -6px;
+            width: 16px;
+            height: 64px;
+            background: linear-gradient(180deg, #4b5563, #1f2937);
+            border: 2px solid #9ca3af;
+            border-radius: 4px;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        }
+
+        .slate-box {
+            background: #0f1115;
+            border: 4px solid var(--text-chalk);
+            border-top: 1px solid #374151;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            padding: 30px 32px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.9);
+            text-align: left;
+            position: relative;
+            z-index: 1;
+        }
+
+        .slate-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            border-bottom: 2px dashed rgba(226, 222, 212, 0.25);
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+        }
+
+        .slate-label {
+            font-size: 11px;
+            color: var(--teal-bright);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .slate-val-big {
+            font-family: 'Special Elite', 'Courier Prime', monospace;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-chalk);
+            letter-spacing: 2px;
+            text-shadow: 0 0 1px rgba(255,255,255,0.5);
+        }
+
+        .slate-val-amber {
+            color: var(--amber-gold);
+            font-size: 28px;
+            text-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .slate-val-burgundy {
+            color: var(--burgundy-bright);
+            font-size: 24px;
+        }
+
+        .btn-enter-vintage {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(135deg, var(--burgundy) 0%, #be123c 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 18px 44px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 15px;
+            letter-spacing: 3px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            border: 1px solid rgba(244, 63, 94, 0.4);
+            box-shadow: 0 10px 30px rgba(159, 18, 57, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 10px;
+        }
+
+        .btn-enter-vintage:hover {
+            background: linear-gradient(135deg, #be123c 0%, #e11d48 100%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(225, 29, 72, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-vintage {
+            margin-top: 35px;
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 1.8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-vintage::before, .footer-vintage::after {
+            content: '';
+            width: 30px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 640px) {
+            .vintage-wrapper { padding: 40px 20px; }
+            .header-tag { font-size: 13px; margin-bottom: 95px; letter-spacing: 3px; }
+            .slate-val-big { font-size: 20px; }
+            .slate-val-amber { font-size: 22px; }
+            .btn-enter-vintage { padding: 15px 28px; font-size: 13px; width: 100%; }
+        }
     </style>
 </head>
 <body>
-    <div class="intro-card">
-        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-primary); margin-bottom: 15px; font-weight: 600;">Portfolio de Guiones</div>
-        <div class="intro-title">ERIZOFILM</div>
-        <div class="intro-sub">Plataforma de desarrollo y lectura de guiones técnicos y cinematográficos.</div>
-        <a href="guiones.html" class="btn-enter">Ver Lista de Guiones</a>
+
+    <div class="vintage-wrapper">
+        
+        <!-- ENCABEZADO CINEMÁTICO CON TONOS AZUL-VERDE Y BORDE DE RESPLANDOR -->
+        <div class="header-tag">
+            <span class="dot"></span>
+            ERIZOFILM · STUDIOS
+        </div>
+
+        <!-- CLAQUETA CON BARRAS GRUESAS Y PALETA MULTICOLOR CINEMÁTICA -->
+        <div class="slate-container">
+            
+            <div class="slate-bars-top">
+                <div class="bar-bottom"></div>
+                <div class="bar-top"></div>
+                <div class="hinge"></div>
+            </div>
+
+            <div class="slate-box">
+
+                <!-- Productora y Toma -->
+                <div class="slate-row">
+                    <div>
+                        <div class="slate-label">PRODUCTION</div>
+                        <div class="slate-val-big slate-val-amber">ERIZOFILM</div>
+                    </div>
+                    <div>
+                        <div class="slate-label">YEAR / TAKE</div>
+                        <div class="slate-val-big">2026 / 01</div>
+                    </div>
+                </div>
+
+                <!-- Título del Proyecto -->
+                <div style="border-bottom: 2px dashed rgba(226, 222, 212, 0.25); padding-bottom: 16px; margin-bottom: 16px;">
+                    <div class="slate-label">TITLE / PROJECT</div>
+                    <div class="slate-val-big slate-val-burgundy">CATÁLOGO DE GUIONES</div>
+                </div>
+
+                <!-- Director / Formato -->
+                <div class="slate-row" style="border-bottom: none; padding-bottom: 0; margin-bottom: 0;">
+                    <div>
+                        <div class="slate-label">DIRECTOR</div>
+                        <div class="slate-val-big" style="font-size: 19px;">FRODO</div>
+                    </div>
+                    <div>
+                        <div class="slate-label">FORMAT</div>
+                        <div class="slate-val-big" style="font-size: 19px; color: var(--teal-bright);">SPEC SCRIPT</div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- BOTÓN CON ACENTO EN TONOS ROJO BORGOÑA Y EFECTOS -->
+        <a href="guiones.html" class="btn-enter-vintage">
+            <span>🎬</span> INGRESAR AL CATÁLOGO
+        </a>
+
+        <div class="footer-vintage">
+            © 2026 ERIZOFILM STUDIOS · PROPIEDAD INTELECTUAL
+        </div>
     </div>
+
 </body>
 </html>
