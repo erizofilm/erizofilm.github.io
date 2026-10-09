@@ -1,0 +1,79 @@
+# EL SILENCIO DE UN CORAZÓN
+Guion Técnico para Cortometraje
+
+Escrito por Erizofilm
+2026
+
+---
+
+## SINOPSIS Y REPARTO
+
+SINOPSIS:
+En una cafetería local, un joven intenta acercarse a una mujer que evita el contacto, mientras en el exterior se gestan tensiones, reproches y conflictos vinculados a relaciones del pasado y decisiones impulsivas marcadas por la obsesión y la redención.
+
+REPARTO PRINCIPAL:
+- MARCO (34): Repartidor de café, atento y observador.
+- VANESSA (30): Cliente de la cafetería, distante y reservada.
+- DAYNER (34): Joven tímido, insistente y marcado por la devoción hacia Bianca.
+- BIANCA (30): Amiga de Vanessa, de carácter cortante, directa y envuelta en tensiones ocultas.
+- ROYER (35): Motociclista rebelde a bordo de una Harley Davidson.
+- KAREN (28): Testigo circunstancial de los hechos en el exterior.
+
+---
+
+- INT. CAFETERÍA - DÍA
+
+- En una mesa de fondo, Marco entrega con cortesía una taza humeante de café a Vanessa, quien apenas lo mira.
+
+DAYNER
+(acercándose con timidez, sosteniendo una servilleta)
+Sé que no has comido nada... Te traje esto. Deberías cuidarte un poco más.
+
+BIANCA
+(sin mirarlo, con tono cortante y cortante)
+No quiero nada, Dayner. ¿Por qué siempre tienes que estar encima mío? Vete ya.
+
+DAYNER
+(bajando la mirada, con un nudo en la garganta)
+Solo quería asegurarme de que estuvieras bien... Nada más.
+
+BIANCA
+Pues tus atenciones ya me cansaron. No las necesito.
+
+- EXT. CALLE DE LA CIUDAD - ATARDECER
+
+- Un rugido de motor seco y potente retumba en el asfalto. Royer frena de golpe al borde de la acera a bordo de su Harley Davidson, quitándose el casco con actitud despreocupada y una sonrisa desafiante.
+
+DAYNER
+(inquieto, dudando desde la acera de enfrente al verlo llegar)
+Esto no es una buena idea... Si nos ve aquí, se armará un problema de aquellos.
+
+BIANCA
+(cruzándose de brazos, con gesto desafiante)
+Que piense lo que quiera y que haga lo que le plazca. Ya estoy harta de tanta discreción y de ocultar lo que sentimos ante todos.
+
+ROYER
+(apagando el motor y acercándose con paso firme)
+¿De qué tanto hablan que se les nota tan nerviosos? Espero que no sea nada en mi contra.
+
+- INT. CAFETERÍA - CONTINUACIÓN
+
+- Vanessa observa la escena a través del ventanal, bebiendo su café en completo silencio, mientras el peso del ambiente se vuelve cada vez más asfixiante.
+
+VANESSA
+(susurrando para sí misma)
+Nunca aprenden... Todo esto va a terminar muy mal.
+
+MARCO
+(acercándose con discreción para limpiar la mesa contigua)
+A veces las personas eligen chocar contra la misma pared una y otra vez, señorita.
+
+- EXT. CALLE DE LA CIUDAD - MOMENTOS DESPUÉS
+
+- La tensión entre Dayner, Bianca y Royer alcanza su punto máximo mientras los transeúntes desvían la mirada. El silencio entre ellos pesa más que las propias palabras.
+
+BIANCA
+(mirando fijamente a los ojos de Dayner)
+Se acabó el juego. Es hora de asumir las consecuencias de lo que hemos hecho.
+
+FADE OUT.
