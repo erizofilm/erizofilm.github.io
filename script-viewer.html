@@ -70,7 +70,7 @@
             border: 1px solid var(--border-color); 
             border-radius: 8px; 
             min-height: 980px; 
-            padding: 70px 80px; 
+            padding: 70px 80px 80px 80px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
             position: relative; 
             font-family: 'Courier Prime', Courier, monospace; 
@@ -78,13 +78,27 @@
             line-height: 1.45; 
         }
 
+        /* ENCABEZADO CON NOMBRE Y NÚMERO DE PÁGINA */
         .page-number { 
             position: absolute; 
             top: 35px; 
             right: 45px; 
-            font-size: 13px; 
+            font-size: 12px; 
             color: var(--text-muted); 
             font-family: 'Courier Prime', monospace; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* PIE DE PÁGINA CON NOMBRE DE PRODUCTORA */
+        .page-footer {
+            position: absolute;
+            bottom: 35px;
+            left: 45px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: 'Courier Prime', monospace;
+            letter-spacing: 0.5px;
         }
 
         /* PORTADA SPEC SCRIPT TRADICIONAL */
@@ -137,7 +151,7 @@
             margin-top: 24px; 
             margin-bottom: 10px; 
             color: #fff; 
-            break-after: avoid; /* EVITA QUE LA ESCENA QUEDE HUÉRFANA AL FINAL DE PÁGINA */
+            break-after: avoid; 
             page-break-after: avoid;
         }
         .action { 
@@ -146,16 +160,19 @@
             line-height: 1.45; 
             text-align: left;
         }
+        .dialogue-group {
+            margin-top: 14px;
+            margin-bottom: 12px;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
         .character { 
             text-transform: uppercase; 
             font-weight: 700; 
-            margin-top: 14px; 
             margin-bottom: 2px; 
             margin-left: 38%; 
             color: #fff; 
             text-align: left;
-            break-after: avoid;
-            page-break-after: avoid;
         }
         .parenthetical { 
             font-style: italic; 
@@ -168,7 +185,6 @@
         .dialogue { 
             margin-left: 22%; 
             margin-right: 22%; 
-            margin-bottom: 12px; 
             color: var(--text-main); 
             text-align: left;
             line-height: 1.4;
@@ -189,7 +205,7 @@
                 min-height: auto; 
             }
             .cover-title, .synopsis-page h2, .scene, .character { color: black !important; }
-            .cover-subtitle, .parenthetical, .page-number, .cover-footer-left { color: #555 !important; }
+            .cover-subtitle, .parenthetical, .page-number, .page-footer, .cover-footer-left { color: #555 !important; }
             .dialogue, .action, .cover-author, .synopsis-page p, .synopsis-page li { color: black !important; }
         }
 
@@ -251,7 +267,7 @@
                         title = trimmed.replace('# ', '');
                     } else if (trimmed.toLowerCase().startsWith('contacto:') || trimmed.toLowerCase().startsWith('registro:')) {
                         contactLines.push(trimmed);
-                    } else if (trimmed !== '') {
+                    } else if (trimmed !== '' && !trimmed.toLowerCase().includes('guion para')) {
                         authorLines.push(trimmed);
                     }
                 });
@@ -285,53 +301,70 @@
                 htmlOutput += `</div></div>`;
             }
 
-            // 3. DESARROLLO DEL GUIÓN CON NUMERACIÓN DE ESCENAS Y CONTROL DE HUÉRFANOS
+            // 3. GUIÓN CON NUMERACIÓN DE PÁGINA PERSONALIZADA Y PIE DE PÁGINA
             if (sections.length > 2) {
                 const fullScriptText = sections.slice(2).join('\n');
                 const scriptLines = fullScriptText.trim().split('\n');
 
                 let scriptBlocks = [];
-                let isLastLineCharacter = false;
-                let isLastLineParenthetical = false;
-                let sceneCount = 1; // Contador automático de escenas
+                let sceneCount = 1;
+
+                let currentCharacter = null;
+                let currentParenthetical = null;
+                let currentDialogueLines = [];
+
+                function flushDialogueGroup() {
+                    if (currentCharacter) {
+                        let groupHtml = `<div class="dialogue-group">`;
+                        groupHtml += `<div class="character">${currentCharacter}</div>`;
+                        if (currentParenthetical) {
+                            groupHtml += `<div class="parenthetical">${currentParenthetical}</div>`;
+                        }
+                        if (currentDialogueLines.length > 0) {
+                            groupHtml += `<div class="dialogue">${currentDialogueLines.join('<br>')}</div>`;
+                        }
+                        groupHtml += `</div>`;
+                        scriptBlocks.push(groupHtml);
+
+                        currentCharacter = null;
+                        currentParenthetical = null;
+                        currentDialogueLines = [];
+                    }
+                }
 
                 scriptLines.forEach(line => {
                     let trimmed = line.trim();
                     if (!trimmed) return;
 
-                    // Limpiar números preexistentes si los hubiera
                     trimmed = trimmed.replace(/^\d+\.\s*/, '');
 
                     if (trimmed.startsWith('INT.') || trimmed.startsWith('EXT.')) {
-                        // Agrega el número delante de la escena (Ej: "1. INT. CAFETERÍA - DÍA")
+                        flushDialogueGroup();
                         scriptBlocks.push(`<div class="scene">${sceneCount}. ${trimmed}</div>`);
                         sceneCount++;
-                        isLastLineCharacter = false;
-                        isLastLineParenthetical = false;
-                    } else if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
-                        scriptBlocks.push(`<div class="parenthetical">${trimmed}</div>`);
-                        isLastLineCharacter = false;
-                        isLastLineParenthetical = true;
                     } else if (trimmed === trimmed.toUpperCase() && !trimmed.includes('.') && trimmed.length < 35 && !trimmed.startsWith('FADE')) {
-                        scriptBlocks.push(`<div class="character">${trimmed}</div>`);
-                        isLastLineCharacter = true;
-                        isLastLineParenthetical = false;
+                        flushDialogueGroup();
+                        currentCharacter = trimmed;
+                    } else if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
+                        if (currentCharacter) {
+                            currentParenthetical = trimmed;
+                        } else {
+                            scriptBlocks.push(`<div class="parenthetical">${trimmed}</div>`);
+                        }
                     } else if (trimmed.startsWith('FADE OUT') || trimmed.startsWith('FIN')) {
+                        flushDialogueGroup();
                         scriptBlocks.push(`<div class="scene" style="text-align:right; margin-top:20px;">${trimmed}</div>`);
-                        isLastLineCharacter = false;
-                        isLastLineParenthetical = false;
                     } else {
-                        if (isLastLineCharacter || isLastLineParenthetical) {
-                            scriptBlocks.push(`<div class="dialogue">${trimmed}</div>`);
+                        if (currentCharacter) {
+                            currentDialogueLines.push(trimmed);
                         } else {
                             scriptBlocks.push(`<div class="action">${trimmed}</div>`);
                         }
-                        isLastLineCharacter = false;
-                        isLastLineParenthetical = false;
                     }
                 });
 
-                // Paginador dinámico con protección anti-encabezados huérfanos
+                flushDialogueGroup();
+
                 const tempContainer = document.createElement('div');
                 tempContainer.innerHTML = scriptBlocks.join('');
                 tempContainer.style.visibility = 'hidden';
@@ -342,7 +375,7 @@
                 tempContainer.style.lineHeight = '1.45';
                 document.body.appendChild(tempContainer);
 
-                const MAX_PAGE_HEIGHT = 800;
+                const MAX_PAGE_HEIGHT = 780;
                 let currentPageBlocks = [];
                 let currentHeight = 0;
                 let scriptPageNum = 1;
@@ -351,20 +384,20 @@
 
                 for (let i = 0; i < children.length; i++) {
                     const child = children[i];
-                    const childHeight = child.offsetHeight || 20;
+                    const childHeight = child.offsetHeight || 24;
                     const isSceneHeader = child.classList.contains('scene');
 
-                    // REGLA: Si es el encabezado de una escena y no cabe junto al siguiente bloque de acción, pasar ambos a la siguiente página
                     let extraHeightNeeded = childHeight;
                     if (isSceneHeader && i + 1 < children.length) {
-                        extraHeightNeeded += (children[i + 1].offsetHeight || 20);
+                        extraHeightNeeded += (children[i + 1].offsetHeight || 24);
                     }
 
                     if (currentHeight + extraHeightNeeded > MAX_PAGE_HEIGHT && currentPageBlocks.length > 0) {
                         htmlOutput += `
                             <div class="page">
-                                <div class="page-number">${scriptPageNum}.</div>
+                                <div class="page-number">${mainTitle} — ${scriptPageNum}.</div>
                                 <div class="script-body">${currentPageBlocks.map(el => el.outerHTML).join('')}</div>
+                                <div class="page-footer">Erizofilm</div>
                             </div>
                         `;
                         scriptPageNum++;
@@ -379,8 +412,9 @@
                 if (currentPageBlocks.length > 0) {
                     htmlOutput += `
                         <div class="page">
-                            <div class="page-number">${scriptPageNum}.</div>
+                            <div class="page-number">${mainTitle} — ${scriptPageNum}.</div>
                             <div class="script-body">${currentPageBlocks.map(el => el.outerHTML).join('')}</div>
+                            <div class="page-footer">Erizofilm</div>
                         </div>
                     `;
                 }
