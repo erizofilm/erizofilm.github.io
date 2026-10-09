@@ -64,13 +64,13 @@
             padding: 0 20px; 
         }
 
-        /* HOJA TAMAÑO CARTA EN PANTALLA */
+        /* HOJA TAMAÑO CARTA */
         .page { 
             background-color: var(--card-bg); 
             border: 1px solid var(--border-color); 
             border-radius: 8px; 
             min-height: 980px; 
-            padding: 80px 80px; 
+            padding: 70px 80px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
             position: relative; 
             font-family: 'Courier Prime', Courier, monospace; 
@@ -78,7 +78,6 @@
             line-height: 1.45; 
         }
 
-        /* NUMERACIÓN DERECHA ARRIBA */
         .page-number { 
             position: absolute; 
             top: 35px; 
@@ -107,16 +106,16 @@
         .synopsis-page h2 { font-size: 16px; font-weight: 700; color: #fff; margin-top: 20px; margin-bottom: 12px; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; letter-spacing: 1px; }
         .synopsis-page p, .synopsis-page li { font-size: 14px; color: var(--text-main); margin-bottom: 10px; line-height: 1.6; }
 
-        /* FORMATO CENTRADO DE GUIÓN CINEMATOGRÁFICO */
+        /* ESTRUCTURA FORMATO GUIÓN DE CINE */
         .scene { 
             font-weight: 700; 
             text-transform: uppercase; 
-            margin-top: 24px; 
-            margin-bottom: 12px; 
+            margin-top: 20px; 
+            margin-bottom: 10px; 
             color: #fff; 
         }
         .action { 
-            margin-bottom: 14px; 
+            margin-bottom: 12px; 
             color: var(--text-main); 
             line-height: 1.45; 
             text-align: left;
@@ -124,7 +123,7 @@
         .character { 
             text-transform: uppercase; 
             font-weight: 700; 
-            margin-top: 18px; 
+            margin-top: 14px; 
             margin-bottom: 2px; 
             margin-left: 38%; 
             color: #fff; 
@@ -141,7 +140,7 @@
         .dialogue { 
             margin-left: 22%; 
             margin-right: 22%; 
-            margin-bottom: 16px; 
+            margin-bottom: 12px; 
             color: var(--text-main); 
             text-align: left;
             line-height: 1.4;
@@ -211,7 +210,7 @@
             let htmlOutput = '';
             let mainTitle = "Guion Erizofilm";
 
-            // 1. HOJA DE PORTADA (SIN NUMERACIÓN)
+            // 1. HOJA DE PORTADA
             if (sections.length > 0) {
                 const coverLines = sections[0].trim().split('\n');
                 let title = "";
@@ -239,7 +238,7 @@
                 `;
             }
 
-            // 2. HOJA DE SINOPSIS Y REPARTO (SIN NUMERACIÓN)
+            // 2. HOJA DE SINOPSIS Y REPARTO
             if (sections.length > 1) {
                 const synopsisLines = sections[1].trim().split('\n');
                 htmlOutput += `<div class="page"><div class="synopsis-page">`;
@@ -252,7 +251,7 @@
                 htmlOutput += `</div></div>`;
             }
 
-            // 3. DESARROLLO DEL GUIÓN (PAGINADO Y NUMERADO DESDE PÁGINA 1)
+            // 3. DESARROLLO DEL GUIÓN FLUIDO Y CONTINUO
             if (sections.length > 2) {
                 const fullScriptText = sections.slice(2).join('\n');
                 const scriptLines = fullScriptText.trim().split('\n');
@@ -278,11 +277,10 @@
                         isLastLineCharacter = true;
                         isLastLineParenthetical = false;
                     } else if (trimmed.startsWith('FADE OUT') || trimmed.startsWith('FIN')) {
-                        scriptBlocks.push(`<div class="scene" style="text-align:right; margin-top:30px;">${trimmed}</div>`);
+                        scriptBlocks.push(`<div class="scene" style="text-align:right; margin-top:20px;">${trimmed}</div>`);
                         isLastLineCharacter = false;
                         isLastLineParenthetical = false;
                     } else {
-                        // Si viene justo después de un personaje o paréntesis, se renderiza como diálogo centrado
                         if (isLastLineCharacter || isLastLineParenthetical) {
                             scriptBlocks.push(`<div class="dialogue">${trimmed}</div>`);
                         } else {
@@ -293,20 +291,51 @@
                     }
                 });
 
-                // Agrupar bloques por página carta (~12-14 bloques por hoja)
-                const BLOCKS_PER_PAGE = 13;
+                // Renderizado dinámico según la altura real para llenar la página de arriba abajo
+                const tempContainer = document.createElement('div');
+                tempContainer.innerHTML = scriptBlocks.join('');
+                tempContainer.style.visibility = 'hidden';
+                tempContainer.style.position = 'absolute';
+                tempContainer.style.width = '670px';
+                tempContainer.style.fontFamily = "'Courier Prime', Courier, monospace";
+                tempContainer.style.fontSize = '14.5px';
+                tempContainer.style.lineHeight = '1.45';
+                document.body.appendChild(tempContainer);
+
+                const MAX_PAGE_HEIGHT = 820; // Altura disponible de la hoja
+                let currentPageHtml = '';
+                let currentHeight = 0;
                 let scriptPageNum = 1;
 
-                for (let i = 0; i < scriptBlocks.length; i += BLOCKS_PER_PAGE) {
-                    const pageContent = scriptBlocks.slice(i, i + BLOCKS_PER_PAGE).join('');
+                Array.from(tempContainer.children).forEach(child => {
+                    const childHeight = child.offsetHeight || 20;
+
+                    if (currentHeight + childHeight > MAX_PAGE_HEIGHT && currentPageHtml !== '') {
+                        htmlOutput += `
+                            <div class="page">
+                                <div class="page-number">${scriptPageNum}.</div>
+                                <div class="script-body">${currentPageHtml}</div>
+                            </div>
+                        `;
+                        scriptPageNum++;
+                        currentPageHtml = child.outerHTML;
+                        currentHeight = childHeight;
+                    } else {
+                        currentPageHtml += child.outerHTML;
+                        currentHeight += childHeight;
+                    }
+                });
+
+                if (currentPageHtml !== '') {
                     htmlOutput += `
                         <div class="page">
                             <div class="page-number">${scriptPageNum}.</div>
-                            <div class="script-body">${pageContent}</div>
+                            <div class="script-body">${currentPageHtml}</div>
                         </div>
                     `;
-                    scriptPageNum++;
                 }
+
+                document.body.removeChild(tempContainer);
             }
 
             document.getElementById('scriptContainer').innerHTML = htmlOutput;
