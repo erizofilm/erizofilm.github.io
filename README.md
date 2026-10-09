@@ -10,7 +10,7 @@ script-viewer
 ![script-viewer](https://i.imgur.com/cyZL0t3.png)
 
 CREATE NEW SCRIPT
-</pre>
+*
 # [TÍTULO DEL GUION EN MAYÚSCULAS]
 
 Escrito por Frodo
@@ -53,4 +53,3 @@ EXT. [NUEVO LUGAR] - [DÍA/NOCHE]
 FADE OUT.
 
 FIN
-</pre>
