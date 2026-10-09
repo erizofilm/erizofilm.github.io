@@ -130,6 +130,7 @@
             color: #f1f5f9;
             letter-spacing: 1px;
             line-height: 1;
+            text-transform: capitalize;
         }
 
         .script-logline {
@@ -187,10 +188,10 @@
         <a href="index.html" class="btn-back">← Volver al Inicio</a>
     </div>
 
-    <!-- Contenedor dinámico -->
+    <!-- Contenedor donde aparecerán solos los archivos de la carpeta scripts/ -->
     <div class="scripts-container" id="scriptsList">
         <div style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 20px;">
-            Buscando archivos en el archivo...
+            Escaneando archivo de guiones...
         </div>
     </div>
 
@@ -199,36 +200,53 @@
     </div>
 
     <script>
-        // Registro apuntando a la carpeta /scripts/
-        const guionesDisponibles = [
-            {
-                titulo: "El Silencio de un Corazón",
-                tipo: "Cortometraje · Thriller / Drama",
-                logline: "Dinámicas de tensión y conflictos románticos entre dos amigas, un admirador y un misterioso motociclista.",
-                archivo: "scripts/el-silencio-de-un-corazon.pdf"
+        async function escanearCarpetaScripts() {
+            const container = document.getElementById('scriptsList');
+            try {
+                // Petición a la carpeta scripts/ para leer su contenido automáticamente
+                const response = await fetch('scripts/');
+                const htmlText = await response.text();
+                
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlText, 'text/html');
+                const links = doc.querySelectorAll('a');
+                
+                container.innerHTML = '';
+                let encontrados = false;
+
+                links.forEach(link => {
+                    const href = link.getAttribute('href');
+                    // Filtramos únicamente los archivos .txt dentro de la carpeta
+                    if (href && href.endsWith('.txt')) {
+                        encontrados = true;
+                        
+                        // Limpiamos el nombre del archivo para mostrarlo estéticamente como título
+                        const nombreArchivo = href.split('/').pop();
+                        const tituloLimpio = decodeURIComponent(nombreArchivo.replace('.txt', '').replace(/-/g, ' '));
+                        
+                        const card = document.createElement('div');
+                        card.className = 'script-card';
+                        card.innerHTML = `
+                            <div class="script-info">
+                                <span class="script-meta">Spec Script · Archivo de Texto</span>
+                                <h2 class="script-name">${tituloLimpio}</h2>
+                                <p class="script-logline">Cargado automáticamente desde el directorio del sistema.</p>
+                            </div>
+                            <a href="scripts/${nombreArchivo}" target="_blank" class="btn-read">📄 Leer Guion</a>
+                        `;
+                        container.appendChild(card);
+                    }
+                });
+
+                if (!encontrados) {
+                    container.innerHTML = `<div style="color: var(--text-muted); text-align: center;">No hay archivos .txt en la carpeta scripts/ todavía.</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div style="color: var(--text-muted); text-align: center;">Nota: Para que el escaneo automático funcione, abre tu proyecto usando un servidor local (como Live Server en VS Code).</div>`;
             }
-        ];
-
-        const container = document.getElementById('scriptsList');
-
-        if (guionesDisponibles.length === 0) {
-            container.innerHTML = `<div style="color: var(--text-muted); text-align: center;">No hay guiones registrados en este momento.</div>`;
-        } else {
-            container.innerHTML = '';
-            guionesDisponibles.forEach(script => {
-                const card = document.createElement('div');
-                card.className = 'script-card';
-                card.innerHTML = `
-                    <div class="script-info">
-                        <span class="script-meta">${script.tipo}</span>
-                        <h2 class="script-name">${script.titulo}</h2>
-                        <p class="script-logline">${script.logline}</p>
-                    </div>
-                    <a href="${script.archivo}" target="_blank" class="btn-read">📄 Leer Guion</a>
-                `;
-                container.appendChild(card);
-            });
         }
+
+        escanearCarpetaScripts();
     </script>
 
 </body>
