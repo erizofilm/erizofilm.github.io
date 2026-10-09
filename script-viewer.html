@@ -139,10 +139,26 @@
             margin-top: auto;
         }
 
-        /* SINOPSIS Y REPARTO */
-        .synopsis-page { font-family: 'Inter', sans-serif; }
-        .synopsis-page h2 { font-size: 16px; font-weight: 700; color: #fff; margin-top: 20px; margin-bottom: 12px; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; letter-spacing: 1px; }
-        .synopsis-page p, .synopsis-page li { font-size: 14px; color: var(--text-main); margin-bottom: 10px; line-height: 1.6; }
+        /* SINOPSIS Y REPARTO - CON MAYOR ESPACIADO */
+        .synopsis-page { font-family: 'Inter', sans-serif; padding-top: 10px; }
+        .synopsis-page h2 { 
+            font-size: 15px; 
+            font-weight: 700; 
+            color: #fff; 
+            margin-top: 35px; 
+            margin-bottom: 16px; 
+            text-transform: uppercase; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 8px; 
+            letter-spacing: 1px; 
+        }
+        .synopsis-page h2:first-child { margin-top: 0; }
+        .synopsis-page p, .synopsis-page li { 
+            font-size: 14px; 
+            color: var(--text-main); 
+            margin-bottom: 14px; 
+            line-height: 1.65; 
+        }
 
         /* FORMATO GUIÓN DE CINE */
         .scene { 
@@ -262,7 +278,11 @@
                     let trimmed = l.trim();
                     if (trimmed.startsWith('# ')) {
                         title = trimmed.replace('# ', '');
-                    } else if (trimmed.toLowerCase().startsWith('contacto:') || trimmed.toLowerCase().startsWith('registro:')) {
+                    } else if (
+                        trimmed.toLowerCase().startsWith('contacto:') || 
+                        trimmed.toLowerCase().startsWith('registro:') ||
+                        trimmed.startsWith('©')
+                    ) {
                         contactLines.push(trimmed);
                     } else if (trimmed !== '' && !trimmed.toLowerCase().includes('guion para')) {
                         authorLines.push(trimmed);
@@ -285,7 +305,7 @@
                 `;
             }
 
-            // 2. SINOPSIS Y REPARTO
+            // 2. SINOPSIS Y REPARTO (EN SU PROPIA HOJA CON ESPACIADO MEJORADO)
             if (sections.length > 1) {
                 const synopsisLines = sections[1].trim().split('\n');
                 htmlOutput += `<div class="page"><div class="synopsis-page">`;
