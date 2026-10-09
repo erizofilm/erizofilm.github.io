@@ -21,7 +21,7 @@ REPARTO Y PERFILES (30-35 AÑOS):
 
 ---
 
-1. INT. CAFETERÍA - DÍA
+INT. CAFETERÍA - DÍA
 
 En una mesa de fondo, MARCO (34) entrega con cortesía una taza de café a VANESSA (30), ofreciéndole además una sonrisa atenta. Vanessa apenas lo mira; revisa su teléfono con evidente aburrimiento.
 
@@ -38,7 +38,7 @@ No quiero nada. ¿Por qué siempre tienes que estar encima mío?
 
 Dayner guarda silencio, asiente con timidez y da un paso atrás sin reprocharle nada.
 
-2. EXT. CALLE DE LA CIUDAD - ATARDECER
+EXT. CALLE DE LA CIUDAD - ATARDECER
 
 Vanessa camina distanciada por la acera. Más atrás, Bianca la sigue con disimulo. Dayner camina a su lado.
 
@@ -62,9 +62,7 @@ Dayner la mira, atrapado por su mirada. Traga saliva, rindiéndose.
 DAYNER
 Está bien... Lo haré.
 
----
-
-3. EXT. CALLEJÓN EN SOMBRAS - NOCHE
+EXT. CALLEJÓN EN SOMBRAS - NOCHE
 
 Entre la penumbra del callejón, Dayner, con una gabardina oscura, sigue a Vanessa a una distancia discreta.
 
@@ -96,9 +94,7 @@ La imagen se va a negro gradualmente.
 
 FADE OUT.
 
----
-
-4. INT. CASA DE MARCO - NOCHE
+INT. CASA DE MARCO - NOCHE
 
 El celular de Bianca vibra. Lleva la foto donde Vanessa está con Royer. Bianca sonríe victoriosa y corre a la casa de Marco.
 
@@ -194,9 +190,7 @@ BIANCA
 
 Ella sale corriendo de la casa, dejando la puerta abierta.
 
----
-
-5. INT. ENTRADA DE LA CASA DE DAYNER - NOCHE
+INT. ENTRADA DE LA CASA DE DAYNER - NOCHE
 
 Bianca llega agitada y toca la puerta.
 
@@ -212,7 +206,7 @@ Karen exhala un largo suspiro, notando el arrepentimiento sincero en su rostro. 
 KAREN
 Está descansando en su habitación.
 
-6. INT. HABITACIÓN DE DAYNER - CONTINUACIÓN
+INT. HABITACIÓN DE DAYNER - CONTINUACIÓN
 
 Luz tenue. Dayner yace en la cama con vendajes en la cabeza, pómulos inflamados y cortes en el rostro.
 
