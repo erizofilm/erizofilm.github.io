@@ -130,6 +130,7 @@
             color: #f1f5f9;
             letter-spacing: 1px;
             line-height: 1;
+            text-transform: capitalize;
         }
 
         .script-logline {
@@ -187,10 +188,10 @@
         <a href="index.html" class="btn-back">← Volver al Inicio</a>
     </div>
 
-    <!-- Contenedor dinámico -->
+    <!-- Contenedor dinámico automático -->
     <div class="scripts-container" id="scriptsList">
         <div style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 20px;">
-            Cargando archivo de guiones...
+            Sincronizando con la nube de Erizofilm...
         </div>
     </div>
 
@@ -199,45 +200,53 @@
     </div>
 
     <script>
-        // ==========================================
-        // AQUÍ AGREGAS TUS GUIONES NUEVOS FÁCILMENTE
-        // ==========================================
-        const listaGuiones = [
-            {
-                titulo: "El Silencio de un Corazón",
-                tipo: "Cortometraje · Thriller / Drama",
-                logline: "Dinámicas de tensión y conflictos románticos entre dos amigas, un admirador y un misterioso motociclista.",
-                archivo: "scripts/el-silencio-de-un-corazon.txt"
+        // CONFIGURACIÓN: Solo pon aquí tu usuario exacto de GitHub y el nombre de tu repositorio
+        const usuarioGithub = 'erizofilm'; 
+        const repositorioGithub = 'erizofilm.github.io';
+
+        async function escanearAutomaticoNube() {
+            const container = document.getElementById('scriptsList');
+            try {
+                // Petición automática a la API de GitHub para listar la carpeta scripts
+                const respuesta = await fetch(`https://api.github.com/repos/${usuarioGithub}/${repositorioGithub}/contents/scripts`);
+                const archivos = await respuesta.json();
+
+                container.innerHTML = '';
+                let encontrados = false;
+
+                if (Array.isArray(archivos)) {
+                    for (const archivo of archivos) {
+                        if (archivo.name && archivo.name.endsWith('.txt')) {
+                            encontrados = true;
+                            
+                            // Limpiamos el nombre del archivo (ej: "el-silencio-de-un-corazon.txt" -> "El Silencio De Un Corazon")
+                            const nombreLimpio = decodeURIComponent(archivo.name.replace('.txt', '').replace(/-/g, ' '));
+                            
+                            // Creamos la tarjeta de forma 100% automática
+                            const card = document.createElement('div');
+                            card.className = 'script-card';
+                            card.innerHTML = `
+                                <div class="script-info">
+                                    <span class="script-meta">Spec Script · Archivo de Texto</span>
+                                    <h2 class="script-name">${nombreLimpio}</h2>
+                                    <p class="script-logline">Cargado automáticamente desde el servidor.</p>
+                                </div>
+                                <a href="scripts/${archivo.name}" target="_blank" class="btn-read">📄 Leer Guion</a>
+                            `;
+                            container.appendChild(card);
+                        }
+                    }
+                }
+
+                if (!encontrados) {
+                    container.innerHTML = `<div style="color: var(--text-muted); text-align: center;">No hay archivos .txt en la carpeta scripts/ todavía.</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div style="color: var(--text-muted); text-align: center;">Error al escanear los guiones en la nube.</div>`;
             }
-            // Si subes otro guion, solo copias y pegas otra línea abajo separada por coma:
-            // {
-            //     titulo: "Nombre del Nuevo Guion",
-            //     tipo: "Cortometraje · Género",
-            //     logline: "Breve descripción...",
-            //     archivo: "scripts/nombre-del-archivo.txt"
-            // }
-        ];
-
-        const container = document.getElementById('scriptsList');
-
-        if (listaGuiones.length === 0) {
-            container.innerHTML = `<div style="color: var(--text-muted); text-align: center;">No hay guiones registrados.</div>`;
-        } else {
-            container.innerHTML = '';
-            listaGuiones.forEach(script => {
-                const card = document.createElement('div');
-                card.className = 'script-card';
-                card.innerHTML = `
-                    <div class="script-info">
-                        <span class="script-meta">${script.tipo}</span>
-                        <h2 class="script-name">${script.titulo}</h2>
-                        <p class="script-logline">${script.logline}</p>
-                    </div>
-                    <a href="${script.archivo}" target="_blank" class="btn-read">📄 Leer Guion</a>
-                `;
-                container.appendChild(card);
-            });
         }
+
+        escanearAutomaticoNube();
     </script>
 
 </body>
