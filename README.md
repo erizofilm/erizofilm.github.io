@@ -11,7 +11,7 @@ script-viewer
 
 CREATE NEW SCRIPT
 
-<pre><code>
+<code>
 # [TÍTULO DEL GUION EN MAYÚSCULAS]
 
 Escrito por Frodo
@@ -54,4 +54,4 @@ EXT. [NUEVO LUGAR] - [DÍA/NOCHE]
 FADE OUT.
 
 FIN
-</code></pre>
+</code>
