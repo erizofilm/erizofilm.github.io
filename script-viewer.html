@@ -90,7 +90,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* PIE DE PÁGINA CON NOMBRE DE PRODUCTORA */
+        /* PIE DE PÁGINA CON COPYRIGHT DE PRODUCTORA */
         .page-footer {
             position: absolute;
             bottom: 35px;
@@ -301,7 +301,7 @@
                 htmlOutput += `</div></div>`;
             }
 
-            // 3. GUIÓN CON NUMERACIÓN DE PÁGINA PERSONALIZADA Y PIE DE PÁGINA
+            // 3. GUIÓN CON NUMERACIÓN DE PÁGINA Y PIE CON COPYRIGHT
             if (sections.length > 2) {
                 const fullScriptText = sections.slice(2).join('\n');
                 const scriptLines = fullScriptText.trim().split('\n');
@@ -397,7 +397,7 @@
                             <div class="page">
                                 <div class="page-number">${mainTitle} — ${scriptPageNum}.</div>
                                 <div class="script-body">${currentPageBlocks.map(el => el.outerHTML).join('')}</div>
-                                <div class="page-footer">Erizofilm</div>
+                                <div class="page-footer">© 2026 Erizofilm</div>
                             </div>
                         `;
                         scriptPageNum++;
@@ -414,7 +414,7 @@
                         <div class="page">
                             <div class="page-number">${mainTitle} — ${scriptPageNum}.</div>
                             <div class="script-body">${currentPageBlocks.map(el => el.outerHTML).join('')}</div>
-                            <div class="page-footer">Erizofilm</div>
+                            <div class="page-footer">© 2026 Erizofilm</div>
                         </div>
                     `;
                 }
