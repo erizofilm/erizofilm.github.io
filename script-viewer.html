@@ -16,11 +16,25 @@
         .btn-action { background: #181b22; color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.2s; }
         .btn-action:hover { background: var(--accent-primary); color: #fff; border-color: var(--accent-primary); }
         .container { width: 100%; max-width: 850px; margin-top: 36px; padding: 0 20px 80px 20px; }
-        .script-paper { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 70px 90px; box-shadow: 0 20px 40px rgba(0,0,0,0.55); font-family: 'Courier Prime', Courier, monospace; font-size: 15px; line-height: 1.4; outline: none; }
         
+        /* HOJA ESTILO CARTA / SCRIPT */
+        .script-paper { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 70px 90px; box-shadow: 0 20px 40px rgba(0,0,0,0.55); font-family: 'Courier Prime', Courier, monospace; font-size: 15px; line-height: 1.5; outline: none; }
+        
+        /* ELEMENTOS FORMATEADOS */
+        .script-title-page { text-align: center; margin-top: 120px; margin-bottom: 120px; }
+        .script-title-page h1 { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase; }
+        .script-title-page p { font-size: 14px; color: var(--text-muted); font-family: 'Inter', sans-serif; margin-bottom: 8px; }
+        
+        .section-block { margin-bottom: 40px; }
+        .section-block h2 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 15px; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; font-family: 'Inter', sans-serif; letter-spacing: 1px; }
+        .section-block p, .section-block li { font-size: 14px; color: var(--text-main); margin-bottom: 10px; font-family: 'Inter', sans-serif; line-height: 1.6; }
+        .section-block ul { list-style: none; padding-left: 0; }
+        
+        .page-break { border: 0; border-top: 1px dashed var(--border-color); margin: 50px 0; }
+
         .scene { font-weight: 700; text-transform: uppercase; margin-top: 36px; margin-bottom: 16px; color: #fff; }
         .action { margin-bottom: 18px; color: var(--text-main); }
-        .character { text-transform: uppercase; font-weight: 700; margin-top: 22px; margin-bottom: 2px; margin-left: 38%; color: #fff; font-family: 'Courier Prime', monospace; }
+        .character { text-transform: uppercase; font-weight: 700; margin-top: 22px; margin-bottom: 2px; margin-left: 38%; color: #fff; }
         .parenthetical { font-style: italic; margin-left: 28%; color: var(--text-muted); margin-bottom: 2px; }
         .dialogue { margin-left: 20%; margin-right: 20%; margin-bottom: 18px; color: var(--text-main); }
         
@@ -41,73 +55,93 @@
 
     <div class="container">
         <div class="script-paper" id="scriptContainer">
-            Cargando contenido...
+            Cargando contenido del guion...
         </div>
     </div>
 
     <script>
-        // BASE DE DATOS INTERNA DE GUIONES (Sin problemas de carpetas ni fetch)
-        const scriptsDB = {
-            "el-silencio": `
-# EL SILENCIO DE UN CORAZÓN
-
-- INT. CAFETERÍA - DÍA
-
-- En una mesa de fondo, Marco entrega con cortesía una taza de café a Vanessa.
-
-DAYNER
-(acercándose con timidez)
-Sé que no has comido nada... Te traje esto.
-
-BIANCA
-(sin mirarlo, cortante)
-No quiero nada. ¿Por qué siempre tienes que estar encima mío?
-            `
-            // Aquí puedes agregar más guiones en el futuro separados por comas, por ejemplo:
-            // "proyecto-2": "# TÍTULO DEL PROYECTO 2\n\n- INT. CASA - DÍA\n..."
-        };
-
-        function loadScript() {
+        async function loadScript() {
             const urlParams = new URLSearchParams(window.location.search);
-            const scriptKey = urlParams.get('id') || 'el-silencio';
+            let filePath = urlParams.get('file') || 'scripts/EL SILENCIO DE UN CORAZÓN.txt';
+            
+            // Decodifica la URL por si tiene espacios o tildes
+            filePath = decodeURIComponent(filePath);
 
-            const rawText = scriptsDB[scriptKey];
-
-            if (rawText) {
-                parseScriptFormat(rawText);
-            } else {
-                document.getElementById('scriptContainer').innerHTML = "<p style='color: #ef4444;'>Error: El guion solicitado no existe en la base de datos.</p>";
+            try {
+                const response = await fetch(filePath);
+                if (!response.ok) throw new Error("No se pudo cargar el archivo");
+                const text = await response.text();
+                parseFullScript(text);
+            } catch (error) {
+                document.getElementById('scriptContainer').innerHTML = "<p style='color: #ef4444; text-align: center; padding: 40px;'>Error: No se pudo encontrar o cargar el archivo de guion especificado en la ruta.</p>";
             }
         }
 
-        function parseScriptFormat(rawText) {
+        function parseFullScript(rawText) {
             const lines = rawText.split('\n');
             let htmlOutput = '';
-            let titleDetected = "Guion Erizofilm";
+            let mainTitle = "Guion Erizofilm";
+            
+            let inPortadapage = true;
+            let currentSection = '';
+
+            htmlOutput += `<div class="script-title-page">`;
 
             lines.forEach(line => {
                 const trimmed = line.trim();
-                if (!trimmed) return;
 
+                // Título principal de la portada
                 if (trimmed.startsWith('# ')) {
-                    titleDetected = trimmed.replace('# ', '');
-                    htmlOutput += `<div style="text-align: center; font-size: 26px; font-weight: 700; letter-spacing: 2px; margin-top: 60px; margin-bottom: 20px; color: #fff;">${titleDetected}</div>`;
-                } else if (trimmed.startsWith('INT.') || trimmed.startsWith('EXT.')) {
+                    mainTitle = trimmed.replace('# ', '');
+                    htmlOutput += `<h1>${mainTitle}</h1>`;
+                    return;
+                }
+
+                // Separador de página o sección
+                if (trimmed === '---') {
+                    htmlOutput += `</div><hr class="page-break"><div class="section-block">`;
+                    return;
+                }
+
+                // Encabezados de sección (Sinopsis / Reparto)
+                if (trimmed.startsWith('## ')) {
+                    const headingText = trimmed.replace('## ', '');
+                    htmlOutput += `<h2>${headingText}</h2>`;
+                    return;
+                }
+
+                // Si estamos en la portada (antes del primer ---)
+                if (inPortadapage && !trimmed.startsWith('INT.') && !trimmed.startsWith('EXT.') && trimmed !== '') {
+                    if (!trimmed.startsWith('#')) {
+                        htmlOutput += `<p>${trimmed}</p>`;
+                    }
+                    return;
+                }
+
+                // Elementos del guion técnico
+                if (trimmed.startsWith('INT.') || trimmed.startsWith('EXT.')) {
                     htmlOutput += `<div class="scene">${trimmed}</div>`;
                 } else if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
                     htmlOutput += `<div class="parenthetical">${trimmed}</div>`;
-                } else if (trimmed === trimmed.toUpperCase() && !trimmed.includes('.') && trimmed.length < 30) {
-                    htmlOutput += `<div class="character">${trimmed}</div>`;
                 } else if (trimmed.startsWith('- ')) {
                     htmlOutput += `<div class="action">${trimmed.replace('- ', '')}</div>`;
-                } else {
-                    htmlOutput += `<div class="dialogue">${trimmed}</div>`;
+                } else if (trimmed === trimmed.toUpperCase() && !trimmed.includes('.') && trimmed.length < 30 && trimmed !== '') {
+                    htmlOutput += `<div class="character">${trimmed}</div>`;
+                } else if (trimmed !== '') {
+                    // Si es texto de sinopsis o diálogo
+                    if (htmlOutput.includes('<h2>')) {
+                        htmlOutput += `<p>${trimmed}</p>`;
+                    } else {
+                        htmlOutput += `<div class="dialogue">${trimmed}</div>`;
+                    }
                 }
             });
 
+            htmlOutput += `</div>`;
+
             document.getElementById('scriptContainer').innerHTML = htmlOutput;
-            document.getElementById('scriptTitleHeader').textContent = "|  " + titleDetected;
-            document.title = titleDetected + " — Erizofilm";
+            document.getElementById('scriptTitleHeader').textContent = "|  " + mainTitle;
+            document.title = mainTitle + " — Erizofilm";
         }
 
         loadScript();
