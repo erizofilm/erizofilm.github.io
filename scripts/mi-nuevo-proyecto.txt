@@ -9,10 +9,12 @@ Contacto: erizofilm@gmail.com | +591 64748000
 
 ## INFORMACIÓN DEL PROYECTO
 
+<br>
+
 SINOPSIS:
 [Escribe aquí el resumen general de tu historia en un solo párrafo. Describe la premisa principal y el conflicto sin dar muchos rodeos.]
 
-<br><br><br>
+<br>
 
 REPARTO Y PERFILES:
 - [NOMBRE PERSONAJE 1] ([Edad] años): [Descripción breve de su personalidad, rol y apariencia].
