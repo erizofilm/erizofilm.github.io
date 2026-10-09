@@ -182,37 +182,54 @@
     <div class="catalog-header">
         <div>
             <div class="script-meta">Erizofilm Studios — Archivo</div>
-            <!-- Título actualizado a Guiones -->
             <h1 class="catalog-title">Guiones</h1>
         </div>
         <a href="index.html" class="btn-back">← Volver al Inicio</a>
     </div>
 
-    <div class="scripts-container">
-
-        <div class="script-card">
-            <div class="script-info">
-                <span class="script-meta">Cortometraje · Thriller / Drama</span>
-                <h2 class="script-name">El Silencio de un Corazón</h2>
-                <p class="script-logline">Dinámicas de tensión y conflictos románticos entre dos amigas, un admirador y un misterioso motociclista.</p>
-            </div>
-            <a href="#" class="btn-read">📄 Leer Guion</a>
+    <!-- Contenedor dinámico -->
+    <div class="scripts-container" id="scriptsList">
+        <div style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 20px;">
+            Buscando archivos en el archivo...
         </div>
-
-        <div class="script-card">
-            <div class="script-info">
-                <span class="script-meta">Spec Script · Noir / Suspenso</span>
-                <h2 class="script-name">Proyecto En Desarrollo (Take 02)</h2>
-                <p class="script-logline">Espacio reservado para tu siguiente concepto narrativo o borrador de guion.</p>
-            </div>
-            <a href="#" class="btn-read" style="opacity: 0.6; pointer-events: none;">Próximamente</a>
-        </div>
-
     </div>
 
     <div class="footer-vintage">
         © 2026 ERIZOFILM STUDIOS · ARCHIVO CONFIDENCIAL DE ESCRITURA
     </div>
+
+    <script>
+        // Registro apuntando a la carpeta /script/
+        const guionesDisponibles = [
+            {
+                titulo: "El Silencio de un Corazón",
+                tipo: "Cortometraje · Thriller / Drama",
+                logline: "Dinámicas de tensión y conflictos románticos entre das amigas, un admirador y un misterioso motociclista.",
+                archivo: "script/el-silencio-de-un-corazon.pdf" // Apunta a la carpeta script/
+            }
+        ];
+
+        const container = document.getElementById('scriptsList');
+
+        if (guionesDisponibles.length === 0) {
+            container.innerHTML = `<div style="color: var(--text-muted); text-align: center;">No hay guiones registrados en este momento.</div>`;
+        } else {
+            container.innerHTML = '';
+            guionesDisponibles.forEach(script => {
+                const card = document.createElement('div');
+                card.className = 'script-card';
+                card.innerHTML = `
+                    <div class="script-info">
+                        <span class="script-meta">${script.tipo}</span>
+                        <h2 class="script-name">${script.titulo}</h2>
+                        <p class="script-logline">${script.logline}</p>
+                    </div>
+                    <a href="${script.archivo}" target="_blank" class="btn-read">📄 Leer Guion</a>
+                `;
+                container.appendChild(card);
+            });
+        }
+    </script>
 
 </body>
 </html>
