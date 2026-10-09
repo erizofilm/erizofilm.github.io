@@ -70,12 +70,12 @@
             border: 1px solid var(--border-color); 
             border-radius: 8px; 
             min-height: 980px; 
-            padding: 80px 90px; 
+            padding: 80px 80px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
             position: relative; 
             font-family: 'Courier Prime', Courier, monospace; 
-            font-size: 15px; 
-            line-height: 1.5; 
+            font-size: 14.5px; 
+            line-height: 1.45; 
         }
 
         /* NUMERACIÓN DERECHA ARRIBA */
@@ -107,17 +107,50 @@
         .synopsis-page h2 { font-size: 16px; font-weight: 700; color: #fff; margin-top: 20px; margin-bottom: 12px; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; letter-spacing: 1px; }
         .synopsis-page p, .synopsis-page li { font-size: 14px; color: var(--text-main); margin-bottom: 10px; line-height: 1.6; }
 
-        /* FORMATO GUIÓN */
-        .scene { font-weight: 700; text-transform: uppercase; margin-top: 28px; margin-bottom: 14px; color: #fff; }
-        .action { margin-bottom: 16px; color: var(--text-main); line-height: 1.5; }
-        .character { text-transform: uppercase; font-weight: 700; margin-top: 20px; margin-bottom: 2px; margin-left: 38%; color: #fff; }
-        .parenthetical { font-style: italic; margin-left: 28%; color: var(--text-muted); margin-bottom: 2px; }
-        .dialogue { margin-left: 20%; margin-right: 20%; margin-bottom: 16px; color: var(--text-main); }
+        /* FORMATO CENTRADO DE GUIÓN CINEMATOGRÁFICO */
+        .scene { 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            margin-top: 24px; 
+            margin-bottom: 12px; 
+            color: #fff; 
+        }
+        .action { 
+            margin-bottom: 14px; 
+            color: var(--text-main); 
+            line-height: 1.45; 
+            text-align: left;
+        }
+        .character { 
+            text-transform: uppercase; 
+            font-weight: 700; 
+            margin-top: 18px; 
+            margin-bottom: 2px; 
+            margin-left: 38%; 
+            color: #fff; 
+            text-align: left;
+        }
+        .parenthetical { 
+            font-style: italic; 
+            margin-left: 28%; 
+            margin-right: 28%; 
+            color: var(--text-muted); 
+            margin-bottom: 2px; 
+            text-align: left;
+        }
+        .dialogue { 
+            margin-left: 22%; 
+            margin-right: 22%; 
+            margin-bottom: 16px; 
+            color: var(--text-main); 
+            text-align: left;
+            line-height: 1.4;
+        }
 
         @media print {
             body { background: white; color: black; }
             header { display: none !important; }
-            .script-wrapper { margin: 0; padding: 0; gap: 0; }
+            .script-wrapper { margin: 0; padding: 0; gap: 0; max-width: 100%; }
             .page { 
                 background: white !important; 
                 color: black !important; 
@@ -135,9 +168,9 @@
 
         @media(max-width: 640px) {
             .page { padding: 40px 20px; }
-            .character { margin-left: 15%; }
-            .parenthetical { margin-left: 8%; }
-            .dialogue { margin-left: 0%; margin-right: 0%; }
+            .character { margin-left: 25%; }
+            .parenthetical { margin-left: 10%; margin-right: 10%; }
+            .dialogue { margin-left: 5%; margin-right: 5%; }
         }
     </style>
 </head>
@@ -225,25 +258,43 @@
                 const scriptLines = fullScriptText.trim().split('\n');
 
                 let scriptBlocks = [];
+                let isLastLineCharacter = false;
+                let isLastLineParenthetical = false;
+
                 scriptLines.forEach(line => {
                     const trimmed = line.trim();
                     if (!trimmed) return;
 
                     if (trimmed.startsWith('INT.') || trimmed.startsWith('EXT.') || trimmed.match(/^\d+\.\s+(INT|EXT)/)) {
                         scriptBlocks.push(`<div class="scene">${trimmed}</div>`);
+                        isLastLineCharacter = false;
+                        isLastLineParenthetical = false;
                     } else if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
                         scriptBlocks.push(`<div class="parenthetical">${trimmed}</div>`);
+                        isLastLineCharacter = false;
+                        isLastLineParenthetical = true;
                     } else if (trimmed === trimmed.toUpperCase() && !trimmed.includes('.') && trimmed.length < 35 && !trimmed.startsWith('FADE')) {
                         scriptBlocks.push(`<div class="character">${trimmed}</div>`);
+                        isLastLineCharacter = true;
+                        isLastLineParenthetical = false;
                     } else if (trimmed.startsWith('FADE OUT') || trimmed.startsWith('FIN')) {
                         scriptBlocks.push(`<div class="scene" style="text-align:right; margin-top:30px;">${trimmed}</div>`);
+                        isLastLineCharacter = false;
+                        isLastLineParenthetical = false;
                     } else {
-                        scriptBlocks.push(`<div class="action">${trimmed}</div>`);
+                        // Si viene justo después de un personaje o paréntesis, se renderiza como diálogo centrado
+                        if (isLastLineCharacter || isLastLineParenthetical) {
+                            scriptBlocks.push(`<div class="dialogue">${trimmed}</div>`);
+                        } else {
+                            scriptBlocks.push(`<div class="action">${trimmed}</div>`);
+                        }
+                        isLastLineCharacter = false;
+                        isLastLineParenthetical = false;
                     }
                 });
 
-                // Agrupar elementos por capacidad estimada de página tamaño carta (~15 bloques por hoja)
-                const BLOCKS_PER_PAGE = 14;
+                // Agrupar bloques por página carta (~12-14 bloques por hoja)
+                const BLOCKS_PER_PAGE = 13;
                 let scriptPageNum = 1;
 
                 for (let i = 0; i < scriptBlocks.length; i += BLOCKS_PER_PAGE) {
