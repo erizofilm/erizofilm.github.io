@@ -8,38 +8,126 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-color: #0d0f12; --card-bg: #121418; --text-main: #e2e8f0; --text-muted: #8a94a6; --accent-primary: #6366f1; --border-color: #22262f; }
+        :root { 
+            --bg-color: #0d0f12; 
+            --card-bg: #121418; 
+            --text-main: #e2e8f0; 
+            --text-muted: #8a94a6; 
+            --accent-primary: #6366f1; 
+            --border-color: #22262f; 
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        header { width: 100%; background: rgba(18,20,24,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 12px 24px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
-        .nav-actions { display: flex; gap: 10px; }
-        .btn-action { background: #181b22; color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+        }
+        
+        header { 
+            width: 100%; 
+            background: rgba(18,20,24,0.85); 
+            backdrop-filter: blur(12px); 
+            border-bottom: 1px solid var(--border-color); 
+            padding: 12px 24px; 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .btn-action { 
+            background: #181b22; 
+            color: var(--text-main); 
+            border: 1px solid var(--border-color); 
+            padding: 8px 14px; 
+            border-radius: 8px; 
+            font-size: 13px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            text-decoration: none; 
+            transition: all 0.2s; 
+        }
         .btn-action:hover { background: var(--accent-primary); color: #fff; border-color: var(--accent-primary); }
-        .container { width: 100%; max-width: 850px; margin-top: 36px; padding: 0 20px 80px 20px; }
-        
-        .script-paper { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 70px 90px; box-shadow: 0 20px 40px rgba(0,0,0,0.55); font-family: 'Courier Prime', Courier, monospace; font-size: 15px; line-height: 1.4; outline: none; }
-        
-        /* ESTILOS DE PORTADA Y SINOPSIS */
-        .cover-page { text-align: center; padding: 80px 0; font-family: 'Inter', sans-serif; }
+
+        .script-wrapper { 
+            width: 100%; 
+            max-width: 850px; 
+            margin: 40px auto 80px auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 40px; 
+            padding: 0 20px; 
+        }
+
+        /* HOJA TAMAÑO CARTA */
+        .page { 
+            background-color: var(--card-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            padding: 80px 90px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
+            position: relative; 
+            font-family: 'Courier Prime', Courier, monospace; 
+            font-size: 15px; 
+            line-height: 1.5; 
+        }
+
+        .page-number { 
+            position: absolute; 
+            top: 35px; 
+            right: 45px; 
+            font-size: 13px; 
+            color: var(--text-muted); 
+            font-family: 'Courier Prime', monospace; 
+        }
+
+        /* PORTADA */
+        .cover-page { 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 600px; 
+            text-align: center; 
+            font-family: 'Inter', sans-serif; 
+        }
         .cover-title { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: 2px; margin-bottom: 12px; text-transform: uppercase; font-family: 'Courier Prime', monospace; }
         .cover-subtitle { font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 140px; }
-        .cover-author { font-size: 14px; color: var(--text-main); line-height: 1.6; }
-        
-        .synopsis-page { padding: 20px 0; font-family: 'Inter', sans-serif; }
-        .synopsis-page h2 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 15px; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; letter-spacing: 1px; }
-        .synopsis-page p, .synopsis-page li { font-size: 14px; color: var(--text-main); margin-bottom: 14px; line-height: 1.6; }
-        .synopsis-page ul { list-style: none; padding-left: 0; }
-        
-        .page-break { border: 0; border-top: 1px dashed var(--border-color); margin: 60px 0; }
+        .cover-author { font-size: 14px; color: var(--text-main); line-height: 1.8; }
 
-        /* ESTILOS CLÁSICOS DE GUIÓN */
-        .scene { font-weight: 700; text-transform: uppercase; margin-top: 36px; margin-bottom: 16px; color: #fff; }
-        .action { margin-bottom: 18px; color: var(--text-main); }
-        .character { text-transform: uppercase; font-weight: 700; margin-top: 22px; margin-bottom: 2px; margin-left: 38%; color: #fff; }
+        /* SINOPSIS Y REPARTO */
+        .synopsis-page { font-family: 'Inter', sans-serif; }
+        .synopsis-page h2 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 15px; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; letter-spacing: 1px; }
+        .synopsis-page p, .synopsis-page li { font-size: 14px; color: var(--text-main); margin-bottom: 12px; line-height: 1.6; }
+
+        /* FORMATO GUIÓN */
+        .scene { font-weight: 700; text-transform: uppercase; margin-top: 28px; margin-bottom: 14px; color: #fff; }
+        .action { margin-bottom: 16px; color: var(--text-main); line-height: 1.5; }
+        .character { text-transform: uppercase; font-weight: 700; margin-top: 20px; margin-bottom: 2px; margin-left: 38%; color: #fff; }
         .parenthetical { font-style: italic; margin-left: 28%; color: var(--text-muted); margin-bottom: 2px; }
-        .dialogue { margin-left: 20%; margin-right: 20%; margin-bottom: 18px; color: var(--text-main); }
-        
-        @media(max-width: 640px) { .script-paper { padding: 35px 20px; } .character { margin-left: 20%; } .parenthetical { margin-left: 10%; } .dialogue { margin-left: 5%; margin-right: 5%; } }
+        .dialogue { margin-left: 20%; margin-right: 20%; margin-bottom: 16px; color: var(--text-main); }
+
+        @media print {
+            body { background: white; color: black; }
+            header { display: none !important; }
+            .script-wrapper { margin: 0; padding: 0; gap: 0; }
+            .page { background: white !important; color: black !important; border: none !important; box-shadow: none !important; page-break-after: always; break-after: page; padding: 50px 60px; }
+            .cover-title, .synopsis-page h2, .scene, .character { color: black !important; }
+            .cover-subtitle, .parenthetical, .page-number { color: #555 !important; }
+            .dialogue, .action, .cover-author, .synopsis-page p, .synopsis-page li { color: black !important; }
+        }
+
+        @media(max-width: 640px) {
+            .page { padding: 40px 20px; }
+            .character { margin-left: 15%; }
+            .parenthetical { margin-left: 8%; }
+            .dialogue { margin-left: 0%; margin-right: 0%; }
+        }
     </style>
 </head>
 <body>
@@ -49,105 +137,110 @@
             <a href="guiones.html" class="btn-action">← Volver a la Lista</a>
             <span id="scriptTitleHeader" style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Cargando guion...</span>
         </div>
-        <div class="nav-actions">
+        <div>
             <button class="btn-action" onclick="window.print()">🖨️ PDF / Imprimir</button>
         </div>
     </header>
 
-    <div class="container">
-        <div class="script-paper" id="scriptContainer">
-            Cargando contenido...
-        </div>
+    <div class="script-wrapper" id="scriptContainer">
+        Cargando guion...
     </div>
 
     <script>
         async function loadScript() {
             const urlParams = new URLSearchParams(window.location.search);
-            let filePath = urlParams.get('file') || 'scripts/el-silencio.txt';
+            let filePath = urlParams.get('file') || 'scripts/el-silencio-de-un-corazon.txt';
             filePath = decodeURIComponent(filePath);
 
             try {
                 const response = await fetch(filePath);
                 if (!response.ok) throw new Error("No se pudo cargar el archivo");
                 const text = await response.text();
-                parseScriptProperly(text);
+                renderAllPages(text);
             } catch (error) {
-                document.getElementById('scriptContainer').innerHTML = "<p style='color: #ef4444; text-align: center; padding: 40px;'>Error: No se pudo cargar el archivo de guion especificado.</p>";
+                document.getElementById('scriptContainer').innerHTML = "<p style='color: #ef4444; text-align: center; padding: 40px;'>Error al cargar el guion.</p>";
             }
         }
 
-        function parseScriptProperly(rawText) {
-            const parts = rawText.split('---');
+        function renderAllPages(rawText) {
+            // Dividir por cada marca ---
+            const pagesRaw = rawText.split('---');
             let htmlOutput = '';
             let mainTitle = "Guion Erizofilm";
+            let scriptPageNum = 1;
 
-            // PARTE 1: PORTADA
-            if (parts.length > 0) {
-                const coverLines = parts[0].trim().split('\n');
-                let title = "";
-                let subtitle = "";
-                let authorInfo = [];
+            pagesRaw.forEach((pageContent, index) => {
+                const lines = pageContent.trim().split('\n');
+                if (lines.length === 0 || pageContent.trim() === '') return;
 
-                coverLines.forEach(l => {
-                    let trimmed = l.trim();
-                    if (trimmed.startsWith('# ')) title = trimmed.replace('# ', '');
-                    else if (trimmed !== '') {
-                        if (!subtitle && !trimmed.toLowerCase().includes('escrito') && !trimmed.match(/^\d{4}$/)) subtitle = trimmed;
-                        else authorInfo.push(trimmed);
-                    }
-                });
-                if (title) mainTitle = title;
+                // HOJA 1: PORTADA
+                if (index === 0) {
+                    let title = "";
+                    let subtitle = "";
+                    let authorInfo = [];
 
-                htmlOutput += `
-                    <div class="cover-page">
-                        <div class="cover-title">${title}</div>
-                        <div class="cover-subtitle">${subtitle}</div>
-                        <div class="cover-author">${authorInfo.join('<br>')}</div>
-                    </div>
-                `;
-            }
+                    lines.forEach(l => {
+                        let trimmed = l.trim();
+                        if (trimmed.startsWith('# ')) title = trimmed.replace('# ', '');
+                        else if (trimmed !== '') {
+                            if (!subtitle && !trimmed.toLowerCase().includes('escrito') && !trimmed.match(/^\d{4}$/)) subtitle = trimmed;
+                            else authorInfo.push(trimmed);
+                        }
+                    });
+                    if (title) mainTitle = title;
 
-            // PARTE 2: SINOPSIS Y REPARTO
-            if (parts.length > 1) {
-                htmlOutput += `<hr class="page-break"><div class="synopsis-page">`;
-                const synopsisLines = parts[1].trim().split('\n');
-                
-                synopsisLines.forEach(l => {
-                    let trimmed = l.trim();
-                    if (trimmed.startsWith('## ')) {
-                        htmlOutput += `<h2>${trimmed.replace('## ', '')}</h2>`;
-                    } else if (trimmed.startsWith('- ')) {
-                        htmlOutput += `<li>${trimmed.replace('- ', '')}</li>`;
-                    } else if (trimmed !== '') {
-                        htmlOutput += `<p>${trimmed}</p>`;
-                    }
-                });
-                htmlOutput += `</div>`;
-            }
+                    htmlOutput += `
+                        <div class="page">
+                            <div class="cover-page">
+                                <div class="cover-title">${title}</div>
+                                <div class="cover-subtitle">${subtitle}</div>
+                                <div class="cover-author">${authorInfo.join('<br>')}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                // HOJA 2: SINOPSIS Y REPARTO
+                else if (index === 1) {
+                    htmlOutput += `<div class="page"><div class="synopsis-page">`;
+                    lines.forEach(l => {
+                        let trimmed = l.trim();
+                        if (trimmed.startsWith('## ')) htmlOutput += `<h2>${trimmed.replace('## ', '')}</h2>`;
+                        else if (trimmed.startsWith('- ')) htmlOutput += `<p style="margin-left:15px;">• ${trimmed.replace('- ', '')}</p>`;
+                        else if (trimmed !== '') htmlOutput += `<p>${trimmed}</p>`;
+                    });
+                    htmlOutput += `</div></div>`;
+                }
+                // RESTO DE HOJAS: GUIÓN TÉCNICO COMPLETO
+                else {
+                    htmlOutput += `
+                        <div class="page">
+                            <div class="page-number">${scriptPageNum}.</div>
+                            <div class="script-body">
+                    `;
+                    scriptPageNum++;
 
-            // PARTE 3: EL GUIÓN TÉCNICO (Escenas, diálogos, etc.)
-            if (parts.length > 2) {
-                htmlOutput += `<hr class="page-break"><div class="script-body">`;
-                const scriptLines = parts[2].trim().split('\n');
+                    lines.forEach(line => {
+                        const trimmed = line.trim();
+                        if (!trimmed) return;
 
-                scriptLines.forEach(line => {
-                    const trimmed = line.trim();
-                    if (!trimmed) return;
+                        // Detección universal de líneas
+                        if (trimmed.startsWith('INT.') || trimmed.startsWith('EXT.') || trimmed.match(/^\d+\.\s+(INT|EXT)/)) {
+                            htmlOutput += `<div class="scene">${trimmed}</div>`;
+                        } else if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
+                            htmlOutput += `<div class="parenthetical">${trimmed}</div>`;
+                        } else if (trimmed === trimmed.toUpperCase() && !trimmed.includes('.') && trimmed.length < 35 && !trimmed.startsWith('FADE')) {
+                            htmlOutput += `<div class="character">${trimmed}</div>`;
+                        } else if (trimmed.startsWith('FADE OUT') || trimmed.startsWith('FIN')) {
+                            htmlOutput += `<div class="scene" style="text-align:right; margin-top:30px;">${trimmed}</div>`;
+                        } else {
+                            // Si la línea anterior era un personaje o paréntesis, es diálogo. Si no, es acción.
+                            htmlOutput += `<div class="action">${trimmed}</div>`;
+                        }
+                    });
 
-                    if (trimmed.startsWith('INT.') || trimmed.startsWith('EXT.')) {
-                        htmlOutput += `<div class="scene">${trimmed}</div>`;
-                    } else if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
-                        htmlOutput += `<div class="parenthetical">${trimmed}</div>`;
-                    } else if (trimmed.startsWith('- ')) {
-                        htmlOutput += `<div class="action">${trimmed.replace('- ', '')}</div>`;
-                    } else if (trimmed === trimmed.toUpperCase() && !trimmed.includes('.') && trimmed.length < 30) {
-                        htmlOutput += `<div class="character">${trimmed}</div>`;
-                    } else {
-                        htmlOutput += `<div class="dialogue">${trimmed}</div>`;
-                    }
-                });
-                htmlOutput += `</div>`;
-            }
+                    htmlOutput += `</div></div>`;
+                }
+            });
 
             document.getElementById('scriptContainer').innerHTML = htmlOutput;
             document.getElementById('scriptTitleHeader').textContent = "|  " + mainTitle;
