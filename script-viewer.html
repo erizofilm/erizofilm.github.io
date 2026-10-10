@@ -268,7 +268,11 @@
     <script>
         async function loadScript() {
             const urlParams = new URLSearchParams(window.location.search);
-            let filePath = urlParams.get('file') || 'scripts/el-silencio-de-un-corazon.txt';
+            let filePath = urlParams.get('file');
+            if (!filePath) {
+            document.getElementById('scriptContainer').innerHTML = "<p style='color: #94a3b8; text-align: center; padding: 40px;'>Ningún guion seleccionado. Por favor, regresa al catálogo y selecciona uno.</p>";
+            return;
+            }
             filePath = decodeURIComponent(filePath);
 
             try {
