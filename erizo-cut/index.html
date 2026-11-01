@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Erizo Cut</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/workspace.css" />
+    <!-- v61 patch ELIMINADO: forzaba captureStream(0) sin requestFrame => export negro -->
+  </head>
+  <body>
+    <header class="header">
+      <div class="logo">
+        🦔 Erizo <span>Cut</span>
+      </div>
+      <div class="menu-bar">
+        <div class="menu-item">
+          <button class="menu-btn">Editar ▾</button>
+          <div class="dropdown">
+            <button id="m-undo">Deshacer Ctrl+Z</button>
+            <button id="m-redo">Rehacer Ctrl+Shift+Z</button>
+            <hr />
+            <button id="m-copy">Copiar</button>
+            <button id="m-cut">Cortar</button>
+            <button id="m-paste">Pegar</button>
+            <hr />
+            <button id="m-del">Borrar selección</button>
+            <button id="m-split">Dividir S (seleccionados)</button>
+          </div>
+        </div>
+        <div class="menu-item">
+          <button class="menu-btn">Ver ▾</button>
+          <div class="dropdown">
+            <button id="m-fit">Fit Timeline</button>
+            <button id="m-detail">Detalle 200px/s</button>
+            <hr />
+            <button onclick="editor.setZoom(20)">20px/s</button>
+            <button onclick="editor.setZoom(80)">80px/s</button>
+            <button onclick="editor.setZoom(200)">200px/s</button>
+            <hr />
+            <button onclick="editor.setPreviewZoom(0.5)">Preview 50%</button>
+            <button onclick="editor.setPreviewZoom(1)">Preview 100%</button>
+            <button onclick="editor.setPreviewZoom(2)">200%</button>
+          </div>
+        </div>
+        <div class="menu-item">
+          <button class="menu-btn">Paneles ▾</button>
+          <div class="dropdown" id="ws-menu"></div>
+        </div>
+        <div class="menu-item">
+          <button class="menu-btn">Exportar ▾</button>
+          <div class="dropdown">
+            <button id="m-exp-dialog">⬇ Exportar con opciones SD/HD/FHD</button>
+          </div>
+        </div>
+      </div>
+      <div class="project-bar">
+        <label>W:</label>
+        <input type="number" id="proj-w" value="1920" />
+        <label>H:</label>
+        <input type="number" id="proj-h" value="1080" />
+        <button class="btn btn-ghost btn-sm" id="apply-size">Aplicar</button>
+      </div>
+      <div class="project-bar">
+        <button class="aspect-btn active" data-ratio="16-9">16:9</button>
+        <button class="aspect-btn" data-ratio="9-16">9:16</button>
+        <button class="aspect-btn" data-ratio="1-1">1:1</button>
+        <select id="res-select" class="res-select">
+          <option value="480p">480p</option>
+          <option value="720p">720p</option>
+          <option value="1080p" selected="">1080p</option>
+        </select>
+      </div>
+      <div class="import-bar">
+        <label>Agregar a:</label>
+        <select id="import-track-select">
+          <option value="auto">AUTO</option>
+          <option value="v1">V1</option>
+          <option value="v2">V2</option>
+          <option value="v3">V3</option>
+          <option value="a1">A1</option>
+          <option value="a2">A2</option>
+          <option value="a3">A3</option>
+          <option value="newV">+ Nueva V</option>
+          <option value="newA">+ Nueva A</option>
+        </select>
+        <button class="btn btn-primary btn-sm" id="import-btn">📁 Medios</button>
+      </div>
+      <button class="btn btn-primary btn-sm" id="export-btn">⬇ Exportar</button>
+    </header>
+    <div class="main">
+      <aside class="sidebar">
+        <button class="tool-btn" id="tb-import">
+          📁
+          <small>Medios</small>
+        </button>
+        <button class="tool-btn" id="tb-split">
+          ✂️
+          <small>Cortar S</small>
+        </button>
+        <button class="tool-btn" id="tb-unlink" title="Desenlazar audio (Ctrl+Shift+L)">🔓 Desenlazar</button>
+        <button class="tool-btn" id="tb-link" title="Enlazar audio y video">🔗 Enlazar</button>
+        <button class="tool-btn" id="tb-del">
+          🗑️
+          <small>Borrar Sel</small>
+        </button>
+        <button class="tool-btn" id="tb-text">
+          T
+          <small>Texto en V</small>
+        </button>
+      </aside>
+      <div class="center">
+        <div class="preview-stage" id="preview-stage">
+          <div class="preview-viewport" id="preview-viewport">
+            <div class="preview-box" id="preview-box" style="width: 720px; height: 405px">
+              <div id="preview-layers"></div>
+              <div id="text-layer"></div>
+              <div id="placeholder" class="placeholder">
+                <div>⬆️ Arrastra video / imagen / audio a una pista específica</div>
+                <small>
+                  v20 FINAL - Drag entre pistas OK • Playhead solo en regla • Centro exacto • Export 1x velocidad
+                </small>
+              </div>
+            </div>
+          </div>
+          <div class="preview-controls">
+            <button id="play-btn-main">▶</button>
+            <span
+              id="preview-time"
+              style="
+                font-family: monospace;
+                font-size: 10px;
+                background: #000;
+                padding: 2px 5px;
+                border-radius: 4px;
+                border: 1px solid #333;
+              "
+            >
+              0:00 / 0:00
+            </span>
+            <button id="zoom-fit-btn">⊡ Fit TL</button>
+            <button id="zoom-detail-btn">🔍</button>
+            <div style="width: 1px; height: 18px; background: #333"></div>
+            <button id="preview-zoom-out">-</button>
+            <input type="range" id="preview-zoom-slider" min="10" max="300" value="100" />
+            <button id="preview-zoom-in">+</button>
+            <span
+              id="preview-zoom-label"
+              style="
+                font-size: 10px;
+                font-family: monospace;
+                background: #000;
+                padding: 2px 5px;
+                border-radius: 4px;
+                border: 1px solid #333;
+              "
+            >
+              100%
+            </span>
+            <button id="preview-fit">⊡ Fit Preview</button>
+            <span id="undo-status" style="font-size: 9px; color: #10b981">Erizo Cut</span>
+          </div>
+        </div>
+      </div>
+      <aside class="right-panel">
+        <div class="prop-group">
+          <div class="prop-label">IMPORTAR A PISTA ESPECÍFICA</div>
+          <div style="display: flex; gap: 4px; align-items: center; margin-bottom: 6px">
+            <span style="font-size: 8px; color: #8b8ba3">Destino:</span>
+            <select
+              id="import-track-select2"
+              style="
+                flex: 1;
+                background: #000;
+                color: #fff;
+                border: 1px solid #7c3aed;
+                border-radius: 6px;
+                padding: 5px;
+                font-size: 11px;
+                font-weight: 600;
+              "
+            ></select>
+          </div>
+          <button class="btn btn-primary" id="export-btn2" style="width: 100%">⬇ ELEGIR CALIDAD Y EXPORTAR</button>
+          <div class="help" style="margin-top: 5px; color: #10b981">
+            ✓ FIX mover archivos entre líneas: arrastra clip y suéltalo en otra pista V/A
+            <br />
+            ✓ Drop directo de archivo sobre pista = agrega ahí
+            <br />
+            ✓ Selector para no agregar siempre al final de V1
+            <br />
+            ✓ FIX velocidad: export 1:30 ya no se hace 3min
+            <br />
+            ✓ FIX playhead solo se mueve en regla superior
+            <br />
+            ✓ FIX centro exacto sin desvío lateral
+          </div>
+        </div>
+        <div class="prop-group" id="text-edit-group" style="display: none">
+          <div class="prop-label">Editar Texto (en pista V)</div>
+          <div class="transform-row">
+            <label>Texto</label>
+            <textarea
+              rows="3"
+              placeholder="Shift + Enter = nueva línea"
+              id="txt-content"
+              style="
+                flex: 1;
+                background: #000;
+                color: #fff;
+                border: 1px solid #555;
+                border-radius: 5px;
+                padding: 3px 6px;
+                font-size: 10px;
+                font-family: inherit;
+                resize: vertical;
+                min-height: 46px;
+                line-height: 1.3;
+              "
+            ></textarea>
+          </div>
+          <div class="transform-row">
+            <label>Fuente</label>
+            <select id="txt-font">
+              <option value="Inter, system-ui, sans-serif">Inter</option>
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="Impact, sans-serif">Impact Bold</option>
+              <option value="'Courier New', monospace">Mono</option>
+              <option value="'Times New Roman', serif">Serif</option>
+              <option value="'Comic Sans MS', cursive">Comic</option>
+              <option value="Bebas Neue, Impact, sans-serif">Bebas</option>
+            </select>
+          </div>
+          <div class="transform-row">
+            <label>Tamaño</label>
+            <input type="range" id="txt-size" min="10" max="180" value="32" />
+            <input type="number" id="txt-size-num" value="32" />
+          </div>
+          <div class="transform-row">
+            <label>Color</label>
+            <input type="color" id="txt-color" value="#ffffff" />
+            <input
+              type="text"
+              id="txt-color-txt"
+              value="#ffffff"
+              style="
+                width: 58px;
+                background: #000;
+                color: #fff;
+                border: 1px solid #555;
+                border-radius: 5px;
+                padding: 2px 4px;
+                font-size: 9px;
+              "
+            />
+          </div>
+          <div class="transform-row">
+            <label>Fondo</label>
+            <input type="color" id="txt-bg" value="#000000" />
+            <select id="txt-bg-alpha">
+              <option value="0">Transp</option>
+              <option value="0.35" selected="">35%</option>
+              <option value="0.75">75%</option>
+              <option value="1">100%</option>
+            </select>
+          </div>
+          <div class="transform-row">
+            <label>Estilo</label>
+            <select id="txt-weight">
+              <option value="400">Normal</option>
+              <option value="700" selected="">Bold</option>
+              <option value="900">Extra Bold</option>
+            </select>
+            <select id="txt-align">
+              <option value="center">Centro</option>
+              <option value="left">Izq</option>
+              <option value="right">Der</option>
+            </select>
+          </div>
+        </div>
+        <div class="prop-group">
+          <div class="prop-label">Transform Clip Seleccionado</div>
+          <div class="transform-row">
+            <label>Pos X</label>
+            <input type="range" id="tr-x" min="-800" max="800" step="1" value="0" />
+            <input type="number" id="tr-x-num" value="0" step="0.1" />
+            <button class="btn-reset" data-reset="x">↺</button>
+          </div>
+          <div class="transform-row">
+            <label>Pos Y</label>
+            <input type="range" id="tr-y" min="-800" max="800" step="1" value="0" />
+            <input type="number" id="tr-y-num" value="0" step="0.1" />
+            <button class="btn-reset" data-reset="y">↺</button>
+          </div>
+          <div class="transform-row">
+            <label>Zoom</label>
+            <input type="range" id="tr-scale" min="0.05" max="6" step="0.01" value="1" />
+            <input type="number" id="tr-scale-num" value="1.00" step="0.01" />
+            <button class="btn-reset" data-reset="scale">↺</button>
+          </div>
+          <div class="transform-row">
+            <label>Estirar H</label>
+            <input type="range" id="tr-scaleX" min="0.05" max="4" step="0.01" value="1" />
+            <input type="number" id="tr-scaleX-num" value="1.00" step="0.01" />
+            <button class="btn-reset" data-reset="scaleX">↺</button>
+          </div>
+          <div class="transform-row">
+            <label>Estirar V</label>
+            <input type="range" id="tr-scaleY" min="0.05" max="4" step="0.01" value="1" />
+            <input type="number" id="tr-scaleY-num" value="1.00" step="0.01" />
+            <button class="btn-reset" data-reset="scaleY">↺</button>
+          </div>
+          <div class="transform-row">
+            <label>Rotar</label>
+            <input type="range" id="tr-rot" min="-180" max="180" step="0.5" value="0" />
+            <input type="number" id="tr-rot-num" value="0" step="0.1" />
+            <button class="btn-reset" data-reset="rot">↺</button>
+          </div>
+          <div class="transform-row">
+            <label>Persp. H</label>
+            <input type="range" id="tr-perspX" min="-60" max="60" step="0.5" value="0" />
+            <input type="number" id="tr-perspX-num" value="0" step="0.5" />
+            <button class="btn-reset" data-reset="perspX">↺</button>
+          </div>
+          <div class="transform-row">
+            <label>Persp. V</label>
+            <input type="range" id="tr-perspY" min="-60" max="60" step="0.5" value="0" />
+            <input type="number" id="tr-perspY-num" value="0" step="0.5" />
+            <button class="btn-reset" data-reset="perspY">↺</button>
+          </div>
+        </div>
+        <div class="prop-group">
+          <div class="prop-label">Selección</div>
+          <div id="selected-info" class="help">
+            Arrastra clips entre pistas. Ctrl+Click multi. Drop archivo sobre pista para agregar ahí. Playhead solo en
+            regla.
+          </div>
+          <div style="margin-top: 5px; display: flex; gap: 3px; flex-wrap: wrap">
+            <button class="btn btn-ghost btn-sm" id="c-copy">📋 Copiar</button>
+            <button class="btn btn-ghost btn-sm" id="c-cut">✂️ Cortar</button>
+            <button class="btn btn-ghost btn-sm" id="c-paste">📄 Pegar</button>
+            <button class="btn btn-danger btn-sm" id="c-del">Borrar Sel</button>
+            <button class="btn btn-ghost btn-sm" id="c-clear-sel">Quitar sel</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <footer class="timeline-container">
+      <div class="timeline-header">
+        <button class="btn btn-ghost btn-sm" id="play-btn"><span id="play-icon">▶</span></button>
+        <span class="time-display" id="time-display">0:00.0 / 0:00.0</span>
+        <div class="zoom-controls">
+          <button id="zoom-out">-</button>
+          <input type="range" id="zoom-slider" min="1" max="1000" value="80" />
+          <button id="zoom-in">+</button>
+          <span id="zoom-label">80 px/s</span>
+          <button id="zoom-fit">⊡ Fit</button>
+          <button id="zoom-detail">🔍</button>
+        </div>
+        <button class="add-track-btn" id="add-v-track">+ V</button>
+        <button class="add-track-btn" id="add-a-track" style="border-color: #10b981; color: #10b981">+ A</button>
+        <span style="margin-left: auto; font-size: 8px; color: #8b8ba3">
+          💡 Playhead SOLO en regla superior • Arrastra clip arriba/abajo para cambiar línea
+        </span>
+      </div>
+      <div class="timeline-body">
+        <div class="timeline-inner">
+          <div class="tracks-sidebar" id="tracks-sidebar"></div>
+          <div class="timeline-wrapper" id="timeline-wrapper">
+            <div class="single-playhead" id="single-playhead" style="left: 0"></div>
+            <div class="single-playhead-cursor" id="single-cursor" style="left: 0"></div>
+            <div class="timeline-ruler" id="timeline-ruler"></div>
+            <div class="timeline-tracks" id="timeline-tracks">
+              <div id="tracks-list" style="display: flex; flex-direction: column"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <div class="context-menu" id="context-menu">
+      <button id="ctx-copy">📋 Copiar</button>
+      <button id="ctx-cut">✂️ Cortar</button>
+      <button id="ctx-paste">📄 Pegar</button>
+      <hr />
+      <button id="ctx-split">✂️ Dividir selección S</button>
+      <button id="ctx-del">🗑️ Borrar selección</button>
+      <hr />
+      <button id="ctx-fit">⊡ Fit Timeline</button>
+      <button id="ctx-dup">⎘ Duplicar selección</button>
+      <button id="ctx-unlink">🔓 Desenlazar audio/video</button>
+      <button id="ctx-link">🔗 Enlazar audio/video</button>
+      <button id="ctx-clear">Quitar multi-select</button>
+    </div>
+
+    <div class="export-modal" id="export-options-modal">
+      <div class="export-box">
+        <h3 style="margin: 0 0 12px">⬇ Elige calidad de exportación</h3>
+        <div class="export-option selected" data-quality="original">
+          <input type="radio" name="expq" checked="" />
+          <div>
+            <div style="font-weight: 700">ORIGINAL - Respeta proyecto</div>
+            <div style="font-size: 10px; color: #8b8ba3" id="opt-original-desc">1920x1080</div>
+          </div>
+          <div
+            style="
+              margin-left: auto;
+              font-size: 10px;
+              background: #7c3aed;
+              color: white;
+              padding: 2px 6px;
+              border-radius: 4px;
+            "
+          >
+            Recomendado
+          </div>
+        </div>
+        <div class="export-option" data-quality="480p">
+          <input type="radio" name="expq" />
+          <div>
+            <div style="font-weight: 700">SD 480p</div>
+            <div style="font-size: 10px; color: #8b8ba3">Archivo pequeño</div>
+          </div>
+        </div>
+        <div class="export-option" data-quality="720p">
+          <input type="radio" name="expq" />
+          <div>
+            <div style="font-weight: 700">HD 720p</div>
+            <div style="font-size: 10px; color: #8b8ba3">Equilibrio</div>
+          </div>
+        </div>
+        <div class="export-option" data-quality="1080p">
+          <input type="radio" name="expq" />
+          <div>
+            <div style="font-weight: 700">Full HD 1080p</div>
+            <div style="font-size: 10px; color: #8b8ba3">Máxima calidad</div>
+          </div>
+        </div>
+        <div style="margin-top: 10px; display: flex; gap: 6px">
+          <div class="export-option selected" data-format="mp4" style="flex: 1">
+            <input type="radio" name="expf" checked="" />
+            <div>
+              <div style="font-weight: 700">MP4 H.264</div>
+              <div style="font-size: 9px; color: #8b8ba3" id="mp4-support-info">Detectando...</div>
+            </div>
+          </div>
+          <div class="export-option" data-format="webm" style="flex: 1">
+            <input type="radio" name="expf" />
+            <div>
+              <div style="font-weight: 700">WEBM</div>
+              <div style="font-size: 9px; color: #8b8ba3">Compatibilidad total</div>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 14px">
+          <button
+            class="btn btn-ghost"
+            onclick="
+              document.getElementById('export-options-modal').classList.remove('show');
+              document.getElementById('export-options-modal').style.display = 'none';
+            "
+          >
+            Cancelar
+          </button>
+          <button class="btn btn-primary" id="confirm-export" style="flex: 1">⬇ EXPORTAR AHORA</button>
+        </div>
+      </div>
+    </div>
+    <div class="export-modal" id="export-modal">
+      <div class="export-box">
+        <h3 style="margin: 0 0 8px">⬇ Exportando</h3>
+        <div id="export-status" style="font-size: 11px; color: #8b8ba3">Iniciando...</div>
+        <div class="progress-bar"><div class="progress-fill" id="export-progress"></div></div>
+        <div style="font-size: 9px; color: #666; margin-top: 5px" id="export-details"></div>
+        <canvas id="export-canvas" style="display: none"></canvas>
+        <video
+          id="export-preview"
+          style="width: 100%; max-height: 240px; background: #000; border-radius: 8px; margin-top: 8px; display: none"
+          controls=""
+        ></video>
+        <div style="display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap">
+          <button class="btn btn-ghost" id="close-export-modal">✕ Cerrar</button>
+          <button class="btn btn-ghost" id="cancel-export-modal" style="background: #1f1f2a">✕ Cancelar</button>
+          <button
+            class="btn btn-ghost"
+            id="abort-export-btn"
+            style="display: none; background: #7f1d1d; border: 1px solid #991b1b; color: #fca5a5"
+          >
+            ⏹ Detener Export
+          </button>
+          <a id="download-link" class="btn btn-primary" style="display: none" download="erizocut_export.webm">
+            ⬇ Descargar
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <input type="file" id="file-input" multiple="" accept="video/*,image/*,audio/*" hidden="" />
+    <script src="js/perspective.js"></script>
+    <script src="js/inputs.js"></script>
+    <script src="js/editor.js"></script>
+    <script src="js/workspace.js"></script>
+  </body>
+</html>
