@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="css/main.css" />
     <link rel="stylesheet" href="css/workspace.css" />
     <!-- v61 patch ELIMINADO: forzaba captureStream(0) sin requestFrame => export negro -->
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Anton&family=Bangers&family=Bebas+Neue&family=Caveat:wght@400;700&family=Cinzel:wght@400;700;900&family=Dancing+Script:wght@400;700&family=Inter:wght@400;700;900&family=Lobster&family=Montserrat:wght@400;700;900&family=Orbitron:wght@400;700;900&family=Oswald:wght@400;700&family=Pacifico&family=Permanent+Marker&family=Playfair+Display:wght@400;700;900&family=Poppins:wght@400;700;900&family=Press+Start+2P&family=Righteous&family=Roboto:wght@400;700;900&display=swap" />
   </head>
   <body>
     <header class="header">
@@ -15,7 +17,11 @@
       </div>
       <div class="menu-bar">
         <div class="menu-item">
-          <button class="menu-btn">Editar ▾</button>
+          <button class="menu-btn">Archivo ▾</button>
+          <div class="dropdown" id="proj-menu"></div>
+        </div>
+        <div class="menu-item">
+          <button class="menu-btn">Edición ▾</button>
           <div class="dropdown">
             <button id="m-undo">Deshacer Ctrl+Z</button>
             <button id="m-redo">Rehacer Ctrl+Shift+Z</button>
@@ -26,32 +32,29 @@
             <hr />
             <button id="m-del">Borrar selección</button>
             <button id="m-split">Dividir S (seleccionados)</button>
+            <hr />
+            <button onclick="document.getElementById('tb-text').click()">Agregar texto</button>
+            <button onclick="document.getElementById('tb-link').click()">Enlazar audio y video</button>
+            <button onclick="document.getElementById('tb-unlink').click()">Desenlazar audio</button>
           </div>
         </div>
         <div class="menu-item">
           <button class="menu-btn">Ver ▾</button>
           <div class="dropdown">
-            <button id="m-fit">Fit Timeline</button>
-            <button id="m-detail">Detalle 200px/s</button>
-            <hr />
-            <button onclick="editor.setZoom(20)">20px/s</button>
-            <button onclick="editor.setZoom(80)">80px/s</button>
-            <button onclick="editor.setZoom(200)">200px/s</button>
-            <hr />
-            <button onclick="editor.setPreviewZoom(0.5)">Preview 50%</button>
-            <button onclick="editor.setPreviewZoom(1)">Preview 100%</button>
-            <button onclick="editor.setPreviewZoom(2)">200%</button>
+            <div id="ws-ver"></div>
           </div>
         </div>
         <div class="menu-item">
-          <button class="menu-btn">Paneles ▾</button>
+          <button class="menu-btn">Modos de estudio ▾</button>
           <div class="dropdown" id="ws-menu"></div>
         </div>
         <div class="menu-item">
-          <button class="menu-btn">Exportar ▾</button>
-          <div class="dropdown">
-            <button id="m-exp-dialog">⬇ Exportar con opciones SD/HD/FHD</button>
-          </div>
+          <button class="menu-btn">Temas ▾</button>
+          <div class="dropdown" id="theme-menu"></div>
+        </div>
+        <div class="menu-item">
+          <button class="menu-btn">Escala ▾</button>
+          <div class="dropdown" id="scale-menu"></div>
         </div>
       </div>
       <div class="project-bar">
@@ -71,44 +74,9 @@
           <option value="1080p" selected="">1080p</option>
         </select>
       </div>
-      <div class="import-bar">
-        <label>Agregar a:</label>
-        <select id="import-track-select">
-          <option value="auto">AUTO</option>
-          <option value="v1">V1</option>
-          <option value="v2">V2</option>
-          <option value="v3">V3</option>
-          <option value="a1">A1</option>
-          <option value="a2">A2</option>
-          <option value="a3">A3</option>
-          <option value="newV">+ Nueva V</option>
-          <option value="newA">+ Nueva A</option>
-        </select>
-        <button class="btn btn-primary btn-sm" id="import-btn">📁 Medios</button>
-      </div>
-      <button class="btn btn-primary btn-sm" id="export-btn">⬇ Exportar</button>
+      <button class="btn btn-primary btn-sm" id="export-btn" title="Exportar video">⬆ Exportar</button>
     </header>
     <div class="main">
-      <aside class="sidebar">
-        <button class="tool-btn" id="tb-import">
-          📁
-          <small>Medios</small>
-        </button>
-        <button class="tool-btn" id="tb-split">
-          ✂️
-          <small>Cortar S</small>
-        </button>
-        <button class="tool-btn" id="tb-unlink" title="Desenlazar audio (Ctrl+Shift+L)">🔓 Desenlazar</button>
-        <button class="tool-btn" id="tb-link" title="Enlazar audio y video">🔗 Enlazar</button>
-        <button class="tool-btn" id="tb-del">
-          🗑️
-          <small>Borrar Sel</small>
-        </button>
-        <button class="tool-btn" id="tb-text">
-          T
-          <small>Texto en V</small>
-        </button>
-      </aside>
       <div class="center">
         <div class="preview-stage" id="preview-stage">
           <div class="preview-viewport" id="preview-viewport">
@@ -116,86 +84,21 @@
               <div id="preview-layers"></div>
               <div id="text-layer"></div>
               <div id="placeholder" class="placeholder">
-                <div>⬆️ Arrastra video / imagen / audio a una pista específica</div>
-                <small>
-                  v20 FINAL - Drag entre pistas OK • Playhead solo en regla • Centro exacto • Export 1x velocidad
-                </small>
+                <div>⬆️ Importa medios a la Biblioteca y arrástralos a la línea de tiempo</div>
               </div>
             </div>
           </div>
           <div class="preview-controls">
             <button id="play-btn-main">▶</button>
-            <span
-              id="preview-time"
-              style="
-                font-family: monospace;
-                font-size: 10px;
-                background: #000;
-                padding: 2px 5px;
-                border-radius: 4px;
-                border: 1px solid #333;
-              "
-            >
-              0:00 / 0:00
-            </span>
-            <button id="zoom-fit-btn">⊡ Fit TL</button>
-            <button id="zoom-detail-btn">🔍</button>
-            <div style="width: 1px; height: 18px; background: #333"></div>
-            <button id="preview-zoom-out">-</button>
-            <input type="range" id="preview-zoom-slider" min="10" max="300" value="100" />
-            <button id="preview-zoom-in">+</button>
-            <span
-              id="preview-zoom-label"
-              style="
-                font-size: 10px;
-                font-family: monospace;
-                background: #000;
-                padding: 2px 5px;
-                border-radius: 4px;
-                border: 1px solid #333;
-              "
-            >
-              100%
-            </span>
-            <button id="preview-fit">⊡ Fit Preview</button>
+            <span id="preview-time" class="pv-time">0:00 / 0:00</span>
+            <label class="pv-lbl" for="preview-scale-select">Escala</label>
+            <select id="preview-scale-select" class="pv-select" title="Escala de la vista previa (100 % = tamaño real del proyecto)"></select>
+            <button id="magnet-btn" class="magnet-btn on" title="Magnetizar al centro (M)">🧲 Magnetizar</button>
             <span id="undo-status" style="font-size: 9px; color: #10b981">Erizo Cut</span>
           </div>
         </div>
       </div>
       <aside class="right-panel">
-        <div class="prop-group">
-          <div class="prop-label">IMPORTAR A PISTA ESPECÍFICA</div>
-          <div style="display: flex; gap: 4px; align-items: center; margin-bottom: 6px">
-            <span style="font-size: 8px; color: #8b8ba3">Destino:</span>
-            <select
-              id="import-track-select2"
-              style="
-                flex: 1;
-                background: #000;
-                color: #fff;
-                border: 1px solid #7c3aed;
-                border-radius: 6px;
-                padding: 5px;
-                font-size: 11px;
-                font-weight: 600;
-              "
-            ></select>
-          </div>
-          <button class="btn btn-primary" id="export-btn2" style="width: 100%">⬇ ELEGIR CALIDAD Y EXPORTAR</button>
-          <div class="help" style="margin-top: 5px; color: #10b981">
-            ✓ FIX mover archivos entre líneas: arrastra clip y suéltalo en otra pista V/A
-            <br />
-            ✓ Drop directo de archivo sobre pista = agrega ahí
-            <br />
-            ✓ Selector para no agregar siempre al final de V1
-            <br />
-            ✓ FIX velocidad: export 1:30 ya no se hace 3min
-            <br />
-            ✓ FIX playhead solo se mueve en regla superior
-            <br />
-            ✓ FIX centro exacto sin desvío lateral
-          </div>
-        </div>
         <div class="prop-group" id="text-edit-group" style="display: none">
           <div class="prop-label">Editar Texto (en pista V)</div>
           <div class="transform-row">
@@ -222,13 +125,42 @@
           <div class="transform-row">
             <label>Fuente</label>
             <select id="txt-font">
-              <option value="Inter, system-ui, sans-serif">Inter</option>
-              <option value="Arial, sans-serif">Arial</option>
-              <option value="Impact, sans-serif">Impact Bold</option>
-              <option value="'Courier New', monospace">Mono</option>
-              <option value="'Times New Roman', serif">Serif</option>
-              <option value="'Comic Sans MS', cursive">Comic</option>
-              <option value="Bebas Neue, Impact, sans-serif">Bebas</option>
+              <optgroup label="Sistema">
+                <option value="Inter, system-ui, sans-serif">Inter</option>
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="Verdana, sans-serif">Verdana</option>
+                <option value="Tahoma, sans-serif">Tahoma</option>
+                <option value="'Trebuchet MS', sans-serif">Trebuchet</option>
+                <option value="'Segoe UI', sans-serif">Segoe UI</option>
+                <option value="Impact, sans-serif">Impact Bold</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Times New Roman', serif">Serif</option>
+                <option value="'Palatino Linotype', serif">Palatino</option>
+                <option value="'Courier New', monospace">Mono</option>
+                <option value="'Lucida Console', monospace">Lucida Console</option>
+                <option value="'Comic Sans MS', cursive">Comic</option>
+                <option value="'Brush Script MT', cursive">Brush Script</option>
+              </optgroup>
+              <optgroup label="Google Fonts">
+                <option value="'Bebas Neue', Impact, sans-serif">Bebas Neue</option>
+                <option value="'Anton', Impact, sans-serif">Anton</option>
+                <option value="'Oswald', sans-serif">Oswald</option>
+                <option value="'Montserrat', sans-serif">Montserrat</option>
+                <option value="'Poppins', sans-serif">Poppins</option>
+                <option value="'Roboto', sans-serif">Roboto</option>
+                <option value="'Playfair Display', serif">Playfair Display</option>
+                <option value="'Cinzel', serif">Cinzel</option>
+                <option value="'Abril Fatface', serif">Abril Fatface</option>
+                <option value="'Lobster', cursive">Lobster</option>
+                <option value="'Pacifico', cursive">Pacifico</option>
+                <option value="'Dancing Script', cursive">Dancing Script</option>
+                <option value="'Caveat', cursive">Caveat</option>
+                <option value="'Permanent Marker', cursive">Permanent Marker</option>
+                <option value="'Bangers', cursive">Bangers</option>
+                <option value="'Righteous', sans-serif">Righteous</option>
+                <option value="'Orbitron', sans-serif">Orbitron</option>
+                <option value="'Press Start 2P', monospace">Press Start 2P</option>
+              </optgroup>
             </select>
           </div>
           <div class="transform-row">
@@ -273,9 +205,64 @@
             </select>
             <select id="txt-align">
               <option value="center">Centro</option>
-              <option value="left">Izq</option>
-              <option value="right">Der</option>
+              <option value="left">Izquierda</option>
+              <option value="right">Derecha</option>
             </select>
+          </div>
+          <div class="transform-row">
+            <label>Alinear</label>
+            <button class="al-btn" data-al="left" title="Pegado a la izquierda del video">⬅ Izq</button>
+            <button class="al-btn" data-al="center" title="Centrado">⬌ Centro</button>
+            <button class="al-btn" data-al="right" title="Pegado a la derecha del video">Der ➡</button>
+          </div>
+          <div class="prop-label" style="margin-top: 10px">Sombra</div>
+          <div class="transform-row">
+            <label>Sombra</label>
+            <select id="txt-sh-on"><option value="0">Apagada</option><option value="1">Activa</option></select>
+            <input type="color" id="txt-sh-color" value="#000000" />
+          </div>
+          <div class="transform-row">
+            <label>Opacidad</label>
+            <input type="range" id="txt-sh-a" min="0" max="100" value="70" />
+            <input type="number" id="txt-sh-a-num" value="70" />
+          </div>
+          <div class="transform-row">
+            <label>Desenfoque</label>
+            <input type="range" id="txt-sh-blur" min="0" max="40" value="6" />
+            <input type="number" id="txt-sh-blur-num" value="6" />
+          </div>
+          <div class="transform-row">
+            <label>Distancia X</label>
+            <input type="range" id="txt-sh-x" min="-40" max="40" value="3" />
+            <input type="number" id="txt-sh-x-num" value="3" />
+          </div>
+          <div class="transform-row">
+            <label>Distancia Y</label>
+            <input type="range" id="txt-sh-y" min="-40" max="40" value="3" />
+            <input type="number" id="txt-sh-y-num" value="3" />
+          </div>
+          <div class="transform-row">
+            <label>Contorno</label>
+            <input type="color" id="txt-st-color" value="#000000" />
+            <input type="range" id="txt-st-w" min="0" max="12" value="0" />
+            <input type="number" id="txt-st-w-num" value="0" />
+          </div>
+          <div class="transform-row">
+            <label>Entrada</label>
+            <select id="txt-an-in"><option value="">Ninguna</option><option value="fade">Aparecer</option><option value="left">Deslizar desde la izquierda</option><option value="right">Deslizar desde la derecha</option><option value="up">Deslizar desde arriba</option><option value="down">Deslizar desde abajo</option><option value="zoom">Zoom</option><option value="type">Escribir letra a letra</option></select>
+          </div>
+          <div class="transform-row">
+            <label>Salida</label>
+            <select id="txt-an-out"><option value="">Ninguna</option><option value="fade">Desaparecer</option><option value="left">Deslizar a la izquierda</option><option value="right">Deslizar a la derecha</option><option value="up">Deslizar hacia arriba</option><option value="down">Deslizar hacia abajo</option><option value="zoom">Zoom</option></select>
+          </div>
+          <div class="transform-row">
+            <label>Duración</label>
+            <select id="txt-an-d"><option value="0.3">0.3 s</option><option value="0.5" selected>0.5 s</option><option value="1">1 s</option><option value="2">2 s</option></select>
+          </div>
+          <div class="transform-row">
+            <label>Estilos</label>
+            <select id="txt-preset"><option value="">Elegir estilo…</option></select>
+            <button class="al-btn" id="txt-preset-save" title="Guardar el estilo actual">💾 Guardar</button>
           </div>
         </div>
         <div class="prop-group">
@@ -343,6 +330,15 @@
             <button class="btn btn-ghost btn-sm" id="c-clear-sel">Quitar sel</button>
           </div>
         </div>
+      
+        <div class="prop-group">
+          <div class="prop-label">Clip: opacidad, velocidad y volumen</div>
+          <div class="transform-row"><label>Opacidad</label><input type="range" id="clip-op" min="0" max="100" value="100" /><input type="number" id="clip-op-num" value="100" /></div>
+          <div class="transform-row"><label>Velocidad</label>
+            <select id="clip-speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1× normal</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option><option value="4">4×</option></select>
+          </div>
+          <div class="transform-row"><label>Volumen</label><input type="range" id="clip-vol" min="0" max="100" value="100" /><input type="number" id="clip-vol-num" value="100" /></div>
+        </div>
       </aside>
     </div>
     <footer class="timeline-container">
@@ -357,11 +353,6 @@
           <button id="zoom-fit">⊡ Fit</button>
           <button id="zoom-detail">🔍</button>
         </div>
-        <button class="add-track-btn" id="add-v-track">+ V</button>
-        <button class="add-track-btn" id="add-a-track" style="border-color: #10b981; color: #10b981">+ A</button>
-        <span style="margin-left: auto; font-size: 8px; color: #8b8ba3">
-          💡 Playhead SOLO en regla superior • Arrastra clip arriba/abajo para cambiar línea
-        </span>
       </div>
       <div class="timeline-body">
         <div class="timeline-inner">
@@ -495,9 +486,87 @@
     </div>
 
     <input type="file" id="file-input" multiple="" accept="video/*,image/*,audio/*" hidden="" />
+    
+    <div id="legacy" style="display: none">
+      <button id="m-exp-dialog">Exportar</button>
+      <div class="import-bar">
+        <label>Agregar a:</label>
+        <select id="import-track-select">
+          <option value="auto">AUTO</option>
+          <option value="v1">V1</option>
+          <option value="v2">V2</option>
+          <option value="v3">V3</option>
+          <option value="a1">A1</option>
+          <option value="a2">A2</option>
+          <option value="a3">A3</option>
+          <option value="newV">+ Nueva V</option>
+          <option value="newA">+ Nueva A</option>
+        </select>
+        <button class="btn btn-primary btn-sm" id="import-btn">📁 Medios</button>
+      </div>
+      <aside class="sidebar">
+        <button class="tool-btn" id="tb-import">
+          📁
+          <small>Medios</small>
+        </button>
+        <button class="tool-btn" id="tb-split">
+          ✂️
+          <small>Cortar S</small>
+        </button>
+        <button class="tool-btn" id="tb-unlink" title="Desenlazar audio (Ctrl+Shift+L)">🔓 Desenlazar</button>
+        <button class="tool-btn" id="tb-link" title="Enlazar audio y video">🔗 Enlazar</button>
+        <button class="tool-btn" id="tb-del">
+          🗑️
+          <small>Borrar Sel</small>
+        </button>
+        <button class="tool-btn" id="tb-text">
+          T
+          <small>Texto en V</small>
+        </button>
+      </aside>
+        <div class="prop-group">
+          <div class="prop-label">IMPORTAR A PISTA ESPECÍFICA</div>
+          <div style="display: flex; gap: 4px; align-items: center; margin-bottom: 6px">
+            <span style="font-size: 8px; color: #8b8ba3">Destino:</span>
+            <select
+              id="import-track-select2"
+              style="
+                flex: 1;
+                background: #000;
+                color: #fff;
+                border: 1px solid #7c3aed;
+                border-radius: 6px;
+                padding: 5px;
+                font-size: 11px;
+                font-weight: 600;
+              "
+            ></select>
+          </div>
+        </div>
+    </div>
+    <div id="panel-library" class="ws-lib"></div>
+    <div id="panel-keyframes" class="ws-lib"></div>
     <script src="js/perspective.js"></script>
+    <script src="js/themes.js"></script>
+    <script src="js/settings.js"></script>
     <script src="js/inputs.js"></script>
     <script src="js/editor.js"></script>
+    <script src="js/scale.js"></script>
+    <script src="js/anim.js"></script>
+    <script src="js/look.js"></script>
+    <script src="js/stab.js"></script>
+    <script src="js/effects.js"></script>
+    <script src="js/fxtimeline.js"></script>
+    <script src="js/media.js"></script>
+    <script src="js/library.js"></script>
+    <script src="js/keyframes.js"></script>
+    <script src="js/inspector.js"></script>
+    <script src="js/tracks.js"></script>
+    <script src="js/tltools.js"></script>
+    <script src="js/textfx.js"></script>
+    <script src="js/magnet.js"></script>
+    <script src="js/project.js"></script>
+    <script src="js/archivo.js"></script>
     <script src="js/workspace.js"></script>
   </body>
 </html>
