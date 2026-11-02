@@ -1,5 +1,9 @@
 (function () {
         "use strict";
+        /* Factor de escala de la interfaz: convierte píxeles de pantalla (ratón) en píxeles CSS. */
+        function __K() {
+          return (window.ErizoUI && window.ErizoUI.k) || 1;
+        }
         function hideContext() {
           var m = document.getElementById("context-menu");
           if (m) m.style.display = "none";
@@ -65,6 +69,8 @@
             this.audioElements = {};
             this.transforms = {};
             this.textStyles = {};
+            this.kfs = {};
+            this.anim = {};
             this.defaultTransform = { x: 0, y: 0, scale: 1, scaleX: 1, scaleY: 1, rot: 0, perspX: 0, perspY: 0 };
             this.layerElements = {};
             this.textElements = {};
@@ -119,6 +125,14 @@
                 origW: c.origW,
                 origH: c.origH,
                 text: c.text,
+                speed: c.speed,
+                vol: c.vol,
+                fxKind: c.fxKind,
+                fxIdx: c.fxIdx,
+                fxName: c.fxName,
+                fxVal: c.fxVal,
+                fxMode: c.fxMode,
+                fxDur: c.fxDur,
               };
             });
           }
@@ -127,6 +141,8 @@
               clips: this.cloneClips(),
               transforms: JSON.parse(JSON.stringify(this.transforms)),
               textStyles: JSON.parse(JSON.stringify(this.textStyles)),
+              kfs: JSON.parse(JSON.stringify(this.kfs || {})),
+              anim: JSON.parse(JSON.stringify(this.anim || {})),
               selectedId: this.selectedId,
               selectedIds: Array.from(this.selectedIds),
               action: act,
@@ -156,6 +172,8 @@
             if (!h) return;
             this.transforms = JSON.parse(JSON.stringify(h.transforms));
             this.textStyles = JSON.parse(JSON.stringify(h.textStyles || {}));
+            this.kfs = JSON.parse(JSON.stringify(h.kfs || {}));
+            this.anim = JSON.parse(JSON.stringify(h.anim || {}));
             var curMap = new Map(
               this.clips.map(function (c) {
                 return [c.id, c];
@@ -292,25 +310,44 @@
             var rInd = document.getElementById("snap-indicator-ruler");
             if (rInd) rInd.style.display = "none";
           }
+          /* Escala de la vista previa. previewPct = null → "Ajustar"; si no, fracción del tamaño REAL del proyecto (1 = 100 %, 1 píxel del proyecto = 1 píxel de pantalla, como en DaVinci Resolve). */
+          setPreviewPercent(p) {
+            this.previewPct = p == null ? null : p;
+            this.updatePreviewBoxSize(true);
+          }
           setPreviewZoom(f) {
-            this.previewZoom = Math.max(0.1, Math.min(3, f));
+            this.previewPct = null;
+            var lo = this.previewMin || 0.1,
+              hi = this.previewMax || 8;
+            this.previewZoom = Math.max(lo, Math.min(hi, f));
             var s = document.getElementById("preview-zoom-slider");
             if (s) s.value = Math.round(this.previewZoom * 100);
             var l = document.getElementById("preview-zoom-label");
             if (l) l.textContent = Math.round(this.previewZoom * 100) + "%";
             this.updatePreviewBoxSize();
           }
-          updatePreviewBoxSize() {
+          updatePreviewBoxSize(recenter) {
             var box = this.previewBox;
             if (!box || !this.previewStage) return;
-            var stageW = this.viewport.clientWidth * 0.92;
-            var stageH = this.viewport.clientHeight * 0.92;
-            this.fitScale = Math.min(stageW / this.projectW, stageH / this.projectH, 1);
+            var vp = this.viewport, vw = vp.clientWidth, vh = vp.clientHeight;
+            this.fitScale = Math.min((vw * 0.92) / this.projectW, (vh * 0.92) / this.projectH, 1);
             var baseW = this.projectW * this.fitScale;
             var baseH = this.projectH * this.fitScale;
+            if (this.previewPct != null) this.previewZoom = this.previewPct / this.fitScale;
+            var z = this.previewZoom, visW = baseW * z, visH = baseH * z;
             box.style.width = baseW + "px";
             box.style.height = baseH + "px";
-            box.style.transform = "scale(" + this.previewZoom + ")";
+            box.style.transformOrigin = "0 0";
+            box.style.transform = "scale(" + z + ")";
+            /* centrado cuando cabe; con zoom grande el visor se desplaza con barras */
+            box.style.margin = Math.max(0, (vh - visH) / 2) + "px " + Math.min(0, visW - baseW) + "px " + Math.min(0, visH - baseH) + "px " + Math.max(0, (vw - visW) / 2) + "px";
+            if (recenter) {
+              vp.scrollLeft = Math.max(0, (visW - vw) / 2);
+              vp.scrollTop = Math.max(0, (visH - vh) / 2);
+            }
+            var s = document.getElementById("preview-zoom-slider");
+            if (s) s.value = Math.round(z * 100);
+            if (window.ErizoUI && window.ErizoUI.onPreview) window.ErizoUI.onPreview();
           }
           showContextMenu(x, y) {
             var menu = document.getElementById("context-menu");
@@ -527,6 +564,7 @@
               el.style.color = st.color;
               el.style.fontWeight = st.weight;
               el.style.textAlign = st.align;
+__txtFx(el, st);
               var bgAlpha = parseFloat(st.bgAlpha);
               if (bgAlpha === 0) el.style.background = "transparent";
               else
@@ -704,9 +742,10 @@
             document.addEventListener("mousemove", function (e) {
               if (!drag || !tid) return;
               var t = getT(tid);
-              t.x = ox + (e.clientX - sx) / self.previewZoom;
-              t.y = oy + (e.clientY - sy) / self.previewZoom;
+              t.x = ox + (e.clientX - sx) / __K() / self.previewZoom;
+              t.y = oy + (e.clientY - sy) / __K() / self.previewZoom;
               var el = self.layerElements[tid] || self.textElements[tid];
+              if (el && window.Magnet) Magnet.snap(self, t, el);
               if (el) {
                 var sx2 = (t.scale || 1) * (t.scaleX || 1);
                 var sy2 = (t.scale || 1) * (t.scaleY || 1);
@@ -1090,7 +1129,7 @@
           renderTracks() {
             var self = this;
             if (!this.tracksSidebar || !this.tracksList) return;
-            this.tracksSidebar.innerHTML = '<div class="ruler-spacer">PISTAS 👁️/🚫</div>';
+            this.tracksSidebar.innerHTML = '<div class="ruler-spacer"><button class="add-menu-btn">＋ Agregar ▾</button></div>';
             this.tracksList.innerHTML = "";
             this.allTracksOrdered.forEach(function (track) {
               var lbl = document.createElement("div");
@@ -1161,19 +1200,6 @@
                 }
               });
               self.tracksList.appendChild(row);
-            });
-            var addRow = document.createElement("div");
-            addRow.style.display = "flex";
-            addRow.style.gap = "3px";
-            addRow.style.padding = "4px";
-            addRow.innerHTML =
-              '<button class="add-track-btn" id="add-v-inner">+ V</button><button class="add-track-btn" id="add-a-inner">+ A</button>';
-            self.tracksSidebar.appendChild(addRow);
-            document.getElementById("add-v-inner").addEventListener("click", function () {
-              self.addTrack("video");
-            });
-            document.getElementById("add-a-inner").addEventListener("click", function () {
-              self.addTrack("audio");
             });
             setTimeout(function () {
               self.renderClips();
@@ -1310,7 +1336,7 @@
                   String(c.text || c.name).replace(/\n/g, " ") +
                   " | " +
                   c.trackId.toUpperCase() +
-                  " | Arrastra vertical para cambiar pista. Playhead SOLO en regla.";
+                  "";
             } else {
               inf.textContent =
                 "Arrastra clip hacia arriba/abajo para cambiar de línea V1/V2/V3/A1/A2/A3. Playhead solo se mueve clickeando en regla de tiempo superior.";
@@ -1371,7 +1397,7 @@
               });
               if (targetId) nc.trackId = targetId;
               self.clips.push(nc);
-              self.transforms[newId] = Object.assign({}, self.transforms[base.id] || self.defaultTransform);
+              self.transforms[newId] = JSON.parse(JSON.stringify(self.transforms[base.id] || self.defaultTransform));
               if (nc.type === "text" && base.text)
                 self.textStyles[newId] = Object.assign({}, self.textStyles[base.id] || {}, {
                   id: newId,
@@ -1403,7 +1429,7 @@
                 linkedTo: null,
               });
               self.clips.push(nc);
-              self.transforms[newId] = Object.assign({}, self.transforms[base.id] || self.defaultTransform);
+              self.transforms[newId] = JSON.parse(JSON.stringify(self.transforms[base.id] || self.defaultTransform));
               if (nc.type === "text")
                 self.textStyles[newId] = Object.assign({}, self.textStyles[base.id] || {}, { id: newId });
               if (nc.type === "audio") self.audioElements[newId] = new Audio(nc.url);
@@ -1520,7 +1546,7 @@
                   }.bind(this),
                 )
               : null;
-            var dx = e.clientX - this.dragState.startX;
+            var dx = (e.clientX - this.dragState.startX) / __K();
             var ds = dx / this.pixelsPerSecond;
             if (this.dragState.type === "drag") {
               var self = this;
@@ -1587,11 +1613,11 @@
                 var d = ns - this.dragState.origStart;
                 clip.start = ns;
                 clip.duration = nd;
-                if (clip.type !== "image" && clip.type !== "text") clip.srcStart = this.dragState.origSrcStart + d;
+                if (clip.type !== "image" && clip.type !== "text") clip.srcStart = this.dragState.origSrcStart + d * (clip.speed || 1);
                 if (linked) {
                   linked.start = ns;
                   linked.duration = nd;
-                  if (linked.type !== "image") linked.srcStart = this.dragState.linkedOrigSrcStart + d;
+                  if (linked.type !== "image") linked.srcStart = this.dragState.linkedOrigSrcStart + d * (linked.speed || 1);
                 }
               } else {
                 clip.duration = Math.max(0.2, this.dragState.origDur + ds);
@@ -1876,7 +1902,9 @@
                   url: cl.url,
                   start: t,
                   duration: orig - off,
-                  srcStart: cl.type === "image" || cl.type === "text" ? 0 : cl.srcStart + off,
+                  srcStart: cl.type === "image" || cl.type === "text" ? 0 : cl.srcStart + off * (cl.speed || 1),
+                  speed: cl.speed,
+                  vol: cl.vol,
                   srcDuration: cl.srcDuration,
                   trackId: cl.trackId,
                   origW: cl.origW,
@@ -1898,7 +1926,9 @@
                     url: linked.url,
                     start: t,
                     duration: linked.duration - off,
-                    srcStart: linked.type === "image" ? 0 : linked.srcStart + off,
+                    srcStart: linked.type === "image" ? 0 : linked.srcStart + off * (linked.speed || 1),
+                    speed: linked.speed,
+                    vol: linked.vol,
                     srcDuration: linked.srcDuration,
                     trackId: linked.trackId,
                     origW: 0,
@@ -1929,7 +1959,7 @@
           seekTimelineFromEvent(e) {
             var rect = this.ruler.getBoundingClientRect();
             var scroll = this.ruler.scrollLeft;
-            var x = e.clientX - rect.left + scroll;
+            var x = (e.clientX - rect.left) / __K() + scroll;
             var raw = Math.max(0, x / this.pixelsPerSecond);
             var snapped = this.snapEnabled ? this.applySnap(raw, []) : raw;
             this.timelineTime = snapped;
@@ -2080,8 +2110,8 @@
               }
               // Siempre aplicar transform actualizado (fix: antes solo al crear)
               var tr = self.transforms[clip.id] || self.defaultTransform;
-              var sx = (tr.scale || 1) * (tr.scaleX || 1);
-              var sy = (tr.scale || 1) * (tr.scaleY || 1);
+              var sx = (tr.scale || 1) * (tr.scaleX || 1) * (tr.flipX ? -1 : 1);
+              var sy = (tr.scale || 1) * (tr.scaleY || 1) * (tr.flipY ? -1 : 1);
               var persp =
                 (tr.perspX || 0) !== 0 || (tr.perspY || 0) !== 0
                   ? " perspective(600px) rotateX(" + (tr.perspY || 0) + "deg) rotateY(" + (tr.perspX || 0) + "deg)"
@@ -2116,8 +2146,8 @@
               }
               if (clip.type === "video") {
                 var off = self.timelineTime - clip.start;
-                var target = clip.srcStart + off;
-                var maxT = clip.srcStart + clip.duration;
+                var target = clip.srcStart + off * (clip.speed || 1);
+                var maxT = clip.srcStart + clip.duration * (clip.speed || 1);
                 var clamped = Math.min(Math.max(target, 0), maxT - 0.05);
                 try {
                   if (Math.abs(el.currentTime - clamped) > 0.35) {
@@ -2189,6 +2219,7 @@
                 el.style.color = st.color;
                 el.style.fontWeight = st.weight;
                 el.style.textAlign = st.align;
+__txtFx(el, st);
                 el.style.display = "block";
                 var bgAlpha = parseFloat(st.bgAlpha);
                 if (bgAlpha === 0) el.style.background = "transparent";
@@ -2207,7 +2238,7 @@
                 var sx = (tr.scale || 1) * (tr.scaleX || 1);
                 var sy = (tr.scale || 1) * (tr.scaleY || 1);
                 el.style.transform =
-                  "translate(-50%,-50%) translate(" +
+                  (el.dataset.baseTransform || "translate(-50%,-50%)") + " translate(" +
                   tr.x +
                   "px," +
                   tr.y +
@@ -2255,8 +2286,8 @@
                   console.log("[Audio] Created", c.id, c.url.substring(0, 30));
                 }
                 var off = self.timelineTime - c.start;
-                var st = c.srcStart + off;
-                var maxSt = c.srcStart + c.duration;
+                var st = c.srcStart + off * (c.speed || 1);
+                var maxSt = c.srcStart + c.duration * (c.speed || 1);
                 var clamped = Math.min(Math.max(st, 0), Math.max(0, maxSt - 0.05));
                 try {
                   if (Math.abs(a.currentTime - clamped) > 0.5) a.currentTime = clamped;
@@ -2331,7 +2362,12 @@
             }
           }
           updatePlayheadPos() {
-            var px = this.timelineTime * this.pixelsPerSecond;
+            var sl = this.tracksContainer ? this.tracksContainer.scrollLeft : 0;
+            if (this.ruler) {
+              this.ruler.style.position = "relative";
+              this.ruler.style.left = -sl + "px";
+            }
+            var px = this.timelineTime * this.pixelsPerSecond - sl;
             if (this.playhead) {
               this.playhead.style.left = px + "px";
               this.playhead.style.display = "block";
@@ -3023,6 +3059,7 @@
               function draw(t) {
                 ctx.fillStyle = "#000";
                 ctx.fillRect(0, 0, exportW, exportH);
+                if (window.Anim) Anim.apply(self, t);
                 var atT = self.getClipsAtTimeline(t);
                 var visuals = atT.filter(function (c) {
                   return c.type === "video" || c.type === "image";
@@ -3043,9 +3080,11 @@
                     var tr = self.transforms[clip.id] || { x: 0, y: 0, scale: 1, scaleX: 1, scaleY: 1, rot: 0 };
                     var tx = tr.x * scaleX,
                       ty = tr.y * scaleY;
-                    var sx = (tr.scale || 1) * (tr.scaleX || 1),
-                      sy = (tr.scale || 1) * (tr.scaleY || 1);
+                    var sx = (tr.scale || 1) * (tr.scaleX || 1) * (tr.flipX ? -1 : 1),
+                      sy = (tr.scale || 1) * (tr.scaleY || 1) * (tr.flipY ? -1 : 1);
                     ctx.save();
+                    ctx.filter = (window.ErizoTL ? ErizoTL.mix(tr.filter, t) : tr.filter) || "none";
+                      __animCtx(ctx, self, clip, t, exportW, exportH);
                     ctx.translate(exportW / 2 + tx, exportH / 2 + ty);
                     ctx.rotate(((tr.rot || 0) * Math.PI) / 180);
                     ctx.scale(sx, sy);
@@ -3054,8 +3093,8 @@
                       mediaH,
                       ok = false;
                     if (o.kind === "video") {
-                      var target = (clip.srcStart || 0) + (t - clip.start);
-                      var maxT = (clip.srcStart || 0) + clip.duration;
+                      var target = (clip.srcStart || 0) + (t - clip.start) * (clip.speed || 1);
+                      var maxT = (clip.srcStart || 0) + clip.duration * (clip.speed || 1);
                       target = Math.min(Math.max(target, 0), Math.max(0, maxT - 0.04));
                       if (o.el.readyState >= 1 && Math.abs(o.el.currentTime - target) > 0.35) {
                         try {
@@ -3089,6 +3128,7 @@
                       dw = exportH * ma;
                     }
                     if (ok) {
+                      if (window.ErizoLook) source = ErizoLook.prep(ctx, clip, tr, t, source, mediaW, mediaH, dw, dh);
                       __drawPersp(ctx, source, dw, dh, tr);
                       if (o.kind === "video") {
                         if (!o.lastGood) o.lastGood = document.createElement("canvas");
@@ -3126,7 +3166,8 @@
                     var tr = self.transforms[clip.id] || { x: 0, y: 0, scale: 1, scaleX: 1, scaleY: 1, rot: 0 };
                     try {
                       ctx.save();
-                      ctx.translate(exportW / 2 + tr.x * scaleX, exportH / 2 + tr.y * scaleY);
+                      __animCtx(ctx, self, clip, t, exportW, exportH);
+                      ctx.translate(exportW * (st.align === "left" ? 0.04 : st.align === "right" ? 0.96 : 0.5) + tr.x * scaleX, exportH / 2 + tr.y * scaleY);
                       ctx.rotate(((tr.rot || 0) * Math.PI) / 180);
                       ctx.scale((tr.scale || 1) * (tr.scaleX || 1), (tr.scale || 1) * (tr.scaleY || 1));
                       var fs = Math.max(6, st.size * scaleY);
@@ -3135,7 +3176,7 @@
                       ctx.textBaseline = "middle";
                       if ((tr.perspX || 0) !== 0 || (tr.perspY || 0) !== 0) {
                         // v33: texto con perspectiva -> dibujar en canvas temporal y deformar por franjas
-                        var lines = String(st.text || "").split("\n");
+                        var lines = Anim.text(self, clip, t, st).split("\n");
                         var lh = fs * 1.2;
                         var pmw = 0;
                         lines.forEach(function (ln) { pmw = Math.max(pmw, ctx.measureText(ln).width); });
@@ -3156,18 +3197,22 @@
                         }
                         pc.font = ctx.font;
                         pc.textBaseline = "middle";
+                        var pshp = __shadowParams(st, scaleX);
+                        if (pshp) { pc.shadowColor = pshp.c; pc.shadowBlur = pshp.b; pc.shadowOffsetX = pshp.x; pc.shadowOffsetY = pshp.y; }
                         pc.fillStyle = st.color || "#fff";
                         var palign = st.align || "center";
                         pc.textAlign = palign;
                         var px = palign === "left" ? 12 * scaleX : palign === "right" ? pw - 12 * scaleX : pw / 2;
                         lines.forEach(function (ln, li) {
+                          if (st.stW > 0) { pc.lineJoin = "round"; pc.lineWidth = st.stW * scaleX; pc.strokeStyle = st.stColor || "#000000"; pc.strokeText(ln, px, 6 * scaleY + (li + 0.5) * lh); }
                           pc.fillText(ln, px, 6 * scaleY + (li + 0.5) * lh);
                         });
+                        ctx.translate(palign === "left" ? pw / 2 : palign === "right" ? -pw / 2 : 0, 0);
                         __drawPersp(ctx, PC, pw, ph, tr);
                         ctx.restore();
                         return;
                       }
-                      var lines2 = String(st.text || "").split("\n");
+                      var lines2 = Anim.text(self, clip, t, st).split("\n");
                       var lh2 = fs * 1.2;
                       var mw2 = 0;
                       lines2.forEach(function (ln) { mw2 = Math.max(mw2, ctx.measureText(ln).width); });
@@ -3183,9 +3228,12 @@
                           st.bgAlpha + ")";
                         ctx.fillRect(bx, -bh / 2, bw, bh);
                       }
+                      var shp = __shadowParams(st, scaleX);
+                      if (shp) { ctx.shadowColor = shp.c; ctx.shadowBlur = shp.b; ctx.shadowOffsetX = shp.x; ctx.shadowOffsetY = shp.y; }
                       ctx.fillStyle = st.color || "#fff";
                       lines2.forEach(function (ln, li) {
-                        ctx.fillText(ln, 0, -bh / 2 + 6 * scaleY + (li + 0.5) * lh2);
+                        if (st.stW > 0) { ctx.lineJoin = "round"; ctx.lineWidth = st.stW * scaleX; ctx.strokeStyle = st.stColor || "#000000"; ctx.strokeText(ln, st.align === "left" ? 12 * scaleX : st.align === "right" ? -12 * scaleX : 0, -bh / 2 + 6 * scaleY + (li + 0.5) * lh2); }
+                        ctx.fillText(ln, st.align === "left" ? 12 * scaleX : st.align === "right" ? -12 * scaleX : 0, -bh / 2 + 6 * scaleY + (li + 0.5) * lh2);
                       });
                       ctx.restore();
                     } catch (e) {
@@ -3198,8 +3246,8 @@
                   var active = t >= g.job.clip.start - 0.05 && t < g.job.clip.start + g.job.clip.duration + 0.05;
                   try {
                     if (active) {
-                      var tgt = (g.job.clip.srcStart || 0) + (t - g.job.clip.start);
-                      var mx = (g.job.clip.srcStart || 0) + g.job.clip.duration;
+                      var tgt = (g.job.clip.srcStart || 0) + (t - g.job.clip.start) * (g.job.clip.speed || 1);
+                      var mx = (g.job.clip.srcStart || 0) + g.job.clip.duration * (g.job.clip.speed || 1);
                       tgt = Math.min(Math.max(tgt, 0), Math.max(0, mx - 0.04));
                       if (Math.abs(g.job.el.currentTime - tgt) > 0.5) {
                         try {
@@ -3468,7 +3516,8 @@
                 e.preventDefault();
               });
               this.tracksContainer.addEventListener("scroll", function () {
-                if (self.ruler) self.ruler.scrollLeft = self.tracksContainer.scrollLeft;
+                /* la regla y el marcador deben desplazarse junto con las pistas (si no, el marcador queda lejos de donde corta) */
+                self.updatePlayheadPos();
               });
             }
             if (this.ruler) {
@@ -3482,7 +3531,7 @@
                 if (self.dragState && self.dragState.type === "playhead") self.seekTimelineFromEvent(e);
               });
               this.ruler.addEventListener("scroll", function () {
-                if (self.tracksContainer) self.tracksContainer.scrollLeft = self.ruler.scrollLeft;
+                self.ruler.scrollLeft = 0;
               });
               this.ruler.addEventListener("click", function (e) {
                 self.seekTimelineFromEvent(e);
@@ -3541,8 +3590,7 @@
               function (e) {
                 if (e.ctrlKey || e.altKey) {
                   e.preventDefault();
-                  var d = e.deltaY > 0 ? 0.9 : 1.1;
-                  self.setPreviewZoom(self.previewZoom * d);
+                  if (window.ErizoUI && window.ErizoUI.stepPreview) window.ErizoUI.stepPreview(e.deltaY > 0 ? -1 : 1);
                 }
               },
               { passive: false },
@@ -3653,10 +3701,10 @@
                 if (e.target.closest && e.target.closest(".clip")) return;
                 var rect = tracksContainer.getBoundingClientRect();
                 // Ignorar clic sobre las barras de scroll
-                if (e.clientX > rect.left + tracksContainer.clientWidth) return;
-                if (e.clientY > rect.top + tracksContainer.clientHeight) return;
-                startX = e.clientX - rect.left + tracksContainer.scrollLeft;
-                startY = e.clientY - rect.top + tracksContainer.scrollTop;
+                if (e.clientX > rect.left + tracksContainer.clientWidth * __K()) return;
+                if (e.clientY > rect.top + tracksContainer.clientHeight * __K()) return;
+                startX = (e.clientX - rect.left) / __K() + tracksContainer.scrollLeft;
+                startY = (e.clientY - rect.top) / __K() + tracksContainer.scrollTop;
                 isBoxSelecting = true;
                 boxMoved = false;
                 lastKey = "";
@@ -3678,8 +3726,8 @@
               document.addEventListener("mousemove", function (e) {
                 if (!isBoxSelecting || !boxEl) return;
                 var rect = tracksContainer.getBoundingClientRect();
-                var curX = e.clientX - rect.left + tracksContainer.scrollLeft;
-                var curY = e.clientY - rect.top + tracksContainer.scrollTop;
+                var curX = (e.clientX - rect.left) / __K() + tracksContainer.scrollLeft;
+                var curY = (e.clientY - rect.top) / __K() + tracksContainer.scrollTop;
                 var x = Math.min(curX, startX);
                 var y = Math.min(curY, startY);
                 var w = Math.abs(curX - startX);
@@ -3694,10 +3742,10 @@
                 var hit = new Set(baseSel);
                 tracksContainer.querySelectorAll(".clip").forEach(function (clipEl) {
                   var cRect = clipEl.getBoundingClientRect();
-                  var clipX = cRect.left - rect.left + tracksContainer.scrollLeft;
-                  var clipY = cRect.top - rect.top + tracksContainer.scrollTop;
+                  var clipX = (cRect.left - rect.left) / __K() + tracksContainer.scrollLeft;
+                  var clipY = (cRect.top - rect.top) / __K() + tracksContainer.scrollTop;
                   var intersect =
-                    clipX < x + w && clipX + cRect.width > x && clipY < y + h && clipY + cRect.height > y;
+                    clipX < x + w && clipX + cRect.width / __K() > x && clipY < y + h && clipY + cRect.height / __K() > y;
                   if (!intersect) return;
                   var clip = clipFromEl(clipEl);
                   if (!clip) return;
@@ -3818,7 +3866,7 @@
             this.renderRuler();
             this.updatePlayheadPos();
             this.updateImportSelectors();
-            this.pushHistory("Inicio v20 FINAL todos bugs OK");
+            this.pushHistory("Inicio");
           }
         }
         document.addEventListener("DOMContentLoaded", function () {

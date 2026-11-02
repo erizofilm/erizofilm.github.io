@@ -1,180 +1,186 @@
-/* Workspace: 6 espacios (2 filas x 3), paneles intercambiables, bloqueables y redimensionables. */
+/* Workspace por acoplamiento: los paneles se insertan en cualquier lado y empujan a los vecinos. */
 (function () {
   "use strict";
-  var KEY = "erizocut.layout.v2";
-  var P = { library: "🗂 Biblioteca", preview: "🖼 Vista previa", inspector: "⚙ Inspector", keyframes: "◇ Fotogramas clave", timeline: "☰ Línea de tiempo" };
+  var KEY = "erizocut.layout.v6";
+  var P = {
+    library: { n: "Biblioteca", i: "🗂" }, preview: { n: "Vista previa", i: "🖼" }, inspector: { n: "Inspector", i: "⚙" },
+    keyframes: { n: "Fotogramas clave", i: "◇" }, timeline: { n: "Línea de tiempo", i: "☰" }
+  };
   var IDS = Object.keys(P);
-  function def() {
-    return { tools: 1, rows: [1.7, 1], slots: [
-      { p: "library", v: 1, l: 0, g: 0.8 }, { p: "preview", v: 1, l: 0, g: 2 }, { p: "inspector", v: 1, l: 0, g: 1.1 },
-      { p: "timeline", v: 1, l: 0, g: 1 }, { p: null, v: 0, l: 0, g: 1 }, { p: null, v: 0, l: 0, g: 1 } ] };
+  function L(id) { return { t: "p", id: id }; }
+  function B(dir, a) { return { t: "s", dir: dir, kids: a.map(function (x) { return x[0]; }), w: a.map(function (x) { return x[1]; }) }; }
+  var PRESETS = {
+    default: { n: "Predeterminada", mk: function () { return B("v", [[B("h", [[L("library"), 1], [L("preview"), 2.3], [L("inspector"), 1.1]]), 1.5], [L("timeline"), 1]]); } },
+    short: { n: "Short", mk: function () { return B("h", [[B("v", [[L("library"), 1], [L("timeline"), 1.25]]), 2.3], [L("preview"), 1], [L("inspector"), 1]]); } },
+    anim: { n: "Animación", mk: function () { return B("v", [[B("h", [[L("preview"), 2], [L("inspector"), 1.1]]), 1.4], [B("h", [[L("keyframes"), 1.3], [L("timeline"), 2]]), 1]]); } },
+    all: { n: "Todo a la vista", mk: function () { return B("v", [[B("h", [[L("library"), 1], [L("preview"), 1.6], [L("inspector"), 1]]), 1.3], [B("h", [[L("keyframes"), 1], [L("timeline"), 2.6]]), 1]]); } },
+    focus: { n: "Vista previa grande", mk: function () { return B("h", [[B("v", [[L("preview"), 1.7], [L("timeline"), 1]]), 2], [L("inspector"), 1]]); } }
+  };
+  var S, nodes = {}, rootEl, park, banner, placing = null, dragId = null, timer;
+
+  function sum(a) { return a.reduce(function (x, y) { return x + y; }, 0); }
+  function el(t, c) { var e = document.createElement(t); if (c) e.className = c; return e; }
+  function valid(n, seen) {
+    if (!n) return false;
+    if (n.t === "p") { if (!P[n.id] || seen[n.id]) return false; seen[n.id] = 1; return true; }
+    return n.t === "s" && (n.dir === "h" || n.dir === "v") && n.kids && n.kids.length >= 2 && n.w && n.w.length === n.kids.length &&
+      n.w.every(function (x) { return x > 0; }) && n.kids.every(function (k) { return valid(k, seen); });
   }
-  function load() {
-    try {
-      var s = JSON.parse(localStorage.getItem(KEY)), seen = {};
-      if (s && s.slots && s.slots.length === 6 && s.rows) {
-        s.slots.forEach(function (x) { if (x.p && (!P[x.p] || seen[x.p])) x.p = null; if (x.p) seen[x.p] = 1; });
-        return s;
-      }
-    } catch (e) {}
-    return def();
-  }
-  var S = load(), nodes = {}, ws, rowEl = [], hs, slotEl = [], timer;
+  try { S = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  if (!S || !("root" in S) || (S.root !== null && !valid(S.root, {}))) S = { root: PRESETS.default.mk() };
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
-  function el(t, c, a) { var e = document.createElement(t); if (c) e.className = c; if (a) for (var k in a) e.setAttribute(k, a[k]); return e; }
   function refit() {
     clearTimeout(timer);
-    timer = setTimeout(function () {
-      window.dispatchEvent(new Event("resize"));
-      var b = document.getElementById("preview-fit"); if (b) b.click();
-    }, 150);
+    timer = setTimeout(function () { try { if (window.editor && window.editor.setPreviewZoom) window.editor.updatePreviewBoxSize(); } catch (e) {} }, 150);
   }
-  function commit() { render(); save(); refit(); }
-  function slotOf(pid) { return S.slots.findIndex(function (s) { return s.v && s.p === pid; }); }
-  function flash(i) { var r = slotEl[i].root; r.classList.remove("shake"); void r.offsetWidth; r.classList.add("shake"); }
+  function commit() { if (S.root) S.root = norm(S.root); render(); save(); refit(); }
 
-  function assign(i, pid) {
-    var s = S.slots[i]; if (s.l) return flash(i);
-    if (pid) {
-      var j = S.slots.findIndex(function (x, k) { return k !== i && x.p === pid; });
-      if (j >= 0) { if (S.slots[j].l) return flash(j); S.slots[j].p = s.p; }
+  /* ---- árbol de paneles ---- */
+  function leaves(n, o) { o = o || []; if (!n) return o; if (n.t === "p") o.push(n); else n.kids.forEach(function (k) { leaves(k, o); }); return o; }
+  function byId(id) { return leaves(S.root).filter(function (x) { return x.id === id; })[0]; }
+  function where(t, n, p, i) {
+    if (!n) return null; if (n === t) return { p: p, i: i };
+    if (n.t === "s") for (var k = 0; k < n.kids.length; k++) { var r = where(t, n.kids[k], n, k); if (r) return r; }
+    return null;
+  }
+  function norm(n) {
+    if (n.t === "p") return n;
+    var kids = [], w = [];
+    n.kids.forEach(function (k, i) {
+      k = norm(k);
+      if (k.t === "s" && k.dir === n.dir) { var s = sum(k.w); k.kids.forEach(function (c, j) { kids.push(c); w.push(n.w[i] * k.w[j] / s); }); }
+      else { kids.push(k); w.push(n.w[i]); }
+    });
+    n.kids = kids; n.w = w; return n;
+  }
+  function insert(T, N, zone) {
+    var dir = zone === "l" || zone === "r" ? "h" : "v", before = zone === "l" || zone === "t", f = where(T, S.root, null, 0);
+    if (f.p && f.p.dir === dir) {
+      var k = f.p.kids.indexOf(T), w = f.p.w[k] / 2;
+      f.p.w[k] = w; f.p.kids.splice(before ? k : k + 1, 0, N); f.p.w.splice(before ? k : k + 1, 0, w);
+    } else {
+      var box = { t: "s", dir: dir, kids: before ? [N, T] : [T, N], w: [1, 1] };
+      if (f.p) f.p.kids[f.i] = box; else S.root = box;
     }
-    s.p = pid; s.v = 1; commit();
   }
-  function closeSlot(i) { var s = S.slots[i]; if (s.l) return flash(i); s.v = 0; s.p = null; commit(); }
-  function place(pid) {
-    var i = slotOf(pid); if (i >= 0) return closeSlot(i);
-    var t = S.slots.findIndex(function (s) { return s.v && !s.p; });
-    if (t < 0) t = S.slots.findIndex(function (s) { return !s.v; });
-    if (t < 0) t = S.slots.findIndex(function (s) { return !s.l; });
-    if (t < 0) return;
-    S.slots[t].v = 1; S.slots[t].p = null; assign(t, pid);
+  function remove(T) {
+    var f = where(T, S.root, null, 0); if (!f) return;
+    if (!f.p) { S.root = null; return; }
+    var P0 = f.p; P0.kids.splice(f.i, 1); P0.w.splice(f.i, 1);
+    if (P0.kids.length === 1) { var g = where(P0, S.root, null, 0); if (g.p) g.p.kids[g.i] = P0.kids[0]; else S.root = P0.kids[0]; }
   }
-
-  function mkSlot(i) {
-    var root = el("div", "ws-slot"), head = el("div", "ws-head"), body = el("div", "ws-body");
-    var grip = el("span", "ws-grip"); grip.textContent = "⋮⋮";
-    var sel = el("select", "", { title: "Elegir panel" });
-    sel.innerHTML = '<option value="">— vacío —</option>' + IDS.map(function (k) { return '<option value="' + k + '">' + P[k] + "</option>"; }).join("");
-    var lock = el("button", "ws-btn ws-lock", { title: "Bloquear / desbloquear" }), cls = el("button", "ws-btn", { title: "Quitar espacio" });
-    cls.textContent = "✕";
-    head.append(grip, sel, lock, cls); root.append(head, body);
-    sel.onchange = function () { assign(i, sel.value || null); sel.value = S.slots[i].p || ""; };
-    lock.onclick = function () { S.slots[i].l = S.slots[i].l ? 0 : 1; commit(); };
-    cls.onclick = function () { closeSlot(i); };
-    head.onmousedown = function (e) { root.draggable = !S.slots[i].l && !e.target.closest("select,button"); };
-    root.ondragstart = function (e) { if (!root.draggable) return e.preventDefault(); e.dataTransfer.setData("text/plain", String(i)); root.classList.add("dragging"); };
-    root.ondragend = function () { root.draggable = false; root.classList.remove("dragging"); slotEl.forEach(function (x) { x.root.classList.remove("over"); }); };
-    root.ondragover = function (e) { e.preventDefault(); root.classList.add("over"); };
-    root.ondragleave = function () { root.classList.remove("over"); };
-    root.ondrop = function (e) {
-      e.preventDefault(); root.classList.remove("over");
-      var a = parseInt(e.dataTransfer.getData("text/plain"), 10); if (isNaN(a) || a === i) return;
-      if (S.slots[a].l || S.slots[i].l) return flash(S.slots[i].l ? i : a);
-      var t = S.slots[a].p; S.slots[a].p = S.slots[i].p; S.slots[i].p = t; commit();
-    };
-    return { root: root, body: body, sel: sel, lock: lock, cls: cls };
+  function move(id, T, zone) {
+    var A = byId(id); if (!A || A === T) return;
+    if (zone === "c") { var t = A.id; A.id = T.id; T.id = t; return commit(); }
+    remove(A); insert(T, A, zone); commit();
+  }
+  function autoPlace(id) {
+    var dir = id === "timeline" ? "v" : "h";
+    S.root = S.root ? B(dir, [[S.root, dir === "v" ? 2.2 : 3.2], [L(id), 1]]) : L(id); commit();
   }
 
-  function vsplit(sp, a, b) {
-    sp.onpointerdown = function (e) {
-      e.preventDefault(); sp.setPointerCapture(e.pointerId); sp.classList.add("active"); document.body.classList.add("ws-dragging");
-      var x0 = e.clientX, wa = slotEl[a].root.offsetWidth, wb = slotEl[b].root.offsetWidth, sum = S.slots[a].g + S.slots[b].g;
-      sp.onpointermove = function (ev) {
-        var nw = Math.max(110, Math.min(wa + wb - 110, wa + ev.clientX - x0));
-        S.slots[a].g = nw / (wa + wb) * sum; S.slots[b].g = sum - S.slots[a].g;
-        slotEl[a].root.style.flex = S.slots[a].g + " 1 0px"; slotEl[b].root.style.flex = S.slots[b].g + " 1 0px";
+  function bindBar(sp, n, i) {
+    sp.title = "Arrastra para cambiar el tamaño · doble clic = igualar";
+    sp.onpointerdown = function (ev) {
+      ev.preventDefault(); sp.setPointerCapture(ev.pointerId); sp.classList.add("active"); document.body.classList.add("ws-dragging");
+      var a = sp.previousElementSibling, b = sp.nextElementSibling, h = n.dir === "h", wa = h ? a.offsetWidth : a.offsetHeight, wb = h ? b.offsetWidth : b.offsetHeight;
+      var p0 = h ? ev.clientX : ev.clientY, tot = n.w[i] + n.w[i + 1], min = h ? 100 : 80;
+      sp.onpointermove = function (me) {
+        var kk = (window.ErizoUI && window.ErizoUI.k) || 1, x = Math.max(min, Math.min(wa + wb - min, wa + ((h ? me.clientX : me.clientY) - p0) / kk));
+        n.w[i] = x / (wa + wb) * tot; n.w[i + 1] = tot - n.w[i]; a.style.flex = n.w[i] + " 1 0px"; b.style.flex = n.w[i + 1] + " 1 0px";
       };
-      sp.onpointerup = function () {
-        sp.onpointermove = sp.onpointerup = null; sp.classList.remove("active"); document.body.classList.remove("ws-dragging"); save(); refit();
-      };
+      sp.onpointerup = function () { sp.onpointermove = sp.onpointerup = null; sp.classList.remove("active"); document.body.classList.remove("ws-dragging"); save(); refit(); };
     };
-    sp.ondblclick = function () { var m = (S.slots[a].g + S.slots[b].g) / 2; S.slots[a].g = S.slots[b].g = m; commit(); };
-  }
-  function hsplit(sp) {
-    sp.onpointerdown = function (e) {
-      e.preventDefault(); sp.setPointerCapture(e.pointerId); sp.classList.add("active"); document.body.classList.add("ws-dragging");
-      var y0 = e.clientY, ha = rowEl[0].offsetHeight, hb = rowEl[1].offsetHeight, sum = S.rows[0] + S.rows[1];
-      sp.onpointermove = function (ev) {
-        var nh = Math.max(90, Math.min(ha + hb - 90, ha + ev.clientY - y0));
-        S.rows[0] = nh / (ha + hb) * sum; S.rows[1] = sum - S.rows[0];
-        rowEl[0].style.flex = S.rows[0] + " 1 0px"; rowEl[1].style.flex = S.rows[1] + " 1 0px";
-      };
-      sp.onpointerup = function () {
-        sp.onpointermove = sp.onpointerup = null; sp.classList.remove("active"); document.body.classList.remove("ws-dragging"); save(); refit();
-      };
-    };
-    sp.ondblclick = function () { S.rows = [1.7, 1]; commit(); };
+    sp.ondblclick = function () { n.w[i] = n.w[i + 1] = (n.w[i] + n.w[i + 1]) / 2; commit(); };
   }
 
+  /* ---- zonas de acoplamiento ---- */
+  function zoneOf(e, root, center) {
+    var r = root.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+    if (center && x > 0.28 && x < 0.72 && y > 0.28 && y < 0.72) return "c";
+    var dx = (x - 0.5) * r.width, dy = (y - 0.5) * r.height;
+    return Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? "l" : "r") : (dy < 0 ? "t" : "b");
+  }
+  function showDrop(root, z) {
+    var d = root.querySelector(".ws-drop"), s = d.style; s.display = "block";
+    s.left = z === "r" ? "50%" : z === "c" ? "20%" : "0"; s.top = z === "b" ? "50%" : z === "c" ? "20%" : "0";
+    s.width = z === "l" || z === "r" ? "50%" : z === "c" ? "60%" : "100%"; s.height = z === "t" || z === "b" ? "50%" : z === "c" ? "60%" : "100%";
+  }
+  function hideDrops() { rootEl.querySelectorAll(".ws-drop").forEach(function (d) { d.style.display = "none"; }); }
+  function startPlace(id) {
+    if (!S.root) { S.root = L(id); return commit(); }
+    placing = id; document.body.classList.add("ws-placing"); banner.replaceChildren();
+    var t = el("span"); t.textContent = "Elige dónde poner «" + P[id].n + "»: haz clic en el lado de un panel donde quieras insertarlo.";
+    var a = el("button"); a.textContent = "Automático"; a.onclick = function () { var i = placing; endPlace(); autoPlace(i); };
+    var c = el("button"); c.textContent = "Cancelar"; c.onclick = endPlace; banner.append(t, a, c); banner.style.display = "flex";
+  }
+  function endPlace() { placing = null; document.body.classList.remove("ws-placing"); banner.style.display = "none"; hideDrops(); }
+
+  /* ---- DOM ---- */
+  function panelEl(n) {
+    var root = el("div", "ws-panel"), head = el("div", "ws-head"), body = el("div", "ws-body"), drop = el("div", "ws-drop"), cover = el("div", "ws-cover");
+    var t = el("span", "t"), cl = el("button", "ws-btn", { title: "Cerrar panel" });
+    t.textContent = P[n.id].i + " " + P[n.id].n; cl.textContent = "✕"; cl.title = "Cerrar panel";
+    cl.onclick = function () { remove(n); commit(); };
+    head.draggable = true; head.title = "Arrastra a cualquier lado de otro panel (o al centro para intercambiar)";
+    head.ondragstart = function (e) { dragId = n.id; e.dataTransfer.setData("text/plain", n.id); e.dataTransfer.effectAllowed = "move"; root.classList.add("dragging"); };
+    head.ondragend = function () { dragId = null; root.classList.remove("dragging"); hideDrops(); };
+    root.ondragover = function (e) { if (dragId && dragId !== n.id) { e.preventDefault(); showDrop(root, zoneOf(e, root, true)); } };
+    root.ondragleave = function (e) { if (!root.contains(e.relatedTarget)) drop.style.display = "none"; };
+    root.ondrop = function (e) { e.preventDefault(); var id = dragId, z = zoneOf(e, root, true); dragId = null; hideDrops(); move(id, n, z); };
+    cover.onmousemove = function (e) { if (placing) showDrop(root, zoneOf(e, root, false)); };
+    cover.onmouseleave = function () { drop.style.display = "none"; };
+    cover.onclick = function (e) {
+      e.stopPropagation(); if (!placing) return; var id = placing, z = zoneOf(e, root, false); endPlace(); insert(n, L(id), z); commit();
+    };
+    head.append(t, cl); body.appendChild(nodes[n.id]); root.append(head, body, drop, cover);
+    return root;
+  }
+  function build(n) {
+    if (n.t === "p") return panelEl(n);
+    var box = el("div", "ws-box " + n.dir);
+    n.kids.forEach(function (k, i) {
+      if (i) { var sp = el("div", "ws-split " + (n.dir === "h" ? "v" : "h")); box.appendChild(sp); bindBar(sp, n, i - 1); }
+      var c = build(k); c.style.flex = n.w[i] + " 1 0px"; box.appendChild(c);
+    });
+    return box;
+  }
   function render() {
-    [0, 1].forEach(function (r) {
-      var row = rowEl[r], ids = [0, 1, 2].map(function (k) { return r * 3 + k; });
-      var vis = ids.filter(function (i) { return S.slots[i].v; }), hid = ids.filter(function (i) { return !S.slots[i].v; });
-      row.replaceChildren();
-      vis.forEach(function (i, k) {
-        if (k) { var sp = el("div", "ws-split v", { title: "Arrastra para redimensionar · doble clic = igualar" }); row.appendChild(sp); vsplit(sp, vis[k - 1], i); }
-        row.appendChild(slotEl[i].root); slotEl[i].root.style.flex = S.slots[i].g + " 1 0px";
-      });
-      if (hid.length) {
-        var add = el("button", "ws-add", { title: "Agregar espacio" }); add.textContent = "＋";
-        add.onclick = function () { S.slots[hid[0]].v = 1; S.slots[hid[0]].g = 1; commit(); };
-        row.appendChild(add);
-      }
-      row.style.display = vis.length ? "flex" : "none"; row.style.flex = S.rows[r] + " 1 0px";
-    });
-    hs.style.display = rowEl[0].style.display !== "none" && rowEl[1].style.display !== "none" ? "" : "none";
-    S.slots.forEach(function (s, i) {
-      var x = slotEl[i], p = s.p;
-      x.root.classList.toggle("locked", !!s.l); x.sel.value = p || ""; x.sel.disabled = !!s.l; x.cls.disabled = !!s.l;
-      x.lock.textContent = s.l ? "🔒" : "🔓";
-      if (p) x.body.replaceChildren(nodes[p]);
-      else {
-        var em = el("div", "ws-empty"); em.innerHTML = "<div>Espacio vacío</div>";
-        IDS.filter(function (k) { return slotOf(k) < 0; }).forEach(function (k) {
-          var b = el("button"); b.textContent = "＋ " + P[k]; b.onclick = function () { assign(i, k); }; em.appendChild(b);
-        });
-        x.body.replaceChildren(em);
-      }
-    });
-    var tb = document.querySelector(".sidebar"); if (tb) tb.style.display = S.tools ? "" : "none";
-    renderMenu();
+    IDS.forEach(function (k) { park.appendChild(nodes[k]); });
+    rootEl.replaceChildren();
+    if (S.root) rootEl.appendChild(build(S.root));
+    else { var m = el("div", "ws-none"); m.textContent = "No hay paneles. Ábrelos desde Ver → Paneles o elige un modo de estudio."; rootEl.appendChild(m); }
+    renderMenus();
   }
-
-  function renderMenu() {
-    var m = document.getElementById("ws-menu"); if (!m) return; m.replaceChildren();
-    function item(txt, on, fn) {
-      var b = el("button"); b.innerHTML = (on === null ? "" : '<span class="ws-check">' + (on ? "✓" : "") + "</span>") + txt;
-      b.onclick = function () { fn(); }; m.appendChild(b);
+  function item(box, txt, on, fn) {
+    var b = el("button"); b.innerHTML = (on === null ? "" : '<span class="ws-check">' + (on ? "✓" : "") + "</span>") + txt; b.onclick = fn; box.appendChild(b);
+  }
+  function renderMenus() {
+    var ver = document.getElementById("ws-ver"), win = document.getElementById("ws-menu");
+    if (ver) {
+      ver.replaceChildren(); var d = el("div", "ws-mlabel"); d.textContent = "Paneles"; ver.appendChild(d);
+      IDS.forEach(function (k) {
+        var n = byId(k);
+        item(ver, P[k].i + " " + P[k].n, !!n, function () { if (!n) return startPlace(k); remove(n); commit(); });
+      });
     }
-    function hr() { m.appendChild(el("hr")); }
-    IDS.forEach(function (k) { item(P[k], slotOf(k) >= 0, function () { place(k); }); });
-    hr();
-    S.slots.forEach(function (s, i) { item("Espacio " + (i + 1) + (s.l ? " 🔒" : ""), !!s.v, function () { if (s.v) closeSlot(i); else { s.v = 1; s.g = 1; commit(); } }); });
-    hr();
-    item("Barra de herramientas", !!S.tools, function () { S.tools = S.tools ? 0 : 1; commit(); });
-    item("6 paneles (3×2)", null, function () {
-      S.slots.forEach(function (s) { s.v = 1; s.g = 1; }); S.rows = [1, 1];
-      IDS.forEach(function (k) { if (slotOf(k) < 0) { var t = S.slots.findIndex(function (s) { return !s.p && !s.l; }); if (t >= 0) S.slots[t].p = k; } });
-      commit();
-    });
-    item("↺ Restablecer disposición", null, function () { S = def(); commit(); });
+    if (win) {
+      win.replaceChildren();
+      Object.keys(PRESETS).forEach(function (k) { item(win, PRESETS[k].n, null, function () { endPlace(); S = { root: PRESETS[k].mk() }; commit(); }); });
+    }
   }
 
   document.addEventListener("DOMContentLoaded", function () {
     var main = document.querySelector(".main"), right = document.querySelector(".right-panel");
     var center = document.querySelector(".center"), tl = document.querySelector(".timeline-container");
     if (!main || !right || !center || !tl) return;
-    var lib = el("div", "ws-lib"), first = right.querySelector(".prop-group"); if (first) lib.appendChild(first);
-    var kf = el("div", "ws-kf");
-    kf.innerHTML = "<div style=\"font-size:22px\">◇</div><b>Fotogramas clave</b><p>Panel reservado para animar propiedades (posición, escala, rotación, perspectiva) a lo largo del tiempo. Próximamente.</p>";
-    nodes = { library: lib, preview: center, inspector: right, keyframes: kf, timeline: tl };
-    ws = el("div", "", { id: "ws" });
-    rowEl = [el("div", "ws-row"), el("div", "ws-row")];
-    hs = el("div", "ws-split h", { title: "Arrastra para redimensionar · doble clic = restablecer" });
-    ws.append(rowEl[0], hs, rowEl[1]); main.appendChild(ws); hsplit(hs);
-    for (var i = 0; i < 6; i++) slotEl.push(mkSlot(i));
-    render(); refit();
-    window.addEventListener("resize", refit);
+    nodes = {
+      library: document.getElementById("panel-library"), preview: center, inspector: right,
+      keyframes: document.getElementById("panel-keyframes"), timeline: tl
+    };
+    rootEl = el("div"); rootEl.id = "ws"; park = el("div"); park.id = "ws-park"; banner = el("div", "ws-banner"); banner.style.display = "none";
+    main.appendChild(rootEl); document.body.append(park, banner);
+    document.addEventListener("keydown", function (e) { if (placing && e.key === "Escape") endPlace(); }, true);
+    render(); refit(); window.addEventListener("resize", refit);
   });
 })();
