@@ -1,0 +1,214 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1942 - Grid 4 filas - FB Modal - Full HD - 1:1</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Pacifico&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root{--bg:#0f0f0f;--card:#1a1a1a;--card2:#252525;--border:#333;--text:#FFF8E7;--muted:#aaa;--accent:#B8960C;--modalBg:rgba(0,0,0,.92);--checker1:#2a2a2a;--checker2:#1e1e1e}
+[data-theme="light"]{--bg:#f5f3ef;--card:#ffffff;--card2:#f0ebe3;--border:#e0d5c5;--text:#221A0A;--muted:#7a6a55;--accent:#B8960C;--modalBg:rgba(245,243,239,.96);--checker1:#e8e2d9;--checker2:#f5f3ef}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text);scrollbar-width:thin;scrollbar-color:var(--border) var(--bg)}
+body.modal-open{overflow:hidden}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:var(--bg)}
+*::-webkit-scrollbar-thumb{background:var(--border);border:2px solid var(--bg)}
+*::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+*::-webkit-scrollbar-corner{background:var(--bg)}
+.header{position:sticky;top:0;z-index:30;background:var(--card);border-bottom:1px solid var(--border);padding:12px 18px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:14px;font-weight:900;margin:0}
+.btn{height:38px;padding:0 16px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-weight:800;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.btn:hover{border-color:var(--accent)}
+.btn-accent{background:var(--accent);color:#000;border-color:var(--accent);font-weight:900}
+.btn-primary{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn-small{height:32px;padding:0 12px;font-size:11px}
+.btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.grid-wrap{max-width:1400px;margin:0 auto;padding:18px}
+.grid-title{font-size:11px;font-weight:800;opacity:.6;letter-spacing:1px;margin-bottom:12px;display:flex;justify-content:space-between}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);cursor:pointer;overflow:hidden}
+.card:hover{border-color:var(--accent)}
+.thumb-box{width:100%;aspect-ratio:1080/1920;background-color:var(--checker1);background-image:linear-gradient(45deg,var(--checker2) 25%,transparent 25%,transparent 75%,var(--checker2) 75%,var(--checker2)),linear-gradient(45deg,var(--checker2) 25%,transparent 25%,transparent 75%,var(--checker2) 75%,var(--checker2));background-size:20px 20px;background-position:0 0,10px 10px;overflow:hidden}
+.thumb-box canvas{width:100%;height:100%;display:block}
+.card-info{padding:8px}
+.card-title{font-size:11px;font-weight:800;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-meta{font-size:9px;opacity:.5;margin-top:2px}
+.modal{position:fixed;inset:0;background:var(--modalBg);z-index:100;display:none;flex-direction:column;overflow:hidden}
+.modal.open{display:flex}
+.modal-top{height:56px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0}
+.modal-title{font-size:12px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%}
+.modal-actions{display:flex;gap:6px;align-items:center}
+.modal-body{flex:1;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--accent) var(--bg);display:flex;justify-content:center;align-items:center;padding:16px;background:var(--bg);background-image:linear-gradient(45deg,var(--checker2) 25%,transparent 25%,transparent 75%,var(--checker2) 75%,var(--checker2)),linear-gradient(45deg,var(--checker2) 25%,transparent 25%,transparent 75%,var(--checker2) 75%,var(--checker2));background-size:32px 32px;background-position:0 0,16px 16px}
+.modal-body.fit{align-items:center;justify-content:center}
+.modal-body.fit img{max-width:100%;max-height:85vh;object-fit:contain}
+.modal-body.real{align-items:flex-start;justify-content:center}
+.modal-body.real img{width:1080px;height:1920px;max-width:none;max-height:none;margin:auto}
+#modalImg{flex-shrink:0;background:transparent;box-shadow:0 0 0 1px var(--border)}
+</style>
+</head><body data-theme="dark">
+<div class="header"><h1>MM/LT — 1942 — 39 EPISODIOS — FULL HD 1080x1920 — 1:1 — 4 COLUMNAS</h1><div style="display:flex;gap:8px"><button class="btn" id="themeBtn">🌙 Oscuro</button><button class="btn btn-primary" id="dlAllBtn">⬇️ ZIP TODO</button></div></div>
+<div class="grid-wrap"><div class="grid-title"><span>CLIC PARA EXPANDIR</span><span id="count"></span></div><div class="grid" id="grid"></div></div>
+<div class="modal" id="modal">
+<div class="modal-top"><div class="modal-title" id="modalTitle">01/39</div><div class="modal-actions"><button class="btn btn-small" id="btnZoomOut">➖</button><span id="zoomPercent" style="font-size:11px;font-weight:800;min-width:42px;text-align:center">100%</span><button class="btn btn-small" id="btnZoomIn">➕</button><button class="btn btn-small active" id="btnFit">🔍 Ajustar a pantalla</button><button class="btn btn-small" id="btnReal">↔️ Real 100%</button><button class="btn btn-small btn-accent" id="btnDownload">⬇️ PNG Full HD</button><button class="btn btn-small" id="btnClose">✕</button></div></div>
+<div class="modal-body fit" id="modalBody"><img id="modalImg" /></div>
+</div>
+<script>
+const Jc=["#58D926","#FFBE0B","#FF0000","#FF006E","#8338EC","#3770FF","#2A5F2A","#A8E635","#7ED321","#D92344","#D4BFA3","#C13B32","#5E1210","#C9A89A","#111117","#B78A2E","#0A8F76","#CC6A00","#0A6BC2","#8FC43A","#B94A4A","#7A45D1","#8FBF1F","#B5C03A","#28B50E","#0AB86A","#1A8A4A","#C2B000","#B89A28","#C95E00","#0A9CC2","#12B89F","#5BBBC2","#B86FA8","#B91E4A","#8A4AC2"];
+const M0=[
+{id:1,date:"Jan 3, 1942",title:"Hop, Skip and a Chump",gancho:"Dicen que es el arranque épico de 1942 y yo solo veo a un cuervo con insomnio por una ardilla castrosa 😴🐦💢",series:"MM"},
+{id:2,date:"Jan 17, 1942",title:"Porky's Pastry Pirates",gancho:"Porky abre pastelería y abeja con mosca le hacen boicot gourmet, yo sería el cliente que se ríe 🐷🍰🐝",series:"LT"},
+{id:3,date:"Jan 17, 1942",title:"The Bird Came C.O.D.",gancho:"Conrad el gato quiere entregar una planta y termina entregando puro caos, me representa en delivery 😺📦💥",series:"MM"},
+{id:4,date:"Jan 30, 1942",title:"Aloha Hooey",gancho:"Cecil quiere ver hula y termina con gorila celoso y tres bebés, mi vida amorosa resumida 🌴💃🦍",series:"MM"},
+{id:5,date:"Feb 14, 1942",title:"Who's Who in the Zoo",gancho:"Porky cuidador en zoo con chistes malos y león esperando helado, yo esperando quincena igual 🦁🍦😂",series:"LT"},
+{id:6,date:"Feb 21, 1942",title:"Porky's Cafe",gancho:"Porky mesero con gadgets y Conrad cocinero peleando con hormiga, mi cocina un lunes cualquiera 🐷☕️🐜",series:"LT"},
+{id:7,date:"Feb 28, 1942",title:"Conrad the Sailor",gancho:"Conrad marinero y Daffy troll profesional le sabotea todo, literal yo trabajando con mi primo 😺⚓️🦆",series:"MM"},
+{id:8,date:"Mar 14, 1942",title:"Crazy Cruise",gancho:"Tour mundial en 7 minutos y Bugs de cameo disparando, mi itinerario de viaje soñado y barato 🌍✈️🐰",series:"MM"},
+{id:9,date:"Mar 28, 1942",title:"The Wabbit Who Came to Supper",gancho:"Elmer hereda 3 millones si no daña animales y Bugs se muda a su casa, estafa piramidal experta 🐰🏠💰",series:"MM"},
+{id:10,date:"Apr 11, 1942",title:"Horton Hatches the Egg",gancho:"Horton empolla huevo ajeno 100% comprometido y sale elefante-pájaro, yo cuidando plantas ajenas 🐘🥚💛",series:"MM"},
+{id:11,date:"Apr 11, 1942",title:"Saps in Chaps",gancho:"Chistes de vaqueros y pony que nunca deja subir al mensajero, yo intentando subirme a la vida 🤠🐎🤦‍♂️",series:"LT"},
+{id:12,date:"Apr 25, 1942",title:"Dog Tired",gancho:"Dos perritos peleando por hueso terminan en zoo con hiena riéndose, yo y mi hermano por el control 🐶🦴😂",series:"MM"},
+{id:13,date:"May 2, 1942",title:"Daffy's Southern Exposure",gancho:"Daffy no quiere migrar y casi lo cocinan zorro y comadreja, yo diciendo no tengo frío y congelándome 🦆❄️🦊",series:"LT"},
+{id:14,date:"May 2, 1942",title:"The Wacky Wabbit",gancho:"Elmer busca oro para la guerra y Bugs le hace bullying minero, mi jefe y yo en home office ⛏️🐰😜",series:"MM"},
+{id:15,date:"May 9, 1942",title:"The Draft Horse",gancho:"Caballo quiere alistarse al ejército y lo rechazan por caballo, yo aplicando a trabajos con 5 años experiencia 🐴💪🇺🇸",series:"MM"},
+{id:16,date:"May 23, 1942",title:"Nutty News",gancho:"Elmer narra noticiero con gags absurdos, básicamente Twitter en 1942 antes de Twitter 📰🤪🎙️",series:"LT"},
+{id:17,date:"May 23, 1942",title:"Lights Fantastic",gancho:"Luces de Nueva York cobran vida y hacen show, yo prendo led y ya me siento en Broadway 💡🌃✨",series:"MM"},
+{id:18,date:"Jun 6, 1942",title:"Hobby Horse-Laffs",gancho:"Parodia de hobbies raros de la gente, yo viendo quien colecciona piedras y sintiéndome normal 🛠️🤹‍♂️😂",series:"LT"},
+{id:19,date:"Jun 13, 1942",title:"Hold the Lion, Please",gancho:"León quiere probar que es rey y Bugs lo humilla, yo intentando ser adulto responsable 🦁👑🐰",series:"MM"},
+{id:20,date:"Jun 27, 1942",title:"Gopher Goofy",gancho:"Dos topos uno lento llamado Virgil destrozan jardín, yo y mi ansiedad destruyendo mi paz interior 🐿️🌱😵‍💫",series:"LT"},
+{id:21,date:"Jun 27, 1942",title:"Double Chaser",gancho:"Ratón perseguido por gato contrata bulldog dormido de guardaespaldas, mi estrategia para evitar gente 🐭🐱🐶",series:"MM"},
+{id:22,date:"Jul 11, 1942",title:"Wacky Blackout",gancho:"Granja en apagón de guerra con gags de guerra, yo apagando luz para no ver mi desorden 🌑🔦😂",series:"LT"},
+{id:23,date:"Jul 11, 1942",title:"Bugs Bunny Gets the Boid",gancho:"Buitre bebé debe cazar conejo y Bugs le da clases de fracaso, yo enseñando a mi sobrino 🐰🦅🤣",series:"MM"},
+{id:24,date:"Aug 1, 1942",title:"Foney Fables",gancho:"Cuentos de hadas mal contados con niño que grita lobo cada 5 segundos, yo contando mi día 📚🐺😆",series:"MM"},
+{id:25,date:"Aug 1, 1942",title:"The Ducktators",gancho:"Hitler Mussolini y Tojo como patos en granja, sátira que hoy sería baneada en 2 segundos 🦆⚔️😬",series:"LT"},
+{id:26,date:"Aug 8, 1942",title:"The Squawkin' Hawk",gancho:"Henery Hawk debut quiere pollo pero su mamá le da gusano, yo pidiendo aumento y me dan gracias 🐔🦅😤",series:"MM"},
+{id:27,date:"Aug 22, 1942",title:"Eatin' on the Cuff",gancho:"Polilla ligando con abeja mientras pianista narra en vivo, mi cita más normal del año 🦋💡💃",series:"LT"},
+{id:28,date:"Aug 22, 1942",title:"Fresh Hare",gancho:"Elmer montie quiere arrestar a Bugs en nieve y termina arrestado por el frío, justicia poética 🐰❄️👮‍♂️",series:"MM"},
+{id:29,date:"Sep 5, 1942",title:"The Impatient Patient",gancho:"Daffy con hipo va al doctor y doctor se vuelve monstruo Chloe, yo yendo al médico por cabeza 🦆🤧👹",series:"LT"},
+{id:30,date:"Sep 5, 1942",title:"Fox Pop",gancho:"Zorro se pinta plateado para estafar granja y lo enjaulan, mi intento de ser influencer fallido 🦊🎨🪤",series:"MM"},
+{id:31,date:"Sep 10, 1942",title:"The Dover Boys at Pimento University",gancho:"Tres ñoños rescatan a Dora de villano y viejito en traje baño interrumpe, cine arte puro 🎓👧🏃‍♂️",series:"MM"},
+{id:32,date:"Oct 3, 1942",title:"The Hep Cat",gancho:"Gato callejero se topa con perro Willoughby que lo quiere atrapar, primera a color y ya pelean 😼🎷🐶",series:"LT"},
+{id:33,date:"Oct 17, 1942",title:"The Sheepish Wolf",gancho:"Lobo disfrazado de oveja y perro pastor no se deja, yo con disfraz de persona responsable 🐺🐑😏",series:"MM"},
+{id:34,date:"Oct 24, 1942",title:"The Daffy Duckaroo",gancho:"Daffy vaquero se enamora de pata neoyorquina y su novio gigante lo quiere matar, Tinder 1942 🦆🤠🌵",series:"LT"},
+{id:35,date:"Oct 31, 1942",title:"The Hare-Brained Hypnotist",gancho:"Elmer hipnotiza a Bugs y termina hipnotizado él, yo intentando manipular a mi gato 🐰🧠😵‍💫",series:"MM"},
+{id:36,date:"Nov 21, 1942",title:"A Tale of Two Kitties",gancho:"Babbit y Catstello quieren cazar a Tweety debut y Tweety dice vi un lindo gatito, icónico 🐦🐱🐱😹",series:"MM"},
+{id:37,date:"Dec 5, 1942",title:"My Favorite Duck",gancho:"Porky acampa y Daffy lo acosa protegido por leyes ambientales, mi vecino con bocina a las 7am 🦆🐷🏕️",series:"LT"},
+{id:38,date:"Dec 5, 1942",title:"Ding Dog Daddy",gancho:"Perro enamorado besa estatua de perra y le cae rayo y se enamora más, yo en mis relaciones pasadas 🐶💘🗿",series:"MM"},
+{id:39,date:"Dec 12, 1942",title:"Case of the Missing Hare",gancho:"Bugs sabotea show de mago Ala Bahma y mago termina sacando conejo de su paciencia, magia real 🎩🐰✨",series:"MM"},
+];
+const li=M0.map((e,i)=>{let c={...e};c.color=Jc[i%Jc.length];return c;});
+function getLuminance(hex){let c=hex.replace('#','');if(c.length===3)c=c.split('').map(x=>x+x).join('');let r=parseInt(c.substr(0,2),16)/255,g=parseInt(c.substr(2,2),16)/255,b=parseInt(c.substr(4,2),16)/255;r=r<=0.03928?r/12.92:Math.pow((r+0.055)/1.055,2.4);g=g<=0.03928?g/12.92:Math.pow((g+0.055)/1.055,2.4);b=b<=0.03928?b/12.92:Math.pow((b+0.055)/1.055,2.4);return 0.2126*r+0.7152*g+0.0722*b;}
+function getCombinedColor(hex){let h=hex.toUpperCase();const map={"#C13B32":"#FFF1E6","#5E1210":"#FFD9B3","#C9A89A":"#3B231A","#111117":"#FFE7A0","#B78A2E":"#2A1A02","#0A8F76":"#E6FFF6","#CC6A00":"#FFF0D6","#0A6BC2":"#D6EEFF","#8FC43A":"#122A05","#B94A4A":"#FFF0F0","#7A45D1":"#EDE2FF","#8FBF1F":"#1A2500","#B5C03A":"#1E2205","#28B50E":"#0A2203","#0AB86A":"#032114","#1A8A4A":"#D6FFE6","#C2B000":"#2B1F00","#B89A28":"#201A00","#C95E00":"#FFEED6","#0A9CC2":"#D6EEFF","#12B89F":"#042A24","#5BBBC2":"#0F2A2D","#B86FA8":"#2E0F24","#B91E4A":"#FFE0E8","#8A4AC2":"#EAD9FF"};if(map[h])return map[h];return getLuminance(h)>0.45?"#221A0A":"#FFF8E7";}
+function oi(e,n,mode){
+let t=e.getContext("2d");t.imageSmoothingEnabled=false;let r=1080,l=1920;e.width=r;e.height=l;
+t.fillStyle=n.color;t.fillRect(0,0,r,l);
+let o=50,u=460;t.clearRect(o,u,980,980);t.save();t.strokeStyle='#000000';t.lineWidth=90;t.strokeRect(o+45,u+45,890,890);t.restore();
+t.save();t.textBaseline='top';let padX=30,padY=10,classicH=18,cartoonsH=54,dist=38,frameThick=90;
+t.font='500 '+classicH+'px Inter';let wClassic=t.measureText("the classic").width;
+t.font='400 '+cartoonsH+'px Pacifico';let wCartoons=t.measureText("Cartoons").width;
+let innerRight=o+980-frameThick;let innerBottom=u+980-frameThick;
+let lx=innerRight-Math.max(wClassic,wCartoons)-padX;let ly=innerBottom-(classicH+dist+cartoonsH)-padY;
+t.font='500 '+classicH+'px Inter';t.fillStyle='#000000';t.fillText("the classic",lx,ly+1);
+t.fillStyle='#B8960C';t.fillText("the classic",lx,ly);
+t.save();t.translate(lx,ly+dist);t.rotate(-10*Math.PI/180);t.font='400 '+cartoonsH+'px Pacifico';
+t.fillStyle='#000000';t.fillText("Cartoons",0,2);t.fillStyle='#000000';t.fillText("Cartoons",1,1);t.fillStyle='rgba(0,0,0,0.9)';t.fillText("Cartoons",0,1);t.fillStyle='#111111';t.fillText("Cartoons",0,0);t.restore();t.restore();
+let textMode=mode||'combinado';let baseCombined=getCombinedColor(n.color);let lum=getLuminance(n.color);
+let textColor=textMode==='crema'?"#FFF8E7":textMode==='bn'?(lum>0.45?"#000000":"#FFFFFF"):baseCombined;
+t.textBaseline="top";t.font="700 28px Inter";let epStr=String(n.id).padStart(2,"0")+"/39";let epW=t.measureText(epStr).width;
+t.fillStyle="rgba(0,0,0,0.22)";t.fillRect(90,42-6,epW+24,34);t.fillStyle="#FFFFFF";t.fillText(epStr,90+12,42);
+t.font="500 29px Inter";t.fillStyle="#FFF8E7";let s=t.measureText(n.date).width;t.fillText(n.date,r-90-s,42);
+t.fillStyle=textColor;t.font='500 62px Inter';t.fillText("the classic",90,122);t.save();t.translate(90,260);t.rotate(-10*Math.PI/180);t.font='400 183px Pacifico';t.fillText("Cartoons",0,0);t.restore();
+let d=u+980+45;t.font="500 48px Inter";t.fillStyle=textColor;let h=n.gancho.split(" "),p="",w=d+20,k=900,S=48,lines=0;
+for(let R=0;R<h.length;R++){let c=p+h[R]+" ";if(t.measureText(c).width>k&&R>0){t.fillText(p,90,w,k);p=h[R]+" ";w+=S+25;lines++;if(lines>=4||w>l-150)break}else p=c}
+t.fillText(p,90,w,k);
+t.font="700 28px Inter";let mmPart=n.series;let titlePart=" • "+n.title.toUpperCase();let fullFooter=mmPart+titlePart;
+if(fullFooter.length>45){t.font="700 22px Inter";}if(fullFooter.length>58){t.font="700 18px Inter";}
+t.fillStyle="rgba(0,0,0,0.22)";let mmW=t.measureText(mmPart).width;t.fillRect(90,l-71-6,mmW+24,34);t.fillStyle="#FFFFFF";t.fillText(mmPart,90+12,l-71);
+let titleX=90+12+mmW+24+10;t.fillText(titlePart,titleX,l-71,900-titleX+90);
+}
+let current=0;
+const grid=document.getElementById('grid');
+const modal=document.getElementById('modal');
+const modalImg=document.getElementById('modalImg');
+const modalBody=document.getElementById('modalBody');
+const modalTitle=document.getElementById('modalTitle');
+function renderGrid(){
+  grid.innerHTML='';
+  li.forEach((ep,i)=>{
+    const card=document.createElement('div');card.className='card';
+    card.innerHTML=`<div class="thumb-box"><canvas id="thumb-${i}"></canvas></div><div class="card-info"><div class="card-title">${String(ep.id).padStart(2,'0')} • ${ep.title}</div><div class="card-meta">${ep.date} • ${ep.series} • Full HD 1080x1920 • 1:1</div></div>`;
+    card.onclick=()=>openModal(i);
+    grid.appendChild(card);
+  });
+  setTimeout(()=>{li.forEach((ep,i)=>{const c=document.getElementById(`thumb-${i}`);if(c) oi(c,ep,'combinado');});},120);
+}
+function openModal(i){
+  current=i;
+  const ep=li[i];
+  const c=document.createElement('canvas');oi(c, ep,'combinado');
+  modalImg.src=c.toDataURL('image/png');
+  modalTitle.textContent=`${String(ep.id).padStart(2,'0')}/39 • ${ep.title} • ${ep.date} • ${ep.series} • ${ep.color} • Full HD 1080x1920 • 1:1 • TRANSPARENTE`;
+  modal.classList.add('open');
+  document.body.classList.add('modal-open');
+  currentZoom=100; isFit=true;
+  setFit();
+}
+let currentZoom=100;
+let isFit=true;
+function applyZoom(z){
+  currentZoom=Math.max(10,Math.min(400,z));
+  const pct=document.getElementById('zoomPercent');
+  if(pct) pct.textContent=currentZoom+'%';
+  if(isFit){
+    modalBody.className='modal-body fit';
+    modalImg.style.width='';modalImg.style.height='';
+    modalImg.style.margin='';
+  } else {
+    modalBody.className='modal-body real';
+    const w=1080*(currentZoom/100); const h=1920*(currentZoom/100);
+    modalImg.style.width=w+'px';modalImg.style.height=h+'px';
+    modalImg.style.margin='auto';
+    requestAnimationFrame(()=>{
+      modalBody.scrollLeft=(modalBody.scrollWidth-modalBody.clientWidth)/2;
+      modalBody.scrollTop=(modalBody.scrollHeight-modalBody.clientHeight)/2;
+    });
+  }
+}
+function setFit(){
+  isFit=true; currentZoom=100;
+  document.getElementById('btnFit').classList.add('active');
+  document.getElementById('btnReal').classList.remove('active');
+  applyZoom(currentZoom);
+}
+function setReal(){
+  isFit=false; currentZoom=100;
+  document.getElementById('btnReal').classList.add('active');
+  document.getElementById('btnFit').classList.remove('active');
+  applyZoom(currentZoom);
+}
+function zoomIn(){ isFit=false; document.getElementById('btnFit').classList.remove('active'); applyZoom(currentZoom+25); }
+function zoomOut(){ isFit=false; document.getElementById('btnFit').classList.remove('active'); applyZoom(currentZoom-25); }
+
+document.getElementById('btnFit').onclick=setFit;
+document.getElementById('btnReal').onclick=setReal;
+document.getElementById('btnZoomIn').onclick=zoomIn;
+document.getElementById('btnZoomOut').onclick=zoomOut;
+
+document.getElementById('btnClose').onclick=()=>{modal.classList.remove('open');document.body.classList.remove('modal-open');};
+modal.onclick=(e)=>{if(e.target===modal || e.target===modalBody){modal.classList.remove('open');document.body.classList.remove('modal-open');}};
+document.getElementById('btnDownload').onclick=()=>{
+  const ep=li[current];
+  const c=document.createElement('canvas');oi(c, ep,'combinado');
+  const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download=`1942-${String(ep.id).padStart(2,'0')}-${ep.series}-${ep.title.replace(/[^a-z0-9]/gi,'_')}-FullHD-1080x1920-1:1-Transp.png`;a.click();
+};
+document.getElementById('themeBtn').onclick=()=>{
+  const cur=document.body.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';
+  document.body.setAttribute('data-theme',next);document.getElementById('themeBtn').textContent=next==='dark'?'🌙 Oscuro':'☀️ Claro';
+};
+document.getElementById('dlAllBtn').onclick=async()=>{
+  const btn=document.getElementById('dlAllBtn');btn.textContent='⏳ ZIP...';const zip=new JSZip();
+  for(let i=0;i<li.length;i++){const c=document.createElement('canvas');oi(c, li[i], 'combinado');const data=c.toDataURL('image/png').split(',')[1];zip.file(`1942-${String(li[i].id).padStart(2,'0')}-${li[i].series}-FullHD-1:1.png`, data, {base64:true});}
+  const content=await zip.generateAsync({type:'blob'});const a=document.createElement('a');a.href=URL.createObjectURL(content);a.download='1942-39-FullHD-1080x1920-1:1.zip';a.click();btn.textContent='⬇️ ZIP TODO';
+};
+(async()=>{await document.fonts.ready;renderGrid();document.getElementById('count').textContent=li.length+' items • 4 columnas • 1:1 • transparente visible';})();
+</script></body></html>
