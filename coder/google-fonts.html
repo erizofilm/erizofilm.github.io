@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Tipográfico — Dark & Light Academia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Transiciones suaves para cambio de tema */
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        /* Scrollbar sutil */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(184, 151, 114, 0.3);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(184, 151, 114, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-[#f7f3eb] text-[#2c241e] dark:bg-[#1a1714] dark:text-[#eae0cc] min-h-screen font-sans antialiased selection:bg-[#b89772]/30">
+
+    <!-- Header Fijo -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-[#f7f3eb]/90 dark:bg-[#1a1714]/90 border-b border-[#d9ceb8] dark:border-[#342e27] shadow-sm transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-3">
+            
+            <!-- Primera Fila: Título, Buscador, Tamaño, Vistas y Tema -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-serif font-bold tracking-tight text-[#2c241e] dark:text-[#eae0cc]">
+                            Archivo Tipográfico
+                        </h1>
+                        <p class="text-xs font-serif italic text-[#6e5d4f] dark:text-[#d4c3a3]/70">
+                            <span id="font-count">0</span> fuentes curadas por estilo
+                        </p>
+                    </div>
+                    <!-- Botón Tema en Móvil -->
+                    <button id="theme-toggle-mobile" type="button" class="lg:hidden p-2.5 rounded-lg bg-[#ebe3d5] dark:bg-[#25211c] border border-[#d9ceb8] dark:border-[#342e27] text-[#2c241e] dark:text-[#d4c3a3] hover:border-[#b89772] transition-all" aria-label="Cambiar tema">
+                        <span class="theme-icon">☀️</span>
+                    </button>
+                </div>
+
+                <!-- Controles: Buscador, Tamaño, Modos de Vista y Tema -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Buscador -->
+                    <div class="relative flex-1 sm:flex-initial sm:w-52">
+                        <input 
+                            type="text" 
+                            id="search-input" 
+                            placeholder="Buscar fuente..." 
+                            class="w-full px-3 py-1.5 text-xs sm:text-sm rounded-lg bg-[#ebe3d5] dark:bg-[#25211c] border border-[#d9ceb8] dark:border-[#342e27] text-[#2c241e] dark:text-[#eae0cc] placeholder-[#6e5d4f]/60 dark:placeholder-[#d4c3a3]/40 focus:outline-none focus:ring-2 focus:ring-[#b89772] transition-all"
+                        >
+                    </div>
+
+                    <!-- Control de Tamaño -->
+                    <div class="flex items-center gap-2 bg-[#ebe3d5] dark:bg-[#25211c] px-3 py-1.5 rounded-lg border border-[#d9ceb8] dark:border-[#342e27]">
+                        <input type="range" id="size-slider" min="16" max="80" value="32" class="w-20 sm:w-24 accent-[#8c6b48] dark:accent-[#b89772] cursor-pointer">
+                        <span id="size-label" class="text-xs font-mono text-[#6e5d4f] dark:text-[#d4c3a3] w-9 text-right">32px</span>
+                    </div>
+
+                    <!-- Modos de Vista: Row, Grid, Sample -->
+                    <div class="flex items-center bg-[#ebe3d5] dark:bg-[#25211c] p-1 rounded-lg border border-[#d9ceb8] dark:border-[#342e27]">
+                        <button type="button" data-view="row" class="view-btn flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md transition-all" title="Vista en filas (Row)">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="12" x2="21" y2="12"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                            <span>Row</span>
+                        </button>
+                        <button type="button" data-view="grid" class="view-btn flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md transition-all" title="Vista en cuadrícula (Grid)">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                                <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                                <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                                <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                            </svg>
+                            <span>Grid</span>
+                        </button>
+                        <button type="button" data-view="sample" class="view-btn flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md transition-all" title="Vista de muestra amplia (Sample)">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 19h16"></path>
+                                <path d="M5 15l4-10 4 10"></path>
+                                <path d="M6.5 12h5"></path>
+                                <circle cx="17.5" cy="12.5" r="2.5"></circle>
+                                <path d="M20 10v5"></path>
+                            </svg>
+                            <span>Sample</span>
+                        </button>
+                    </div>
+
+                    <!-- Botón Tema en Desktop -->
+                    <button id="theme-toggle-desktop" type="button" class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#ebe3d5] dark:bg-[#25211c] border border-[#d9ceb8] dark:border-[#342e27] text-xs font-medium text-[#2c241e] dark:text-[#d4c3a3] hover:border-[#b89772] transition-all">
+                        <span class="theme-icon">☀️</span>
+                        <span class="theme-text">Claro</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Segunda Fila: Texto de Prueba Personalizado y Muestras Rápidas -->
+            <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pt-2 border-t border-[#d9ceb8]/70 dark:border-[#342e27]">
+                <div class="flex items-center gap-2 flex-1">
+                    <input 
+                        type="text" 
+                        id="preview-text-input" 
+                        placeholder="Escribe tu propia frase de prueba para verla en todas las fuentes..." 
+                        class="w-full px-3.5 py-1.5 text-xs sm:text-sm rounded-lg bg-[#ebe3d5] dark:bg-[#25211c] border border-[#d9ceb8] dark:border-[#342e27] text-[#2c241e] dark:text-[#eae0cc] placeholder-[#6e5d4f]/60 dark:placeholder-[#d4c3a3]/40 focus:outline-none focus:ring-2 focus:ring-[#b89772] transition-all shadow-inner"
+                    >
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-xs font-serif italic text-[#6e5d4f] dark:text-[#d4c3a3]/80">Muestras:</span>
+                    <button type="button" data-preset="abecedario" class="preset-btn px-2.5 py-1 rounded-md bg-[#ebe3d5] dark:bg-[#25211c] hover:bg-[#b89772]/20 border border-[#d9ceb8] dark:border-[#342e27] text-[#2c241e] dark:text-[#d4c3a3] text-xs font-serif transition-all">Abecedario</button>
+                    <button type="button" data-preset="pangrama" class="preset-btn px-2.5 py-1 rounded-md bg-[#ebe3d5] dark:bg-[#25211c] hover:bg-[#b89772]/20 border border-[#d9ceb8] dark:border-[#342e27] text-[#2c241e] dark:text-[#d4c3a3] text-xs font-serif transition-all">Pangrama</button>
+                    <button type="button" data-preset="numeros" class="preset-btn px-2.5 py-1 rounded-md bg-[#ebe3d5] dark:bg-[#25211c] hover:bg-[#b89772]/20 border border-[#d9ceb8] dark:border-[#342e27] text-[#2c241e] dark:text-[#d4c3a3] text-xs font-serif transition-all">Números</button>
+                </div>
+            </div>
+
+            <!-- Tercera Fila: Botones de Grupos (con salto de línea automático) -->
+            <div id="category-filters" class="flex flex-wrap items-center gap-2 pt-2 border-t border-[#d9ceb8]/50 dark:border-[#342e27]/60">
+                <!-- Inyectado dinámicamente -->
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div id="fonts-container" class="space-y-10">
+            <!-- Inyectado dinámicamente -->
+        </div>
+    </main>
+
+    <!-- Notificación Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-[#2c241e] dark:bg-[#eae0cc] text-[#f7f3eb] dark:text-[#1a1714] px-4 py-2.5 rounded-lg shadow-xl text-xs sm:text-sm font-medium flex items-center gap-2">
+        <span id="toast-message">Copiado al portapapeles</span>
+    </div>
+
+    <script>
+        // Muestras de texto predefinidas
+        const PRESETS = {
+            abecedario: "A B C D E F G H I J K L M N Ñ O P Q R S T U V W X Y Z — a b c d e f g h i j k l m n ñ o p q r s t u v w x y z",
+            pangrama: "El veloz murciélago hindú comía feliz cardillo y kiwi. La cigüeña tocaba el saxofón detrás del palenque de paja.",
+            numeros: "0 1 2 3 4 5 6 7 8 9 — ¡ ? ¿ ! @ # $ % & * ( ) [ ] { } + - = /"
+        };
+
+        // Catálogo curado agrupado por similitud estilística (1 representante por familia repetida)
+        const CATEGORIES = [
+            {
+                id: "caligrafia",
+                name: "Caligrafía Elegante y Formal",
+                fonts: [
+                    "Clicker Script", "Cookie", "Estonia", "Fleur De Leah", "Grand Hotel",
+                    "Ingrid Darling", "Italianno", "La Belle Aurore", "Marck Script", "Meow Script",
+                    "Miss Fajardose", "Montez", "Mr De Haviland", "Ms Madi", "Niconne",
+                    "Norican", "Parisienne", "Princess Sofia", "Puppies Play", "Rouge Script",
+                    "Satisfy", "Seaweed Script", "Send Flowers", "Sevillana", "Sofia",
+                    "Tangerine", "Twinkle Star"
+                ]
+            },
+            {
+                id: "manuscritas",
+                name: "Manuscritas Informales y Escolares",
+                fonts: [
+                    "Annie Use Your Telescope", "Are You Serious", "Beth Ellen", "Borel",
+                    "Butterfly Kids", "Caveat", "Caveat Brush", "Cedarville Cursive",
+                    "Edu NSW ACT Foundation", "Finger Paint", "Handlee", "Love Ya Like A Sister",
+                    "Lugrasimo", "Mansalva", "Oooh Baby", "Pacifico", "Pangolin",
+                    "Patrick Hand", "Playpen Sans", "Playwrite US Modern", "Rancho",
+                    "Reenie Beanie", "Schoolbell", "Shantell Sans", "Single Day",
+                    "Sunshiney", "Unkempt"
+                ]
+            },
+            {
+                id: "display",
+                name: "Display, Cómicas y Decorativas",
+                fonts: [
+                    "Aladin", "Alkatra", "Autour One", "Cabin Sketch", "Chelsea Market",
+                    "Cherry Swash", "Condiment", "Emilys Candy", "Fredoka", "Grandstander",
+                    "Griffy", "Henny Penny", "Jim Nightshade", "Leckerli One", "Lily Script One",
+                    "Milonga", "Miltonian", "Miniver", "Mountains of Christmas", "Ribeye Marrow",
+                    "Ruge Boogie", "Salsa", "Sansita Swashed", "Spirax", "Underdog"
+                ]
+            },
+            {
+                id: "serif",
+                name: "Serif Clásicas y Editoriales",
+                fonts: [
+                    "Almendra Display", "Artifika", "Averia Serif Libre", "Fenix", "Fondamento",
+                    "Gentium Book Plus", "Goudy Bookletter 1911", "Grenze", "IM Fell English",
+                    "Inika", "Kotta One", "Luxurious Roman", "Marko One", "Modern Antiqua",
+                    "Stoke"
+                ]
+            },
+            {
+                id: "sans",
+                name: "Sans Serif Limpias y Modernas",
+                fonts: [
+                    "Alata", "Belanosima", "Convergence", "Fresca", "GFS Neohellenic",
+                    "Kite One", "Libertinus Sans", "Momo Trust Sans", "Ysabeau"
+                ]
+            },
+            {
+                id: "maquina",
+                name: "Máquina de Escribir y Pixel / Góticas",
+                fonts: [
+                    "Betania Patmos", "Courier Prime", "Jacquard 12", "Special Elite", "Tagesschrift"
+                ]
+            }
+        ];
+
+        // Estado global de la aplicación
+        const state = {
+            category: "all",
+            search: "",
+            size: 32,
+            view: "grid", // 'grid' | 'row' | 'sample'
+            text: PRESETS.abecedario,
+            theme: "dark"
+        };
+
+        // Cargar fuentes dinámicamente desde Google Fonts API v2
+        function loadGoogleFonts() {
+            const allFonts = CATEGORIES.flatMap(c => c.fonts);
+            const chunkSize = 40;
+            for (let i = 0; i < allFonts.length; i += chunkSize) {
+                const chunk = allFonts.slice(i, i + chunkSize);
+                const families = chunk.map(f => `family=${f.replace(/ /g, '+')}`).join('&');
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = `https://fonts.googleapis.com/css2?${families}&display=swap`;
+                document.head.appendChild(link);
+            }
+        }
+
+        // Escapar HTML para evitar inyecciones
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, m => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[m]));
+        }
+
+        // Mostrar notificación Toast
+        let toastTimeout;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2200);
+        }
+
+        // Copiar CSS al portapapeles (usando execCommand como fallback seguro en iframes)
+        function copyCSS(fontName) {
+            const cssText = `font-family: '${fontName}', sans-serif;`;
+            const textarea = document.createElement('textarea');
+            textarea.value = cssText;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast(`Copiado: ${cssText}`);
+            } catch (err) {
+                showToast('No se pudo copiar el CSS');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // Renderizar botones de categorías
+        function renderCategoryFilters() {
+            const container = document.getElementById('category-filters');
+            const totalCount = CATEGORIES.reduce((acc, c) => acc + c.fonts.length, 0);
+
+            let html = `
+                <button type="button" data-cat="all" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
+                    state.category === 'all'
+                        ? 'bg-[#8c6b48] dark:bg-[#b89772] text-[#f7f3eb] dark:text-[#1a1714] border-transparent shadow-sm'
+                        : 'bg-[#ebe3d5] dark:bg-[#25211c] text-[#2c241e] dark:text-[#d4c3a3] border-[#d9ceb8] dark:border-[#342e27] hover:border-[#b89772]'
+                }">
+                    Todas (${totalCount})
+                </button>
+            `;
+
+            CATEGORIES.forEach(cat => {
+                const isActive = state.category === cat.id;
+                html += `
+                    <button type="button" data-cat="${cat.id}" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
+                        isActive
+                            ? 'bg-[#8c6b48] dark:bg-[#b89772] text-[#f7f3eb] dark:text-[#1a1714] border-transparent shadow-sm'
+                            : 'bg-[#ebe3d5] dark:bg-[#25211c] text-[#2c241e] dark:text-[#d4c3a3] border-[#d9ceb8] dark:border-[#342e27] hover:border-[#b89772]'
+                    }">
+                        ${cat.name} (${cat.fonts.length})
+                    </button>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            container.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.category = btn.dataset.cat;
+                    renderCategoryFilters();
+                    renderFonts();
+                });
+            });
+        }
+
+        // Renderizar tarjetas/filas de fuentes
+        function renderFonts() {
+            const container = document.getElementById('fonts-container');
+            const query = state.search.trim().toLowerCase();
+            let visibleCount = 0;
+
+            const categoriesToShow = state.category === 'all'
+                ? CATEGORIES
+                : CATEGORIES.filter(c => c.id === state.category);
+
+            let html = '';
+
+            categoriesToShow.forEach(cat => {
+                const filteredFonts = cat.fonts.filter(f => f.toLowerCase().includes(query));
+                if (filteredFonts.length === 0) return;
+
+                visibleCount += filteredFonts.length;
+
+                html += `
+                    <section class="space-y-4">
+                        <div class="flex items-baseline justify-between border-b border-[#d9ceb8] dark:border-[#342e27] pb-2">
+                            <h2 class="text-lg sm:text-xl font-serif font-bold text-[#2c241e] dark:text-[#eae0cc]">
+                                ${cat.name}
+                            </h2>
+                            <span class="text-xs font-serif italic text-[#6e5d4f] dark:text-[#d4c3a3]/70">
+                                ${filteredFonts.length} ${filteredFonts.length === 1 ? 'fuente' : 'fuentes'}
+                            </span>
+                        </div>
+                `;
+
+                if (state.view === 'grid') {
+                    html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">`;
+                    filteredFonts.forEach(font => {
+                        const gfUrl = `https://fonts.google.com/specimen/${encodeURIComponent(font).replace(/%20/g, '+')}`;
+                        html += `
+                            <article class="flex flex-col justify-between p-5 rounded-xl bg-[#ebe3d5]/60 dark:bg-[#25211c]/80 border border-[#d9ceb8] dark:border-[#342e27] hover:border-[#b89772] transition-all shadow-sm">
+                                <div class="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-[#d9ceb8]/60 dark:border-[#342e27]/80">
+                                    <h3 class="text-sm font-semibold text-[#2c241e] dark:text-[#eae0cc] truncate" title="${font}">${font}</h3>
+                                    <div class="flex items-center gap-1.5 shrink-0">
+                                        <a href="${gfUrl}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 text-[11px] font-medium rounded bg-[#f7f3eb] dark:bg-[#1a1714] border border-[#d9ceb8] dark:border-[#342e27] text-[#6e5d4f] dark:text-[#d4c3a3] hover:text-[#8c6b48] dark:hover:text-[#b89772] transition-colors" title="Ver en Google Fonts">
+                                            Google Fonts ↗
+                                        </a>
+                                        <button type="button" onclick="copyCSS('${font.replace(/'/g, "\\'")}')" class="px-2 py-1 text-[11px] font-medium rounded bg-[#8c6b48]/15 dark:bg-[#b89772]/20 text-[#8c6b48] dark:text-[#b89772] hover:bg-[#8c6b48] hover:text-white dark:hover:bg-[#b89772] dark:hover:text-[#1a1714] transition-colors">
+                                            Copiar CSS
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="py-2 break-words leading-snug text-[#2c241e] dark:text-[#eae0cc] overflow-hidden" style="font-family: '${font}', sans-serif; font-size: ${state.size}px;">
+                                    ${escapeHtml(state.text)}
+                                </div>
+                            </article>
+                        `;
+                    });
+                    html += `</div>`;
+                } else if (state.view === 'row') {
+                    html += `<div class="space-y-3">`;
+                    filteredFonts.forEach(font => {
+                        const gfUrl = `https://fonts.google.com/specimen/${encodeURIComponent(font).replace(/%20/g, '+')}`;
+                        html += `
+                            <article class="p-5 rounded-xl bg-[#ebe3d5]/60 dark:bg-[#25211c]/80 border border-[#d9ceb8] dark:border-[#342e27] hover:border-[#b89772] transition-all shadow-sm">
+                                <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-[#d9ceb8]/60 dark:border-[#342e27]/80">
+                                    <h3 class="text-sm font-semibold text-[#2c241e] dark:text-[#eae0cc]">${font}</h3>
+                                    <div class="flex items-center gap-2">
+                                        <a href="${gfUrl}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 text-xs font-medium rounded bg-[#f7f3eb] dark:bg-[#1a1714] border border-[#d9ceb8] dark:border-[#342e27] text-[#6e5d4f] dark:text-[#d4c3a3] hover:text-[#8c6b48] dark:hover:text-[#b89772] transition-colors">
+                                            Google Fonts ↗
+                                        </a>
+                                        <button type="button" onclick="copyCSS('${font.replace(/'/g, "\\'")}')" class="px-2.5 py-1 text-xs font-medium rounded bg-[#8c6b48]/15 dark:bg-[#b89772]/20 text-[#8c6b48] dark:text-[#b89772] hover:bg-[#8c6b48] hover:text-white dark:hover:bg-[#b89772] dark:hover:text-[#1a1714] transition-colors">
+                                            Copiar CSS
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="py-1 break-words leading-snug text-[#2c241e] dark:text-[#eae0cc]" style="font-family: '${font}', sans-serif; font-size: ${state.size}px;">
+                                    ${escapeHtml(state.text)}
+                                </div>
+                            </article>
+                        `;
+                    });
+                    html += `</div>`;
+                } else if (state.view === 'sample') {
+                    html += `<div class="space-y-6">`;
+                    filteredFonts.forEach(font => {
+                        const gfUrl = `https://fonts.google.com/specimen/${encodeURIComponent(font).replace(/%20/g, '+')}`;
+                        html += `
+                            <article class="p-6 rounded-xl bg-[#ebe3d5]/60 dark:bg-[#25211c]/80 border border-[#d9ceb8] dark:border-[#342e27] hover:border-[#b89772] transition-all shadow-sm space-y-4">
+                                <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#d9ceb8]/60 dark:border-[#342e27]/80">
+                                    <div>
+                                        <h3 class="text-base font-semibold text-[#2c241e] dark:text-[#eae0cc]">${font}</h3>
+                                        <span class="text-xs font-serif italic text-[#6e5d4f] dark:text-[#d4c3a3]/70">${cat.name}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <a href="${gfUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#f7f3eb] dark:bg-[#1a1714] border border-[#d9ceb8] dark:border-[#342e27] text-[#6e5d4f] dark:text-[#d4c3a3] hover:text-[#8c6b48] dark:hover:text-[#b89772] transition-colors">
+                                            Google Fonts ↗
+                                        </a>
+                                        <button type="button" onclick="copyCSS('${font.replace(/'/g, "\\'")}')" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#8c6b48]/15 dark:bg-[#b89772]/20 text-[#8c6b48] dark:text-[#b89772] hover:bg-[#8c6b48] hover:text-white dark:hover:bg-[#b89772] dark:hover:text-[#1a1714] transition-colors">
+                                            Copiar CSS
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="break-words leading-tight text-[#2c241e] dark:text-[#eae0cc]" style="font-family: '${font}', sans-serif; font-size: ${Math.min(state.size + 12, 88)}px;">
+                                    ${escapeHtml(state.text)}
+                                </div>
+                                <p class="text-sm leading-relaxed text-[#6e5d4f] dark:text-[#d4c3a3]/80" style="font-family: '${font}', sans-serif;">
+                                    Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Ññ Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz — 0123456789
+                                </p>
+                            </article>
+                        `;
+                    });
+                    html += `</div>`;
+                }
+
+                html += `</section>`;
+            });
+
+            if (visibleCount === 0) {
+                html = `
+                    <div class="text-center py-16 px-4 rounded-xl border border-dashed border-[#d9ceb8] dark:border-[#342e27]">
+                        <p class="font-serif italic text-lg text-[#6e5d4f] dark:text-[#d4c3a3]">No se encontraron fuentes que coincidan con "${escapeHtml(state.search)}"</p>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            document.getElementById('font-count').textContent = visibleCount;
+        }
+
+        // Actualizar botones de vista activos
+        function updateViewButtons() {
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                const isActive = btn.dataset.view === state.view;
+                if (isActive) {
+                    btn.classList.add('bg-[#8c6b48]', 'dark:bg-[#b89772]', 'text-[#f7f3eb]', 'dark:text-[#1a1714]', 'shadow-sm');
+                    btn.classList.remove('text-[#6e5d4f]', 'dark:text-[#d4c3a3]');
+                } else {
+                    btn.classList.remove('bg-[#8c6b48]', 'dark:bg-[#b89772]', 'text-[#f7f3eb]', 'dark:text-[#1a1714]', 'shadow-sm');
+                    btn.classList.add('text-[#6e5d4f]', 'dark:text-[#d4c3a3]');
+                }
+            });
+        }
+
+        // Alternar tema Claro / Oscuro
+        function toggleTheme() {
+            const htmlEl = document.documentElement;
+            const isDark = htmlEl.classList.toggle('dark');
+            state.theme = isDark ? 'dark' : 'light';
+            document.querySelectorAll('.theme-icon').forEach(el => {
+                el.textContent = isDark ? '☀️' : '🌙';
+            });
+            document.querySelectorAll('.theme-text').forEach(el => {
+                el.textContent = isDark ? 'Claro' : 'Oscuro';
+            });
+        }
+
+        // Inicialización
+        window.addEventListener('DOMContentLoaded', () => {
+            loadGoogleFonts();
+            renderCategoryFilters();
+            updateViewButtons();
+            renderFonts();
+
+            // Buscador
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                state.search = e.target.value;
+                renderFonts();
+            });
+
+            // Tamaño
+            document.getElementById('size-slider').addEventListener('input', (e) => {
+                state.size = parseInt(e.target.value, 10);
+                document.getElementById('size-label').textContent = `${state.size}px`;
+                renderFonts();
+            });
+
+            // Texto personalizado
+            document.getElementById('preview-text-input').addEventListener('input', (e) => {
+                state.text = e.target.value.trim() || PRESETS.abecedario;
+                renderFonts();
+            });
+
+            // Muestras rápidas
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const presetKey = btn.dataset.preset;
+                    state.text = PRESETS[presetKey];
+                    document.getElementById('preview-text-input').value = '';
+                    renderFonts();
+                });
+            });
+
+            // Modos de vista
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.view = btn.dataset.view;
+                    updateViewButtons();
+                    renderFonts();
+                });
+            });
+
+            // Botones de tema
+            document.getElementById('theme-toggle-desktop').addEventListener('click', toggleTheme);
+            document.getElementById('theme-toggle-mobile').addEventListener('click', toggleTheme);
+        });
+    </script>
+</body>
+</html>
