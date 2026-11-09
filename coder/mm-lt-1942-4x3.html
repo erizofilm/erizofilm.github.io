@@ -249,7 +249,7 @@ modal.onclick=(e)=>{if(e.target===modal || e.target===modalBody){modal.classList
 document.getElementById('btnDownload').onclick=()=>{
   const ep=li[current];
   const c=document.createElement('canvas');oi(c, ep,'combinado');
-  const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download=`1942-${String(ep.id).padStart(2,'0')}-${ep.series}-${ep.title.replace(/[^a-z0-9]/gi,'_')}-FullHD-1080x1920-4:3-Transp.png`;a.click();
+  const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download=`1942-${String(ep.id).padStart(2,'0')}-${ep.series}-${ep.title.replace(/[^a-z0-9]/gi,'_')}-4:3-1080x1920.png`;a.click();
 };
 document.getElementById('themeBtn').onclick=()=>{
   const cur=document.body.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';
@@ -257,7 +257,7 @@ document.getElementById('themeBtn').onclick=()=>{
 };
 document.getElementById('dlAllBtn').onclick=async()=>{
   const btn=document.getElementById('dlAllBtn');btn.textContent='⏳ ZIP...';const zip=new JSZip();
-  for(let i=0;i<li.length;i++){const c=document.createElement('canvas');oi(c, li[i], 'combinado');const data=c.toDataURL('image/png').split(',')[1];zip.file(`1942-${String(li[i].id).padStart(2,'0')}-${li[i].series}-FullHD-4:3.png`, data, {base64:true});}
+  for(let i=0;i<li.length;i++){const c=document.createElement('canvas');oi(c, li[i], 'combinado');const data=c.toDataURL('image/png').split(',')[1];zip.file(`1942-${String(li[i].id).padStart(2,'0')}-${li[i].series}-4:3-1080x1920.png`, data, {base64:true});}
   const content=await zip.generateAsync({type:'blob'});const a=document.createElement('a');a.href=URL.createObjectURL(content);a.download='MM/LT-1942-39-4:3-1080x1920.zip';a.click();btn.textContent='⬇️ ZIP TODO';
 };
 (async()=>{await document.fonts.ready;renderGrid();document.getElementById('count').textContent=li.length+' items • 4 columnas • 4:3 • transparente visible';})();
