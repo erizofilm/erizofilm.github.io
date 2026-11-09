@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MM/LT-1942-4:3-1080x1920</title>
+<title>MM/LT-1942-39-4:3-1080x1920</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Pacifico&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
@@ -67,7 +67,7 @@ background-image:linear-gradient(45deg,var(--checker2) 25%,transparent 25%,trans
 
 </style>
 </head><body data-theme="dark">
-<div class="header"><div class="header-inner"><h1>MM/LT-1942-4:3-1080x1920</h1><div style="display:flex;gap:8px"><button class="btn" id="themeBtn">🌙 Oscuro</button><button class="btn btn-primary" id="dlAllBtn">⬇️ ZIP TODO</button></div></div></div>
+<div class="header"><div class="header-inner"><h1>MM/LT-1942-39-4:3-1080x1920</h1><div style="display:flex;gap:8px"><button class="btn" id="themeBtn">🌙 Oscuro</button><button class="btn btn-primary" id="dlAllBtn">⬇️ ZIP TODO</button></div></div></div>
 <div class="grid-wrap"><div class="grid-title"><span>CLIC PARA EXPANDIR</span><span id="count"></span></div><div class="grid" id="grid"></div></div>
 <div class="modal" id="modal">
 <div class="modal-top"><div class="modal-top-inner"><div class="modal-title" id="modalTitle">01/39</div><div class="modal-actions"><button class="btn btn-small" id="btnZoomOut">➖</button><span id="zoomPercent" style="font-size:11px;font-weight:800;min-width:42px;text-align:center">100%</span><button class="btn btn-small" id="btnZoomIn">➕</button><button class="btn btn-small active" id="btnFit">🔍 Ajustar a pantalla</button><button class="btn btn-small" id="btnReal">↔️ Real 100%</button><button class="btn btn-small btn-accent" id="btnDownload">⬇️ PNG Full HD</button><button class="btn btn-small" id="btnClose">✕</button></div></div></div>
@@ -258,7 +258,7 @@ document.getElementById('themeBtn').onclick=()=>{
 document.getElementById('dlAllBtn').onclick=async()=>{
   const btn=document.getElementById('dlAllBtn');btn.textContent='⏳ ZIP...';const zip=new JSZip();
   for(let i=0;i<li.length;i++){const c=document.createElement('canvas');oi(c, li[i], 'combinado');const data=c.toDataURL('image/png').split(',')[1];zip.file(`1942-${String(li[i].id).padStart(2,'0')}-${li[i].series}-FullHD-4:3.png`, data, {base64:true});}
-  const content=await zip.generateAsync({type:'blob'});const a=document.createElement('a');a.href=URL.createObjectURL(content);a.download='1942-39-FullHD-1080x1920-4:3.zip';a.click();btn.textContent='⬇️ ZIP TODO';
+  const content=await zip.generateAsync({type:'blob'});const a=document.createElement('a');a.href=URL.createObjectURL(content);a.download='MM/LT-1942-39-4:3-1080x1920.zip';a.click();btn.textContent='⬇️ ZIP TODO';
 };
 (async()=>{await document.fonts.ready;renderGrid();document.getElementById('count').textContent=li.length+' items • 4 columnas • 4:3 • transparente visible';})();
 </script></body></html>
