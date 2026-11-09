@@ -253,7 +253,7 @@ document.getElementById('dlAllBtn').onclick=async()=>{
     const titlePart=sanitizeTitleForFilename(ep.title);
     zip.file(`${datePart}-${ep.series}-${titlePart}.png`, data, {base64:true});
   }
-  const content=await zip.generateAsync({type:'blob'});const a=document.createElement('a');a.href=URL.createObjectURL(content);a.download='1942-39-MM-LT-ALL.zip';a.click();btn.textContent='⬇️ ZIP TODO';
+  const content=await zip.generateAsync({type:'blob'});const a=document.createElement('a');a.href=URL.createObjectURL(content);a.download='1942-39-MM-LT-1x1-ALL.zip';a.click();btn.textContent='⬇️ ZIP TODO';
 };
 (async()=>{await document.fonts.ready;renderGrid();document.getElementById('count').textContent=li.length+' items • 4 columnas • 1:1 • transparente visible';})();
 </script></body></html>
