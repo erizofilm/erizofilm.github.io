@@ -1,10 +1,10 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MM/LT-1942-1x1</title>
+<title>MM/LT-1942-1:1-1080x1920</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Pacifico&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
-:root{--bg:#0f0f0f;--card:#1a1a1a;--card2:#252525;--border:#333;--text:#FFF8E7;--muted:#aaa;--accent:#B8960C;--modalBg:rgba(0,0,0,.92);--checker1:#2a2a2a;--checker2:#1e1e1e}
-[data-theme="light"]{--bg:#f5f3ef;--card:#ffffff;--card2:#f0ebe3;--border:#e0d5c5;--text:#221A0A;--muted:#7a6a55;--accent:#B8960C;--modalBg:rgba(245,243,239,.96);--checker1:#e8e2d9;--checker2:#f5f3ef}
+:root{--bg:#0f0f0f;--card:#1a1a1a;--card2:#252525;--border:#333;--text:#FFF8E7;--muted:#aaa;--accent:#B8960C;--modalBg:rgba(0,0,0,.92);--checker1:#2a2a2a;--checker2:#1e1e1e;--previewBg:#121212;--previewChecker:#2a2a2a}
+[data-theme="light"]{--bg:#f5f3ef;--card:#ffffff;--card2:#f0ebe3;--border:#e0d5c5;--text:#221A0A;--muted:#7a6a55;--accent:#B8960C;--modalBg:rgba(245,243,239,.96);--checker1:#e8e2d9;--checker2:#f5f3ef;--previewBg:#ffffff;--previewChecker:#cccccc}
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text);scrollbar-width:thin;scrollbar-color:var(--border) var(--bg)}
 body.modal-open{overflow:hidden}
@@ -41,7 +41,7 @@ body.modal-open{overflow:hidden}
 .modal-top-inner{width:100%;max-width:1400px;margin:0 auto;padding:0 18px;display:flex;align-items:center;justify-content:space-between;box-sizing:border-box}
 .modal-title{font-size:12px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%}
 .modal-actions{display:flex;gap:6px;align-items:center}
-.modal-body{flex:1;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--accent) var(--bg);display:flex;justify-content:center;align-items:center;padding:16px;background:var(--bg);background-image:linear-gradient(45deg,var(--checker2) 25%,transparent 25%,transparent 75%,var(--checker2) 75%,var(--checker2)),linear-gradient(45deg,var(--checker2) 25%,transparent 25%,transparent 75%,var(--checker2) 75%,var(--checker2));background-size:32px 32px;background-position:0 0,16px 16px}
+.modal-body{flex:1;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--accent) var(--bg);display:flex;justify-content:center;align-items:center;padding:16px;background:var(--previewBg);background-image:linear-gradient(45deg,var(--previewChecker) 25%,transparent 25%,transparent 75%,var(--previewChecker) 75%,var(--previewChecker)),linear-gradient(45deg,var(--previewChecker) 25%,transparent 25%,transparent 75%,var(--previewChecker) 75%,var(--previewChecker));background-size:20px 20px;background-position:0 0,10px 10px}
 .modal-body.fit{align-items:center;justify-content:center}
 .modal-body.fit img{max-width:100%;max-height:85vh;object-fit:contain}
 .modal-body.real{align-items:flex-start;justify-content:center}
@@ -49,7 +49,7 @@ body.modal-open{overflow:hidden}
 #modalImg{flex-shrink:0;background:transparent;box-shadow:0 0 0 1px var(--border)}
 </style>
 </head><body data-theme="dark">
-<div class="header"><div class="header-inner"><h1>MM/LT-1942-1x1</h1><div style="display:flex;gap:8px"><button class="btn" id="themeBtn">🌙 Oscuro</button><button class="btn btn-primary" id="dlAllBtn">⬇️ ZIP TODO</button></div></div></div>
+<div class="header"><div class="header-inner"><h1>MM/LT-1942-1:1-1080x1920</h1><div style="display:flex;gap:8px"><button class="btn" id="themeBtn">🌙 Oscuro</button><button class="btn btn-primary" id="dlAllBtn">⬇️ ZIP TODO</button></div></div></div>
 <div class="grid-wrap"><div class="grid-title"><span>CLIC PARA EXPANDIR</span><span id="count"></span></div><div class="grid" id="grid"></div></div>
 <div class="modal" id="modal">
 <div class="modal-top"><div class="modal-top-inner"><div class="modal-title" id="modalTitle">01/39</div><div class="modal-actions"><button class="btn btn-small" id="btnZoomOut">➖</button><span id="zoomPercent" style="font-size:11px;font-weight:800;min-width:42px;text-align:center">100%</span><button class="btn btn-small" id="btnZoomIn">➕</button><button class="btn btn-small active" id="btnFit">🔍 Ajustar a pantalla</button><button class="btn btn-small" id="btnReal">↔️ Real 100%</button><button class="btn btn-small btn-accent" id="btnDownload">⬇️ PNG Full HD</button><button class="btn btn-small" id="btnClose">✕</button></div></div></div>
@@ -117,16 +117,16 @@ t.fillStyle='#000000';t.fillText("Cartoons",0,2);t.fillStyle='#000000';t.fillTex
 let textMode=mode||'combinado';let baseCombined=getCombinedColor(n.color);let lum=getLuminance(n.color);
 let textColor=textMode==='crema'?"#FFF8E7":textMode==='bn'?(lum>0.45?"#000000":"#FFFFFF"):baseCombined;
 t.textBaseline="top";t.font="700 28px Inter";let epStr=String(n.id).padStart(2,"0")+"/39";let epW=t.measureText(epStr).width;
-t.fillStyle="rgba(0,0,0,0.22)";t.fillRect(75,42-6,epW+24,34);t.fillStyle="#FFFFFF";t.fillText(epStr,75+12,42);
-t.font="500 29px Inter";t.fillStyle="#FFF8E7";let s=t.measureText(n.date).width;t.fillText(n.date,r-75-s,42);
+t.fillStyle="rgba(0,0,0,0.22)";t.fillRect(90,42-6,epW+24,34);t.fillStyle="#FFFFFF";t.fillText(epStr,90+12,42);
+t.font="500 29px Inter";t.fillStyle="#FFF8E7";let s=t.measureText(n.date).width;t.fillText(n.date,r-90-s,42);
 t.fillStyle=textColor;t.font='500 62px Inter';t.fillText("the classic",90,122);t.save();t.translate(90,260);t.rotate(-10*Math.PI/180);t.font='400 183px Pacifico';t.fillText("Cartoons",0,0);t.restore();
 let d=u+920+45;t.font="500 48px Inter";t.fillStyle=textColor;let h=n.gancho.split(" "),p="",w=d+20,k=900,S=48,lines=0;
 for(let R=0;R<h.length;R++){let c=p+h[R]+" ";if(t.measureText(c).width>k&&R>0){t.fillText(p,90,w,k);p=h[R]+" ";w+=S+25;lines++;if(lines>=4||w>l-150)break}else p=c}
 t.fillText(p,90,w,k);
 t.font="700 28px Inter";let mmPart=n.series;let titlePart=" • "+n.title.toUpperCase();let fullFooter=mmPart+titlePart;
 if(fullFooter.length>45){t.font="700 22px Inter";}if(fullFooter.length>58){t.font="700 18px Inter";}
-t.fillStyle="rgba(0,0,0,0.22)";let mmW=t.measureText(mmPart).width;t.fillRect(75,l-71-6,mmW+24,34);t.fillStyle="#FFFFFF";t.fillText(mmPart,75+12,l-71);
-let titleX=75+12+mmW+24+10;t.fillText(titlePart,titleX,l-71,935-titleX+75);
+t.fillStyle="rgba(0,0,0,0.22)";let mmW=t.measureText(mmPart).width;t.fillRect(90,l-71-6,mmW+24,34);t.fillStyle="#FFFFFF";t.fillText(mmPart,90+12,l-71);
+let titleX=90+12+mmW+24+10;t.fillText(titlePart,titleX,l-71,900-titleX+90);
 }
 let current=0;
 const grid=document.getElementById('grid');
@@ -165,7 +165,6 @@ function applyZoom(z,opts={}){
   const prevH = modalBody.scrollHeight - modalBody.clientHeight;
   const ratioX = prevW>0 ? prevLeft/prevW : 0.5;
   const ratioY = prevH>0 ? prevTop/prevH : 0.5;
-
   currentZoom=Math.max(10,Math.min(400,z));
   const pct=document.getElementById('zoomPercent');
   if(pct) pct.textContent=currentZoom+'%';
@@ -211,14 +210,24 @@ document.getElementById('btnZoomOut').onclick=zoomOut;
 
 document.getElementById('btnClose').onclick=()=>{modal.classList.remove('open');document.body.classList.remove('modal-open');};
 modal.onclick=(e)=>{if(e.target===modal || e.target===modalBody){modal.classList.remove('open');document.body.classList.remove('modal-open');}};
+document.addEventListener('keydown',(e)=>{
+  if((e.key==='Escape' || e.key==='Esc') && modal.classList.contains('open')){
+    modal.classList.remove('open');
+    document.body.classList.remove('modal-open');
+  }
+});
 document.getElementById('btnDownload').onclick=()=>{
   const ep=li[current];
   const c=document.createElement('canvas');oi(c, ep,'combinado');
   const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download=`1942-${String(ep.id).padStart(2,'0')}-${ep.series}-${ep.title.replace(/[^a-z0-9]/gi,'_')}-FullHD-1080x1920-1:1-Transp.png`;a.click();
 };
+const savedTheme=localStorage.getItem('mm-theme');
+if(savedTheme){document.body.setAttribute('data-theme',savedTheme);document.getElementById('themeBtn').textContent=savedTheme==='dark'?'🌙 Oscuro':'☀️ Claro';}
 document.getElementById('themeBtn').onclick=()=>{
   const cur=document.body.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';
-  document.body.setAttribute('data-theme',next);document.getElementById('themeBtn').textContent=next==='dark'?'🌙 Oscuro':'☀️ Claro';
+  document.body.setAttribute('data-theme',next);
+  localStorage.setItem('mm-theme',next);
+  document.getElementById('themeBtn').textContent=next==='dark'?'🌙 Oscuro':'☀️ Claro';
 };
 document.getElementById('dlAllBtn').onclick=async()=>{
   const btn=document.getElementById('dlAllBtn');btn.textContent='⏳ ZIP...';const zip=new JSZip();

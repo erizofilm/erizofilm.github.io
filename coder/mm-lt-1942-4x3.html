@@ -1,10 +1,10 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MM/LT-1942-4x3</title>
+<title>MM/LT-1942-4:3-1080x1920</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Pacifico&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 :root{--bg:#0f0f0f;--card:#1a1a1a;--card2:#252525;--border:#333;--text:#FFF8E7;--muted:#aaa;--accent:#B8960C;--modalBg:rgba(0,0,0,.92);--checker1:#2a2a2a;--checker2:#1e1e1e}
-[data-theme="light"]{--bg:#f5f3ef;--card:#ffffff;--card2:#f0ebe3;--border:#e0d5c5;--text:#221A0A;--muted:#7a6a55;--accent:#B8960C;--modalBg:rgba(245,243,239,.96);--checker1:#e8e2d9;--checker2:#f5f3ef}
+[data-theme="light"]{--bg:#f5f3ef;--card:#ffffff;--card2:#f0ebe3;--border:#e0d5c5;--text:#221A0A;--muted:#7a6a55;--accent:#B8960C;--modalBg:rgba(245,243,239,.96);--checker1:#b8ae9f;--checker2:#f5f3ef}
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text);scrollbar-width:thin;scrollbar-color:var(--border) var(--bg)}
 body.modal-open{overflow:hidden}
@@ -41,15 +41,33 @@ body.modal-open{overflow:hidden}
 .modal-top-inner{width:100%;max-width:1400px;margin:0 auto;padding:0 18px;display:flex;align-items:center;justify-content:space-between;box-sizing:border-box}
 .modal-title{font-size:12px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%}
 .modal-actions{display:flex;gap:6px;align-items:center}
-.modal-body{flex:1;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--accent) var(--bg);display:flex;justify-content:center;align-items:center;padding:16px;background:var(--bg);background-image:linear-gradient(45deg,var(--checker2) 25%,transparent 25%,transparent 75%,var(--checker2) 75%,var(--checker2)),linear-gradient(45deg,var(--checker2) 25%,transparent 25%,transparent 75%,var(--checker2) 75%,var(--checker2));background-size:32px 32px;background-position:0 0,16px 16px}
+.modal-body{flex:1;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--accent) var(--bg);display:flex;justify-content:center;align-items:center;padding:16px;background-color:var(--bg);background-image:linear-gradient(45deg,var(--checker2) 25%,transparent 25%,transparent 75%,var(--checker2) 75%,var(--checker2)),linear-gradient(45deg,var(--checker2) 25%,transparent 25%,transparent 75%,var(--checker2) 75%,var(--checker2));background-size:32px 32px;background-position:0 0,16px 16px}
 .modal-body.fit{align-items:center;justify-content:center}
 .modal-body.fit img{max-width:100%;max-height:85vh;object-fit:contain}
 .modal-body.real{align-items:flex-start;justify-content:center}
 .modal-body.real img{width:1080px;height:1920px;max-width:none;max-height:none;margin:auto}
 #modalImg{flex-shrink:0;background:transparent;box-shadow:0 0 0 1px var(--border)}
+
+[data-theme="light"] .modal-body{
+background-color:var(--bg) !important;
+background-image:linear-gradient(45deg,var(--checker1) 25%,transparent 25%,transparent 75%,var(--checker1) 75%,var(--checker1)),linear-gradient(45deg,var(--checker1) 25%,transparent 25%,transparent 75%,var(--checker1) 75%,var(--checker1)) !important;
+background-size:32px 32px !important;
+background-position:0 0,16px 16px !important;
+}
+[data-theme="light"] #modalImg{
+background:transparent !important;
+box-shadow:0 0 0 1px #b5a99a, 0 4px 20px rgba(0,0,0,.15) !important;
+}
+
+
+[data-theme="light"] .thumb-box{
+background-color:var(--checker1) !important;
+background-image:linear-gradient(45deg,var(--checker2) 25%,transparent 25%,transparent 75%,var(--checker2) 75%,var(--checker2)),linear-gradient(45deg,var(--checker2) 25%,transparent 25%,transparent 75%,var(--checker2) 75%,var(--checker2)) !important;
+}
+
 </style>
 </head><body data-theme="dark">
-<div class="header"><div class="header-inner"><h1>MM/LT-1942-4x3</h1><div style="display:flex;gap:8px"><button class="btn" id="themeBtn">🌙 Oscuro</button><button class="btn btn-primary" id="dlAllBtn">⬇️ ZIP TODO</button></div></div></div>
+<div class="header"><div class="header-inner"><h1>MM/LT-1942-4:3-1080x1920</h1><div style="display:flex;gap:8px"><button class="btn" id="themeBtn">🌙 Oscuro</button><button class="btn btn-primary" id="dlAllBtn">⬇️ ZIP TODO</button></div></div></div>
 <div class="grid-wrap"><div class="grid-title"><span>CLIC PARA EXPANDIR</span><span id="count"></span></div><div class="grid" id="grid"></div></div>
 <div class="modal" id="modal">
 <div class="modal-top"><div class="modal-top-inner"><div class="modal-title" id="modalTitle">01/39</div><div class="modal-actions"><button class="btn btn-small" id="btnZoomOut">➖</button><span id="zoomPercent" style="font-size:11px;font-weight:800;min-width:42px;text-align:center">100%</span><button class="btn btn-small" id="btnZoomIn">➕</button><button class="btn btn-small active" id="btnFit">🔍 Ajustar a pantalla</button><button class="btn btn-small" id="btnReal">↔️ Real 100%</button><button class="btn btn-small btn-accent" id="btnDownload">⬇️ PNG Full HD</button><button class="btn btn-small" id="btnClose">✕</button></div></div></div>
