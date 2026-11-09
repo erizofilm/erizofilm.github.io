@@ -232,7 +232,7 @@ document.getElementById('themeBtn').onclick=()=>{
 document.getElementById('dlAllBtn').onclick=async()=>{
   const btn=document.getElementById('dlAllBtn');btn.textContent='⏳ ZIP...';const zip=new JSZip();
   for(let i=0;i<li.length;i++){const c=document.createElement('canvas');oi(c, li[i], 'combinado');const data=c.toDataURL('image/png').split(',')[1];zip.file(`1942-${String(li[i].id).padStart(2,'0')}-${li[i].series}-FullHD-1:1.png`, data, {base64:true});}
-  const content=await zip.generateAsync({type:'blob'});const a=document.createElement('a');a.href=URL.createObjectURL(content);a.download='1942-39-FullHD-1080x1920-1:1.zip';a.click();btn.textContent='⬇️ ZIP TODO';
+  const content=await zip.generateAsync({type:'blob'});const a=document.createElement('a');a.href=URL.createObjectURL(content);a.download='MM-LT-1942-1:1-1080x1920.zip';a.click();btn.textContent='⬇️ ZIP TODO';
 };
 (async()=>{await document.fonts.ready;renderGrid();document.getElementById('count').textContent=li.length+' items • 4 columnas • 1:1 • transparente visible';})();
 </script></body></html>
