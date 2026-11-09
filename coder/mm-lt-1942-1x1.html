@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>1942 - Grid 4 filas - FB Modal - Full HD - 1:1</title>
+<title>MM/LT - 1942 - Full HD - 1:1</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Pacifico&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
@@ -13,7 +13,8 @@ body.modal-open{overflow:hidden}
 *::-webkit-scrollbar-thumb{background:var(--border);border:2px solid var(--bg)}
 *::-webkit-scrollbar-thumb:hover{background:var(--accent)}
 *::-webkit-scrollbar-corner{background:var(--bg)}
-.header{position:sticky;top:0;z-index:30;background:var(--card);border-bottom:1px solid var(--border);padding:12px 18px;display:flex;justify-content:space-between;align-items:center}
+.header{position:sticky;top:0;z-index:30;background:var(--card);border-bottom:1px solid var(--border);padding:12px 0;display:flex;justify-content:center}
+.header-inner{width:100%;max-width:1400px;margin:0 auto;padding:0 18px;display:flex;justify-content:space-between;align-items:center;box-sizing:border-box}
 .header h1{font-size:14px;font-weight:900;margin:0}
 .btn{height:38px;padding:0 16px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-weight:800;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
 .btn:hover{border-color:var(--accent)}
@@ -36,7 +37,8 @@ body.modal-open{overflow:hidden}
 .card-meta{font-size:9px;opacity:.5;margin-top:2px}
 .modal{position:fixed;inset:0;background:var(--modalBg);z-index:100;display:none;flex-direction:column;overflow:hidden}
 .modal.open{display:flex}
-.modal-top{height:56px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0}
+.modal-top{height:56px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0}
+.modal-top-inner{width:100%;max-width:1400px;margin:0 auto;padding:0 18px;display:flex;align-items:center;justify-content:space-between;box-sizing:border-box}
 .modal-title{font-size:12px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%}
 .modal-actions{display:flex;gap:6px;align-items:center}
 .modal-body{flex:1;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--accent) var(--bg);display:flex;justify-content:center;align-items:center;padding:16px;background:var(--bg);background-image:linear-gradient(45deg,var(--checker2) 25%,transparent 25%,transparent 75%,var(--checker2) 75%,var(--checker2)),linear-gradient(45deg,var(--checker2) 25%,transparent 25%,transparent 75%,var(--checker2) 75%,var(--checker2));background-size:32px 32px;background-position:0 0,16px 16px}
@@ -47,10 +49,10 @@ body.modal-open{overflow:hidden}
 #modalImg{flex-shrink:0;background:transparent;box-shadow:0 0 0 1px var(--border)}
 </style>
 </head><body data-theme="dark">
-<div class="header"><h1>MM/LT — 1942 — 39 EPISODIOS — FULL HD 1080x1920 — 1:1 — 4 COLUMNAS</h1><div style="display:flex;gap:8px"><button class="btn" id="themeBtn">🌙 Oscuro</button><button class="btn btn-primary" id="dlAllBtn">⬇️ ZIP TODO</button></div></div>
+<div class="header"><div class="header-inner"><h1>MM/LT - 1942 - Full HD - 1:1</h1><div style="display:flex;gap:8px"><button class="btn" id="themeBtn">🌙 Oscuro</button><button class="btn btn-primary" id="dlAllBtn">⬇️ ZIP TODO</button></div></div></div>
 <div class="grid-wrap"><div class="grid-title"><span>CLIC PARA EXPANDIR</span><span id="count"></span></div><div class="grid" id="grid"></div></div>
 <div class="modal" id="modal">
-<div class="modal-top"><div class="modal-title" id="modalTitle">01/39</div><div class="modal-actions"><button class="btn btn-small" id="btnZoomOut">➖</button><span id="zoomPercent" style="font-size:11px;font-weight:800;min-width:42px;text-align:center">100%</span><button class="btn btn-small" id="btnZoomIn">➕</button><button class="btn btn-small active" id="btnFit">🔍 Ajustar a pantalla</button><button class="btn btn-small" id="btnReal">↔️ Real 100%</button><button class="btn btn-small btn-accent" id="btnDownload">⬇️ PNG Full HD</button><button class="btn btn-small" id="btnClose">✕</button></div></div>
+<div class="modal-top"><div class="modal-top-inner"><div class="modal-title" id="modalTitle">01/39</div><div class="modal-actions"><button class="btn btn-small" id="btnZoomOut">➖</button><span id="zoomPercent" style="font-size:11px;font-weight:800;min-width:42px;text-align:center">100%</span><button class="btn btn-small" id="btnZoomIn">➕</button><button class="btn btn-small active" id="btnFit">🔍 Ajustar a pantalla</button><button class="btn btn-small" id="btnReal">↔️ Real 100%</button><button class="btn btn-small btn-accent" id="btnDownload">⬇️ PNG Full HD</button><button class="btn btn-small" id="btnClose">✕</button></div></div></div>
 <div class="modal-body fit" id="modalBody"><img id="modalImg" /></div>
 </div>
 <script>
@@ -102,11 +104,11 @@ function getCombinedColor(hex){let h=hex.toUpperCase();const map={"#C13B32":"#FF
 function oi(e,n,mode){
 let t=e.getContext("2d");t.imageSmoothingEnabled=false;let r=1080,l=1920;e.width=r;e.height=l;
 t.fillStyle=n.color;t.fillRect(0,0,r,l);
-let o=50,u=460;t.clearRect(o,u,980,980);t.save();t.strokeStyle='#000000';t.lineWidth=90;t.strokeRect(o+45,u+45,890,890);t.restore();
+let o=80,u=440;t.clearRect(o,u,920,920);t.save();t.strokeStyle='#000000';t.lineWidth=90;t.strokeRect(o+45,u+45,830,830);t.restore();
 t.save();t.textBaseline='top';let padX=30,padY=10,classicH=18,cartoonsH=54,dist=38,frameThick=90;
 t.font='500 '+classicH+'px Inter';let wClassic=t.measureText("the classic").width;
 t.font='400 '+cartoonsH+'px Pacifico';let wCartoons=t.measureText("Cartoons").width;
-let innerRight=o+980-frameThick;let innerBottom=u+980-frameThick;
+let innerRight=o+920-frameThick;let innerBottom=u+920-frameThick;
 let lx=innerRight-Math.max(wClassic,wCartoons)-padX;let ly=innerBottom-(classicH+dist+cartoonsH)-padY;
 t.font='500 '+classicH+'px Inter';t.fillStyle='#000000';t.fillText("the classic",lx,ly+1);
 t.fillStyle='#B8960C';t.fillText("the classic",lx,ly);
@@ -118,7 +120,7 @@ t.textBaseline="top";t.font="700 28px Inter";let epStr=String(n.id).padStart(2,"
 t.fillStyle="rgba(0,0,0,0.22)";t.fillRect(90,42-6,epW+24,34);t.fillStyle="#FFFFFF";t.fillText(epStr,90+12,42);
 t.font="500 29px Inter";t.fillStyle="#FFF8E7";let s=t.measureText(n.date).width;t.fillText(n.date,r-90-s,42);
 t.fillStyle=textColor;t.font='500 62px Inter';t.fillText("the classic",90,122);t.save();t.translate(90,260);t.rotate(-10*Math.PI/180);t.font='400 183px Pacifico';t.fillText("Cartoons",0,0);t.restore();
-let d=u+980+45;t.font="500 48px Inter";t.fillStyle=textColor;let h=n.gancho.split(" "),p="",w=d+20,k=900,S=48,lines=0;
+let d=u+920+45;t.font="500 48px Inter";t.fillStyle=textColor;let h=n.gancho.split(" "),p="",w=d+20,k=900,S=48,lines=0;
 for(let R=0;R<h.length;R++){let c=p+h[R]+" ";if(t.measureText(c).width>k&&R>0){t.fillText(p,90,w,k);p=h[R]+" ";w+=S+25;lines++;if(lines>=4||w>l-150)break}else p=c}
 t.fillText(p,90,w,k);
 t.font="700 28px Inter";let mmPart=n.series;let titlePart=" • "+n.title.toUpperCase();let fullFooter=mmPart+titlePart;
