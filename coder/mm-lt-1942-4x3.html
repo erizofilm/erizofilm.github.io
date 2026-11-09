@@ -273,7 +273,7 @@ document.getElementById('dlAllBtn').onclick=async()=>{
     try{ const parts=li[i].date.replace(',','').split(' '); if(parts.length===3){ m=months[parts[0]]||'01'; d=String(parseInt(parts[1])).padStart(2,'0'); y=parts[2]; } }catch(e){}
     zip.file(`${y}-${m}-${d}-${li[i].series}-${safeTitle}.png`, data, {base64:true});
   }
-  const content=await zip.generateAsync({type:'blob'});const a=document.createElement('a');a.href=URL.createObjectURL(content);a.download='1942-39-MM-LT-ALL.zip';a.click();btn.textContent='⬇️ ZIP TODO';
+  const content=await zip.generateAsync({type:'blob'});const a=document.createElement('a');a.href=URL.createObjectURL(content);a.download='1942-39-MM-LT-4x3-ALL.zip';a.click();btn.textContent='⬇️ ZIP TODO';
 };
 (async()=>{await document.fonts.ready;renderGrid();document.getElementById('count').textContent=li.length+' items • 4 columnas • 4:3 • transparente visible';})();
 </script></body></html>
