@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MM/LT - 1942 - Full HD - 4x3</title>
+<title>MM/LT-1942-4x3</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Pacifico&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
@@ -49,7 +49,7 @@ body.modal-open{overflow:hidden}
 #modalImg{flex-shrink:0;background:transparent;box-shadow:0 0 0 1px var(--border)}
 </style>
 </head><body data-theme="dark">
-<div class="header"><div class="header-inner"><h1>MM/LT - 1942 - Full HD - 4x3</h1><div style="display:flex;gap:8px"><button class="btn" id="themeBtn">🌙 Oscuro</button><button class="btn btn-primary" id="dlAllBtn">⬇️ ZIP TODO</button></div></div></div>
+<div class="header"><div class="header-inner"><h1>MM/LT-1942-4x3</h1><div style="display:flex;gap:8px"><button class="btn" id="themeBtn">🌙 Oscuro</button><button class="btn btn-primary" id="dlAllBtn">⬇️ ZIP TODO</button></div></div></div>
 <div class="grid-wrap"><div class="grid-title"><span>CLIC PARA EXPANDIR</span><span id="count"></span></div><div class="grid" id="grid"></div></div>
 <div class="modal" id="modal">
 <div class="modal-top"><div class="modal-top-inner"><div class="modal-title" id="modalTitle">01/39</div><div class="modal-actions"><button class="btn btn-small" id="btnZoomOut">➖</button><span id="zoomPercent" style="font-size:11px;font-weight:800;min-width:42px;text-align:center">100%</span><button class="btn btn-small" id="btnZoomIn">➕</button><button class="btn btn-small active" id="btnFit">🔍 Ajustar a pantalla</button><button class="btn btn-small" id="btnReal">↔️ Real 100%</button><button class="btn btn-small btn-accent" id="btnDownload">⬇️ PNG Full HD</button><button class="btn btn-small" id="btnClose">✕</button></div></div></div>
@@ -157,7 +157,7 @@ function openModal(i){
 }
 let currentZoom=100;
 let isFit=true;
-function applyZoom(z){
+function applyZoom(z, center=false){
   currentZoom=Math.max(10,Math.min(400,z));
   const pct=document.getElementById('zoomPercent');
   if(pct) pct.textContent=currentZoom+'%';
@@ -166,35 +166,65 @@ function applyZoom(z){
     modalImg.style.width='';modalImg.style.height='';
     modalImg.style.margin='';
   } else {
+    // guardar scroll actual para no perder encuadre
+    const prevLeft = modalBody.scrollLeft;
+    const prevTop = modalBody.scrollTop;
+    const prevW = modalBody.scrollWidth;
+    const prevH = modalBody.scrollHeight;
+    const wasCentered = (Math.abs(prevLeft - (prevW-modalBody.clientWidth)/2) < 5) && (Math.abs(prevTop - (prevH-modalBody.clientHeight)/2) < 5);
+
     modalBody.className='modal-body real';
     const w=1080*(currentZoom/100); const h=1920*(currentZoom/100);
     modalImg.style.width=w+'px';modalImg.style.height=h+'px';
     modalImg.style.margin='auto';
-    requestAnimationFrame(()=>{
-      modalBody.scrollLeft=(modalBody.scrollWidth-modalBody.clientWidth)/2;
-      modalBody.scrollTop=(modalBody.scrollHeight-modalBody.clientHeight)/2;
-    });
+    if(center){
+      requestAnimationFrame(()=>{
+        modalBody.scrollLeft=(modalBody.scrollWidth-modalBody.clientWidth)/2;
+        modalBody.scrollTop=(modalBody.scrollHeight-modalBody.clientHeight)/2;
+      });
+    } else if(!wasCentered){
+      // mantener posición relativa al hacer zoom
+      requestAnimationFrame(()=>{
+        const scaleX = modalBody.scrollWidth / (prevW || 1);
+        const scaleY = modalBody.scrollHeight / (prevH || 1);
+        modalBody.scrollLeft = prevLeft * scaleX;
+        modalBody.scrollTop = prevTop * scaleY;
+      });
+    }
   }
 }
 function setFit(){
   isFit=true; currentZoom=100;
   document.getElementById('btnFit').classList.add('active');
   document.getElementById('btnReal').classList.remove('active');
-  applyZoom(currentZoom);
+  applyZoom(currentZoom, false);
 }
 function setReal(){
   isFit=false; currentZoom=100;
   document.getElementById('btnReal').classList.add('active');
   document.getElementById('btnFit').classList.remove('active');
-  applyZoom(currentZoom);
+  applyZoom(currentZoom, true);
 }
-function zoomIn(){ isFit=false; document.getElementById('btnFit').classList.remove('active'); applyZoom(currentZoom+25); }
-function zoomOut(){ isFit=false; document.getElementById('btnFit').classList.remove('active'); applyZoom(currentZoom-25); }
+function zoomIn(){ isFit=false; document.getElementById('btnFit').classList.remove('active'); document.getElementById('btnReal').classList.add('active'); applyZoom(currentZoom+25, false); }
+function zoomOut(){ isFit=false; document.getElementById('btnFit').classList.remove('active'); document.getElementById('btnReal').classList.add('active'); applyZoom(currentZoom-25, false); }
 
 document.getElementById('btnFit').onclick=setFit;
 document.getElementById('btnReal').onclick=setReal;
 document.getElementById('btnZoomIn').onclick=zoomIn;
 document.getElementById('btnZoomOut').onclick=zoomOut;
+
+
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape' && modal.classList.contains('open')){
+    modal.classList.remove('open');
+    document.body.classList.remove('modal-open');
+  }
+  // zoom con teclado + - =
+  if(modal.classList.contains('open')){
+    if(e.key==='+' || e.key==='=' || e.key==='NumpadAdd'){ e.preventDefault(); zoomIn(); }
+    if(e.key==='-' || e.key==='_' || e.key==='NumpadSubtract'){ e.preventDefault(); zoomOut(); }
+  }
+});
 
 document.getElementById('btnClose').onclick=()=>{modal.classList.remove('open');document.body.classList.remove('modal-open');};
 modal.onclick=(e)=>{if(e.target===modal || e.target===modalBody){modal.classList.remove('open');document.body.classList.remove('modal-open');}};

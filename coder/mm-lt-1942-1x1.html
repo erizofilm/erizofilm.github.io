@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MM/LT - 1942 - Full HD - 1:1</title>
+<title>MM/LT-1942-1x1</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Pacifico&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
@@ -49,7 +49,7 @@ body.modal-open{overflow:hidden}
 #modalImg{flex-shrink:0;background:transparent;box-shadow:0 0 0 1px var(--border)}
 </style>
 </head><body data-theme="dark">
-<div class="header"><div class="header-inner"><h1>MM/LT - 1942 - Full HD - 1:1</h1><div style="display:flex;gap:8px"><button class="btn" id="themeBtn">🌙 Oscuro</button><button class="btn btn-primary" id="dlAllBtn">⬇️ ZIP TODO</button></div></div></div>
+<div class="header"><div class="header-inner"><h1>MM/LT-1942-1x1</h1><div style="display:flex;gap:8px"><button class="btn" id="themeBtn">🌙 Oscuro</button><button class="btn btn-primary" id="dlAllBtn">⬇️ ZIP TODO</button></div></div></div>
 <div class="grid-wrap"><div class="grid-title"><span>CLIC PARA EXPANDIR</span><span id="count"></span></div><div class="grid" id="grid"></div></div>
 <div class="modal" id="modal">
 <div class="modal-top"><div class="modal-top-inner"><div class="modal-title" id="modalTitle">01/39</div><div class="modal-actions"><button class="btn btn-small" id="btnZoomOut">➖</button><span id="zoomPercent" style="font-size:11px;font-weight:800;min-width:42px;text-align:center">100%</span><button class="btn btn-small" id="btnZoomIn">➕</button><button class="btn btn-small active" id="btnFit">🔍 Ajustar a pantalla</button><button class="btn btn-small" id="btnReal">↔️ Real 100%</button><button class="btn btn-small btn-accent" id="btnDownload">⬇️ PNG Full HD</button><button class="btn btn-small" id="btnClose">✕</button></div></div></div>
@@ -117,16 +117,16 @@ t.fillStyle='#000000';t.fillText("Cartoons",0,2);t.fillStyle='#000000';t.fillTex
 let textMode=mode||'combinado';let baseCombined=getCombinedColor(n.color);let lum=getLuminance(n.color);
 let textColor=textMode==='crema'?"#FFF8E7":textMode==='bn'?(lum>0.45?"#000000":"#FFFFFF"):baseCombined;
 t.textBaseline="top";t.font="700 28px Inter";let epStr=String(n.id).padStart(2,"0")+"/39";let epW=t.measureText(epStr).width;
-t.fillStyle="rgba(0,0,0,0.22)";t.fillRect(90,42-6,epW+24,34);t.fillStyle="#FFFFFF";t.fillText(epStr,90+12,42);
-t.font="500 29px Inter";t.fillStyle="#FFF8E7";let s=t.measureText(n.date).width;t.fillText(n.date,r-90-s,42);
+t.fillStyle="rgba(0,0,0,0.22)";t.fillRect(75,42-6,epW+24,34);t.fillStyle="#FFFFFF";t.fillText(epStr,75+12,42);
+t.font="500 29px Inter";t.fillStyle="#FFF8E7";let s=t.measureText(n.date).width;t.fillText(n.date,r-75-s,42);
 t.fillStyle=textColor;t.font='500 62px Inter';t.fillText("the classic",90,122);t.save();t.translate(90,260);t.rotate(-10*Math.PI/180);t.font='400 183px Pacifico';t.fillText("Cartoons",0,0);t.restore();
 let d=u+920+45;t.font="500 48px Inter";t.fillStyle=textColor;let h=n.gancho.split(" "),p="",w=d+20,k=900,S=48,lines=0;
 for(let R=0;R<h.length;R++){let c=p+h[R]+" ";if(t.measureText(c).width>k&&R>0){t.fillText(p,90,w,k);p=h[R]+" ";w+=S+25;lines++;if(lines>=4||w>l-150)break}else p=c}
 t.fillText(p,90,w,k);
 t.font="700 28px Inter";let mmPart=n.series;let titlePart=" • "+n.title.toUpperCase();let fullFooter=mmPart+titlePart;
 if(fullFooter.length>45){t.font="700 22px Inter";}if(fullFooter.length>58){t.font="700 18px Inter";}
-t.fillStyle="rgba(0,0,0,0.22)";let mmW=t.measureText(mmPart).width;t.fillRect(90,l-71-6,mmW+24,34);t.fillStyle="#FFFFFF";t.fillText(mmPart,90+12,l-71);
-let titleX=90+12+mmW+24+10;t.fillText(titlePart,titleX,l-71,900-titleX+90);
+t.fillStyle="rgba(0,0,0,0.22)";let mmW=t.measureText(mmPart).width;t.fillRect(75,l-71-6,mmW+24,34);t.fillStyle="#FFFFFF";t.fillText(mmPart,75+12,l-71);
+let titleX=75+12+mmW+24+10;t.fillText(titlePart,titleX,l-71,935-titleX+75);
 }
 let current=0;
 const grid=document.getElementById('grid');
@@ -157,7 +157,15 @@ function openModal(i){
 }
 let currentZoom=100;
 let isFit=true;
-function applyZoom(z){
+function applyZoom(z,opts={}){
+  const preserve = opts.preserve || false;
+  const prevLeft = modalBody.scrollLeft;
+  const prevTop = modalBody.scrollTop;
+  const prevW = modalBody.scrollWidth - modalBody.clientWidth;
+  const prevH = modalBody.scrollHeight - modalBody.clientHeight;
+  const ratioX = prevW>0 ? prevLeft/prevW : 0.5;
+  const ratioY = prevH>0 ? prevTop/prevH : 0.5;
+
   currentZoom=Math.max(10,Math.min(400,z));
   const pct=document.getElementById('zoomPercent');
   if(pct) pct.textContent=currentZoom+'%';
@@ -171,8 +179,13 @@ function applyZoom(z){
     modalImg.style.width=w+'px';modalImg.style.height=h+'px';
     modalImg.style.margin='auto';
     requestAnimationFrame(()=>{
-      modalBody.scrollLeft=(modalBody.scrollWidth-modalBody.clientWidth)/2;
-      modalBody.scrollTop=(modalBody.scrollHeight-modalBody.clientHeight)/2;
+      if(preserve && (prevW>0 || prevH>0)){
+        modalBody.scrollLeft = ratioX * (modalBody.scrollWidth - modalBody.clientWidth);
+        modalBody.scrollTop = ratioY * (modalBody.scrollHeight - modalBody.clientHeight);
+      } else {
+        modalBody.scrollLeft=(modalBody.scrollWidth-modalBody.clientWidth)/2;
+        modalBody.scrollTop=(modalBody.scrollHeight-modalBody.clientHeight)/2;
+      }
     });
   }
 }
@@ -186,10 +199,10 @@ function setReal(){
   isFit=false; currentZoom=100;
   document.getElementById('btnReal').classList.add('active');
   document.getElementById('btnFit').classList.remove('active');
-  applyZoom(currentZoom);
+  applyZoom(currentZoom,{preserve:false});
 }
-function zoomIn(){ isFit=false; document.getElementById('btnFit').classList.remove('active'); applyZoom(currentZoom+25); }
-function zoomOut(){ isFit=false; document.getElementById('btnFit').classList.remove('active'); applyZoom(currentZoom-25); }
+function zoomIn(){ isFit=false; document.getElementById('btnFit').classList.remove('active'); applyZoom(currentZoom+25,{preserve:true}); }
+function zoomOut(){ isFit=false; document.getElementById('btnFit').classList.remove('active'); applyZoom(currentZoom-25,{preserve:true}); }
 
 document.getElementById('btnFit').onclick=setFit;
 document.getElementById('btnReal').onclick=setReal;
